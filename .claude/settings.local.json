@@ -1,0 +1,37 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(if exist db.sqlite3 del db.sqlite3)",
+      "Bash(python -c \"import os; os.path.exists(''db.sqlite3'') and os.remove(''db.sqlite3''); print(''Database deleted'')\")",
+      "Bash(python -c \"import os, glob; [os.remove(f) for f in glob.glob(''website/migrations/*.py'') if ''__init__'' not in f]; print(''Migrations deleted'')\")",
+      "Bash(python:*)",
+      "Bash(curl -s http://127.0.0.1:8000/api/v1/shipments/)",
+      "Bash(curl -s http://127.0.0.1:8000/api/v1/shipments/70926e37-0883-49a7-a762-cb5517dfdcb7/)",
+      "Bash(curl -s http://127.0.0.1:8000/api/v1/bids/)",
+      "Bash(curl -s http://127.0.0.1:8000/)",
+      "Bash(curl -s \"http://127.0.0.1:8000/api/v1/shipments/?page=1\")",
+      "Bash(curl -s http://127.0.0.1:8000/admin/)",
+      "Bash(curl -s \"http://127.0.0.1:8000/ilan/YN-2025-TEST02/\")",
+      "Bash(curl -s http://127.0.0.1:8000/ilan/YN-2025-TEST02/)",
+      "Bash(curl -s http://127.0.0.1:8000/ilanlar/)",
+      "Bash(if exist \"website\\firebase_auth.py\" del \"website\\firebase_auth.py\")",
+      "Bash(if exist \"firebase_service.py\" del \"firebase_service.py\")",
+      "Bash(dir:*)",
+      "Bash(curl -s \"http://127.0.0.1:8000/giris/\")",
+      "Bash(curl -s -o nul -w \"%{http_code}\" \"http://127.0.0.1:8000/giris/\")",
+      "Bash(curl:*)",
+      "Bash(curl -s -o /dev/null -w \"Kayit: %{http_code}\\n\" \"http://127.0.0.1:8000/kayit/\")",
+      "Bash(timeout:*)",
+      "Bash(chcp:*)",
+      "Bash(git init:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(git remote add:*)",
+      "Bash(git branch:*)",
+      "Bash(git push:*)",
+      "Bash(git rm:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

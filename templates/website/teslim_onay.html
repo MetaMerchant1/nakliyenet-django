@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-check-circle"></i> Teslim Onayı
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Status Info -->
+                    <div class="alert {% if payment.is_delivery_confirmed %}alert-success{% else %}alert-info{% endif %}">
+                        <i class="bi bi-info-circle"></i>
+                        {% if payment.is_delivery_confirmed %}
+                            <strong>Teslim Tamamlandı!</strong> Her iki taraf da teslimatı onayladı. Admin tarafından ödeme transferi yapılacaktır.
+                        {% else %}
+                            <strong>Teslim Onayı Bekleniyor:</strong> Kargo teslim edildikten sonra her iki tarafın da onaylaması gerekmektedir.
+                        {% endif %}
+                    </div>
+
+                    <!-- Shipment Details -->
+                    <h5 class="mt-4">İlan Bilgileri</h5>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th style="width: 25%;">Takip No:</th>
+                            <td><strong>{{ shipment.tracking_number }}</strong></td>
+                        </tr>
+                        <tr>
+                            <th>İlan:</th>
+                            <td>{{ shipment.title }}</td>
+                        </tr>
+                        <tr>
+                            <th>Rota:</th>
+                            <td>
+                                <strong>{{ shipment.from_address_city }}</strong> ({{ shipment.from_address_district }})
+                                <i class="bi bi-arrow-right mx-2"></i>
+                                <strong>{{ shipment.to_address_city }}</strong> ({{ shipment.to_address_district }})
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Durum:</th>
+                            <td>
+                                {% if shipment.status == 'in_transit' %}
+                                    <span class="badge bg-primary">🚚 Yolda</span>
+                                {% elif shipment.status == 'delivered' %}
+                                    <span class="badge bg-success">✓ Teslim Edildi</span>
+                                {% elif shipment.status == 'assigned' %}
+                                    <span class="badge bg-info">📦 Hazırlanıyor</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Payment Details -->
+                    <h5 class="mt-4">Ödeme Bilgileri</h5>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th style="width: 25%;">Ödeme Durumu:</th>
+                            <td>
+                                {% if payment.status == 'paid' %}
+                                    <span class="badge bg-success">✓ Ödendi</span>
+                                    <small class="text-muted ms-2">(Escrow'da tutuluyor)</small>
+                                {% elif payment.status == 'in_transit' %}
+                                    <span class="badge bg-primary">🚚 Taşımada</span>
+                                {% elif payment.status == 'delivered' %}
+                                    <span class="badge bg-info">📦 Teslim Edildi</span>
+                                    <small class="text-muted ms-2">(Transfer bekleniyor)</small>
+                                {% elif payment.status == 'completed' %}
+                                    <span class="badge bg-success">✓ Tamamlandı</span>
+                                    <small class="text-muted ms-2">(Transfer yapıldı)</small>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr>
+                            <th>Toplam Tutar:</th>
+                            <td><strong class="text-success">{{ payment.amount }} TL</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Taşıyıcıya Gidecek:</th>
+                            <td>{{ payment.carrier_amount }} TL <small class="text-muted">(Platform komisyonu: {{ payment.platform_fee }} TL)</small></td>
+                        </tr>
+                    </table>
+
+                    <!-- Delivery Confirmation Status -->
+                    <h5 class="mt-4">Teslim Onay Durumu</h5>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card {% if payment.shipper_confirmed_delivery %}border-success{% else %}border-warning{% endif %}">
+                                <div class="card-body text-center">
+                                    <h6>
+                                        {% if is_shipper %}
+                                            <i class="bi bi-person-fill"></i> Siz (Yük Sahibi)
+                                        {% else %}
+                                            <i class="bi bi-box-seam"></i> Yük Sahibi
+                                        {% endif %}
+                                    </h6>
+                                    {% if payment.shipper_confirmed_delivery %}
+                                        <div class="text-success">
+                                            <i class="bi bi-check-circle-fill" style="font-size: 3em;"></i>
+                                            <p class="mt-2 mb-0"><strong>Onaylandı</strong></p>
+                                            <small class="text-muted">{{ payment.shipper_confirmed_at|date:"d.m.Y H:i" }}</small>
+                                        </div>
+                                    {% else %}
+                                        <div class="text-warning">
+                                            <i class="bi bi-clock-fill" style="font-size: 3em;"></i>
+                                            <p class="mt-2 mb-0"><strong>Onay Bekleniyor</strong></p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="card {% if payment.carrier_confirmed_delivery %}border-success{% else %}border-warning{% endif %}">
+                                <div class="card-body text-center">
+                                    <h6>
+                                        {% if is_carrier %}
+                                            <i class="bi bi-person-fill"></i> Siz (Taşıyıcı)
+                                        {% else %}
+                                            <i class="bi bi-truck"></i> Taşıyıcı
+                                        {% endif %}
+                                    </h6>
+                                    {% if payment.carrier_confirmed_delivery %}
+                                        <div class="text-success">
+                                            <i class="bi bi-check-circle-fill" style="font-size: 3em;"></i>
+                                            <p class="mt-2 mb-0"><strong>Onaylandı</strong></p>
+                                            <small class="text-muted">{{ payment.carrier_confirmed_at|date:"d.m.Y H:i" }}</small>
+                                        </div>
+                                    {% else %}
+                                        <div class="text-warning">
+                                            <i class="bi bi-clock-fill" style="font-size: 3em;"></i>
+                                            <p class="mt-2 mb-0"><strong>Onay Bekleniyor</strong></p>
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Confirmation Form -->
+                    {% if not payment.is_delivery_confirmed %}
+                        <div class="mt-4">
+                            {% if is_shipper and not payment.shipper_confirmed_delivery %}
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    <strong>Dikkat:</strong> Yükünüzü teslim aldıysanız lütfen aşağıdaki butona tıklayarak onaylayın. Bu onay sonrasında taşıyıcıya ödeme yapılacaktır.
+                                </div>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-success btn-lg">
+                                            <i class="bi bi-check-circle"></i> Teslimatı Onaylıyorum (Yük Sahibi)
+                                        </button>
+                                    </div>
+                                </form>
+                            {% elif is_carrier and not payment.carrier_confirmed_delivery %}
+                                <div class="alert alert-warning">
+                                    <i class="bi bi-exclamation-triangle"></i>
+                                    <strong>Dikkat:</strong> Yükü teslim ettiyseniz lütfen aşağıdaki butona tıklayarak onaylayın.
+                                </div>
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="d-grid gap-2">
+                                        <button type="submit" class="btn btn-success btn-lg">
+                                            <i class="bi bi-check-circle"></i> Teslimatı Onaylıyorum (Taşıyıcı)
+                                        </button>
+                                    </div>
+                                </form>
+                            {% else %}
+                                <div class="alert alert-info text-center">
+                                    <i class="bi bi-clock"></i>
+                                    Onayınız alındı. {% if is_shipper %}Taşıyıcının{% else %}Yük sahibinin{% endif %} onayı bekleniyor...
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="mt-4">
+                            <div class="alert alert-success text-center">
+                                <i class="bi bi-check-circle-fill"></i>
+                                <strong>Teslim Tamamlandı!</strong><br>
+                                Her iki taraf da teslimatı onayladı. Admin tarafından ödeme transferi yapılacaktır.
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <!-- Back Button -->
+                    <div class="mt-4 text-center">
+                        <a href="{% url 'website:ilanlarim' %}" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> İlanlarıma Dön
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

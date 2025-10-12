@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">
+                        <i class="bi bi-credit-card"></i> Güvenli Ödeme
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Payment Info -->
+                    <div class="alert alert-info">
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Escrow Sistemi:</strong> Ödemeniz güvenli bir şekilde tutulacak ve taşıyıcı ile siz teslimatı onayladıktan sonra taşıyıcıya transfer edilecektir.
+                    </div>
+
+                    <!-- Shipment Details -->
+                    <h5 class="mt-4">İlan Bilgileri</h5>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th style="width: 30%;">Takip No:</th>
+                            <td><strong>{{ shipment.tracking_number }}</strong></td>
+                        </tr>
+                        <tr>
+                            <th>İlan:</th>
+                            <td>{{ shipment.title }}</td>
+                        </tr>
+                        <tr>
+                            <th>Rota:</th>
+                            <td>{{ shipment.from_address_city }} → {{ shipment.to_address_city }}</td>
+                        </tr>
+                        <tr>
+                            <th>Kargo Tipi:</th>
+                            <td>{{ shipment.get_cargo_type_display }}</td>
+                        </tr>
+                    </table>
+
+                    <!-- Carrier Details -->
+                    <h5 class="mt-4">Taşıyıcı Bilgileri</h5>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th style="width: 30%;">Ad Soyad:</th>
+                            <td>{{ carrier.user.get_full_name|default:carrier.user.username }}</td>
+                        </tr>
+                        <tr>
+                            <th>Email:</th>
+                            <td>{{ carrier.user.email }}</td>
+                        </tr>
+                        <tr>
+                            <th>Telefon:</th>
+                            <td>{{ carrier.phone_number|default:"Belirtilmemiş" }}</td>
+                        </tr>
+                        <tr>
+                            <th>Belgeler:</th>
+                            <td>
+                                {% if carrier.documents_verified %}
+                                    <span class="badge bg-success">✓ Onaylı</span>
+                                {% else %}
+                                    <span class="badge bg-warning">⏳ Onay Bekliyor</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- Payment Amount -->
+                    <h5 class="mt-4">Ödeme Detayları</h5>
+                    <table class="table table-bordered">
+                        <tr>
+                            <th style="width: 30%;">Teklif Tutarı:</th>
+                            <td><strong class="text-success">{{ payment.amount }} TL</strong></td>
+                        </tr>
+                        <tr>
+                            <th>Platform Komisyonu (10%):</th>
+                            <td>{{ payment.platform_fee }} TL</td>
+                        </tr>
+                        <tr>
+                            <th>Taşıyıcıya Gidecek:</th>
+                            <td>{{ payment.carrier_amount }} TL</td>
+                        </tr>
+                        <tr class="table-primary">
+                            <th>Ödenecek Toplam:</th>
+                            <td><strong style="font-size: 1.3em;">{{ payment.amount }} TL</strong></td>
+                        </tr>
+                    </table>
+
+                    <!-- Payment Form -->
+                    <div class="mt-4 p-4 bg-light rounded">
+                        <h5 class="mb-3">Ödeme Yöntemi</h5>
+                        <div class="alert alert-warning">
+                            <i class="bi bi-exclamation-triangle"></i>
+                            <strong>TEST MODU:</strong> Bu test ortamıdır. Gerçek ödeme yapılmayacaktır. "Ödemeyi Tamamla" butonuna tıklayarak ödemeyi simüle edebilirsiniz.
+                        </div>
+
+                        <form method="post">
+                            {% csrf_token %}
+
+                            <!-- Simulated Credit Card Form -->
+                            <div class="mb-3">
+                                <label class="form-label">Kart Numarası</label>
+                                <input type="text" class="form-control" placeholder="**** **** **** ****" disabled>
+                                <small class="text-muted">Test modunda kart bilgisi gerekmez</small>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">Son Kullanma Tarihi</label>
+                                    <input type="text" class="form-control" placeholder="MM/YY" disabled>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <label class="form-label">CVV</label>
+                                    <input type="text" class="form-control" placeholder="***" disabled>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Kart Üzerindeki İsim</label>
+                                <input type="text" class="form-control" placeholder="AD SOYAD" disabled>
+                            </div>
+
+                            <div class="form-check mb-3">
+                                <input class="form-check-input" type="checkbox" id="termsCheck" required>
+                                <label class="form-check-label" for="termsCheck">
+                                    <a href="#" target="_blank">Kullanım şartlarını</a> ve <a href="#" target="_blank">ödeme politikasını</a> okudum, kabul ediyorum.
+                                </label>
+                            </div>
+
+                            <div class="d-grid gap-2">
+                                <button type="submit" class="btn btn-success btn-lg">
+                                    <i class="bi bi-lock-fill"></i> Ödemeyi Tamamla ({{ payment.amount }} TL)
+                                </button>
+                                <a href="{% url 'website:ilanlarim' %}" class="btn btn-secondary">
+                                    <i class="bi bi-x-circle"></i> İptal Et
+                                </a>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Security Info -->
+                    <div class="mt-4 text-center text-muted">
+                        <small>
+                            <i class="bi bi-shield-check"></i> Tüm ödemeler SSL ile şifrelenir ve güvenli bir şekilde işlenir.
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

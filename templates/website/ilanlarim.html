@@ -1,0 +1,662 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    .my-shipments-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--primary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .shipment-card {
+        background: white;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        transition: all 0.3s;
+    }
+
+    .shipment-card:hover {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+    }
+
+    .shipment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .shipment-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .shipment-tracking {
+        color: var(--primary-color);
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.85rem;
+        font-weight: 600;
+    }
+
+    .status-active { background: #e3f2fd; color: #1976d2; }
+    .status-assigned { background: #fff3e0; color: #f57c00; }
+    .status-completed { background: #e8f5e9; color: #388e3c; }
+    .status-cancelled { background: #ffebee; color: #d32f2f; }
+
+    .shipment-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 1rem;
+        margin: 1rem 0;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .detail-icon {
+        font-size: 1.2rem;
+    }
+
+    .detail-text {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .shipment-stats {
+        display: flex;
+        gap: 2rem;
+        margin: 1rem 0;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        flex-wrap: wrap;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .stat-icon {
+        font-size: 1.2rem;
+    }
+
+    .stat-number {
+        font-weight: 700;
+        color: var(--primary-color);
+        font-size: 1.1rem;
+    }
+
+    .bids-section {
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 2px solid #e0e0e0;
+    }
+
+    .bids-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .bids-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #333;
+    }
+
+    .bid-card {
+        background: #f8f9fa;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        border-left: 4px solid #ccc;
+    }
+
+    .bid-card.pending { border-left-color: #2196f3; }
+    .bid-card.accepted { border-left-color: #4caf50; }
+    .bid-card.rejected { border-left-color: #f44336; }
+
+    .bid-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: start;
+        margin-bottom: 0.75rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .bid-carrier {
+        font-weight: 600;
+        color: #333;
+    }
+
+    .bid-price {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+
+    .bid-details {
+        display: flex;
+        gap: 1.5rem;
+        margin: 0.5rem 0;
+        font-size: 0.9rem;
+        color: #666;
+        flex-wrap: wrap;
+    }
+
+    .bid-actions {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 0.75rem;
+    }
+
+    .btn-accept {
+        background: #4caf50;
+        color: white;
+        padding: 0.5rem 1.25rem;
+        border-radius: 6px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-accept:hover {
+        background: #45a049;
+    }
+
+    .btn-reject {
+        background: #f44336;
+        color: white;
+        padding: 0.5rem 1.25rem;
+        border-radius: 6px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-reject:hover {
+        background: #da190b;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .empty-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .empty-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .empty-text {
+        color: #666;
+        margin-bottom: 1.5rem;
+    }
+
+    .btn-create {
+        background: var(--primary-color);
+        color: white;
+        padding: 0.75rem 2rem;
+        border-radius: 8px;
+        text-decoration: none;
+        display: inline-block;
+        font-weight: 600;
+    }
+
+    .btn-create:hover {
+        background: #1976d2;
+        text-decoration: none;
+        color: white;
+    }
+
+    .verified-badge {
+        background: #4caf50;
+        color: white;
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.75rem;
+        margin-left: 0.5rem;
+    }
+
+    /* Modal Stilleri */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+    }
+
+    .modal-content {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        max-width: 500px;
+        width: 90%;
+        max-height: 80vh;
+        overflow-y: auto;
+    }
+
+    .modal-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .modal-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .modal-subtitle {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .modal-body {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1rem;
+    }
+
+    .form-label {
+        display: block;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-textarea {
+        width: 100%;
+        padding: 0.75rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 0.95rem;
+        resize: vertical;
+        min-height: 100px;
+    }
+
+    .form-textarea:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+
+    .form-help {
+        font-size: 0.85rem;
+        color: #666;
+        margin-top: 0.25rem;
+    }
+
+    .modal-footer {
+        display: flex;
+        gap: 0.75rem;
+        justify-content: flex-end;
+    }
+
+    .btn-modal-cancel {
+        background: #e0e0e0;
+        color: #333;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-modal-cancel:hover {
+        background: #d0d0d0;
+    }
+
+    .btn-modal-submit {
+        background: #4caf50;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        border: none;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .btn-modal-submit:hover {
+        background: #45a049;
+    }
+
+    @media (max-width: 768px) {
+        .stats-grid {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .shipment-details {
+            grid-template-columns: 1fr;
+        }
+
+        .shipment-stats {
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .modal-content {
+            width: 95%;
+            padding: 1.5rem;
+        }
+
+        .modal-footer {
+            flex-direction: column;
+        }
+
+        .btn-modal-cancel,
+        .btn-modal-submit {
+            width: 100%;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="my-shipments-container">
+    <h1 style="margin-bottom: 2rem; color: #333;">📦 İlanlarım</h1>
+
+    <!-- İstatistikler -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.total_shipments }}</div>
+            <div class="stat-label">Toplam İlan</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.active_shipments }}</div>
+            <div class="stat-label">Aktif İlan</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.total_bids }}</div>
+            <div class="stat-label">Toplam Teklif</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">{{ stats.total_views }}</div>
+            <div class="stat-label">Toplam Görüntülenme</div>
+        </div>
+    </div>
+
+    <!-- İlanlar Listesi -->
+    {% if shipments %}
+        {% for shipment in shipments %}
+        <div class="shipment-card">
+            <div class="shipment-header">
+                <div>
+                    <h3 class="shipment-title">{{ shipment.title }}</h3>
+                    <div class="shipment-tracking">🔖 {{ shipment.tracking_number }}</div>
+                </div>
+                <div>
+                    {% if shipment.status == 'active' %}
+                        <span class="status-badge status-active">Aktif</span>
+                    {% elif shipment.status == 'assigned' %}
+                        <span class="status-badge status-assigned">Atandı</span>
+                    {% elif shipment.status == 'completed' %}
+                        <span class="status-badge status-completed">Tamamlandı</span>
+                    {% else %}
+                        <span class="status-badge status-cancelled">İptal</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- İlan Detayları -->
+            <div class="shipment-details">
+                <div class="detail-item">
+                    <span class="detail-icon">📍</span>
+                    <span class="detail-text"><strong>Nereden:</strong> {{ shipment.from_address_city }}, {{ shipment.from_address_district }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-icon">📍</span>
+                    <span class="detail-text"><strong>Nereye:</strong> {{ shipment.to_address_city }}, {{ shipment.to_address_district }}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-icon">💰</span>
+                    <span class="detail-text"><strong>Önerilen Fiyat:</strong> {{ shipment.suggested_price }} TL</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-icon">📦</span>
+                    <span class="detail-text"><strong>Yük Tipi:</strong> {{ shipment.get_cargo_type_display }}</span>
+                </div>
+            </div>
+
+            <!-- İlan İstatistikleri -->
+            <div class="shipment-stats">
+                <div class="stat-item">
+                    <span class="stat-icon">👁️</span>
+                    <span class="stat-number">{{ shipment.view_count }}</span>
+                    <span style="color: #666;">görüntülenme</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-icon">💼</span>
+                    <span class="stat-number">{{ shipment.bid_count }}</span>
+                    <span style="color: #666;">teklif</span>
+                </div>
+                {% if shipment.pending_bids_count > 0 %}
+                <div class="stat-item">
+                    <span class="stat-icon">⏳</span>
+                    <span class="stat-number">{{ shipment.pending_bids_count }}</span>
+                    <span style="color: #666;">bekleyen teklif</span>
+                </div>
+                {% endif %}
+            </div>
+
+            <!-- Teklifler -->
+            {% if shipment.bids_list %}
+            <div class="bids-section">
+                <div class="bids-header">
+                    <h4 class="bids-title">💼 Gelen Teklifler ({{ shipment.bid_count }})</h4>
+                </div>
+
+                {% for bid in shipment.bids_list %}
+                <div class="bid-card {{ bid.status }}">
+                    <div class="bid-header">
+                        <div>
+                            <div class="bid-carrier">
+                                🚚 {{ bid.carrier_name }}
+                                {% if bid.carrier_verified %}
+                                <span class="verified-badge">✓ Onaylı</span>
+                                {% endif %}
+                            </div>
+                            <div style="font-size: 0.85rem; color: #666; margin-top: 0.25rem;">
+                                {{ bid.carrier_email }}
+                            </div>
+                        </div>
+                        <div class="bid-price">{{ bid.offered_price }} TL</div>
+                    </div>
+
+                    <div class="bid-details">
+                        <span>📅 Teslimat: {{ bid.estimated_delivery_days }} gün</span>
+                        <span>📞 {{ bid.carrier_phone }}</span>
+                        <span>
+                            {% if bid.status == 'pending' %}
+                                ⏳ Beklemede
+                            {% elif bid.status == 'accepted' %}
+                                ✅ Kabul Edildi
+                            {% elif bid.status == 'rejected' %}
+                                ❌ Reddedildi
+                            {% endif %}
+                        </span>
+                    </div>
+
+                    {% if bid.message %}
+                    <div style="margin-top: 0.75rem; padding: 0.75rem; background: white; border-radius: 6px; font-size: 0.9rem; color: #555;">
+                        💬 {{ bid.message }}
+                    </div>
+                    {% endif %}
+
+                    {% if bid.status == 'pending' and shipment.status == 'active' %}
+                    <div class="bid-actions">
+                        <button type="button" class="btn-accept" onclick="openAcceptModal('{{ bid.bid_id }}', '{{ bid.carrier_name }}', '{{ bid.offered_price }}')">
+                            ✓ Kabul Et
+                        </button>
+                        <form method="post" action="{% url 'website:teklif_reddet' bid.bid_id %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="btn-reject" onclick="return confirm('Bu teklifi reddetmek istediğinize emin misiniz?');">
+                                ✗ Reddet
+                            </button>
+                        </form>
+                    </div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div style="padding: 1rem; background: #f8f9fa; border-radius: 8px; text-align: center; color: #666;">
+                Henüz teklif yok. Taşıyıcılardan teklif geldiğinde burada göreceksiniz.
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <div class="empty-icon">📦</div>
+            <h2 class="empty-title">Henüz İlan Yok</h2>
+            <p class="empty-text">İlk ilanınızı oluşturmak için mobil uygulamamızı indirin.</p>
+            <a href="{% url 'website:index' %}" class="btn-create">Ana Sayfaya Dön</a>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Teklif Kabul Etme Modal -->
+<div class="modal-overlay" id="acceptModal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3 class="modal-title">✅ Teklifi Kabul Et</h3>
+            <p class="modal-subtitle" id="modalSubtitle">Taşıyıcıya bir mesaj bırakmak ister misiniz?</p>
+        </div>
+        <form method="post" id="acceptForm" action="">
+            {% csrf_token %}
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label" for="shipper_comment">Taşıyıcıya Mesajınız (İsteğe Bağlı)</label>
+                    <textarea
+                        class="form-textarea"
+                        id="shipper_comment"
+                        name="shipper_comment"
+                        placeholder="Örn: Merhaba, teklifinizi kabul ettim. Yükü Pazartesi günü teslim almanızı rica ederim..."
+                        maxlength="500"
+                    ></textarea>
+                    <div class="form-help">Bu mesaj taşıyıcıya email ile gönderilecektir.</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-modal-cancel" onclick="closeAcceptModal()">İptal</button>
+                <button type="submit" class="btn-modal-submit">✓ Teklifi Kabul Et</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+function openAcceptModal(bidId, carrierName, offeredPrice) {
+    // Modal içeriğini güncelle
+    document.getElementById('modalSubtitle').textContent =
+        `${carrierName} tarafından ${offeredPrice} TL fiyatla yapılan teklifi kabul etmek üzeresiniz.`;
+
+    // Form action'ını ayarla
+    const form = document.getElementById('acceptForm');
+    form.action = `/teklif/${bidId}/kabul-et/`;
+
+    // Textarea'yı temizle
+    document.getElementById('shipper_comment').value = '';
+
+    // Modal'ı aç
+    document.getElementById('acceptModal').classList.add('active');
+    document.body.style.overflow = 'hidden';
+}
+
+function closeAcceptModal() {
+    document.getElementById('acceptModal').classList.remove('active');
+    document.body.style.overflow = 'auto';
+}
+
+// Modal dışına tıklandığında kapat
+document.getElementById('acceptModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeAcceptModal();
+    }
+});
+
+// ESC tuşu ile kapat
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        closeAcceptModal();
+    }
+});
+</script>
+{% endblock %}

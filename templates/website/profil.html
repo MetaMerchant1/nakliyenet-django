@@ -1,0 +1,330 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container" style="max-width: 1200px; margin: 40px auto; padding: 20px;">
+    <h1 style="color: #2c3e50; margin-bottom: 30px;">
+        <span style="font-size: 40px;">👤</span> Profilim
+    </h1>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}" style="padding: 15px; margin-bottom: 20px; border-radius: 8px; {% if message.tags == 'success' %}background-color: #d4edda; color: #155724; border: 1px solid #c3e6cb;{% elif message.tags == 'error' %}background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;{% endif %}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-bottom: 30px;">
+        <!-- Profile Info Card -->
+        <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+            <h2 style="color: #34495e; margin-bottom: 20px; font-size: 24px;">
+                📋 Profil Bilgileri
+            </h2>
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div style="margin-bottom: 20px;">
+                    <label style="display: block; color: #555; font-weight: 600; margin-bottom: 8px;">
+                        Email
+                    </label>
+                    <input type="email" value="{{ user.email }}" readonly
+                           style="width: 100%; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; background-color: #f5f5f5; color: #666;">
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="user_type" style="display: block; color: #555; font-weight: 600; margin-bottom: 8px;">
+                        👤 Kullanıcı Tipi *
+                    </label>
+                    <select id="user_type" name="user_type" required
+                            onchange="toggleDocumentSection()"
+                            style="width: 100%; padding: 12px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px;">
+                        <option value="0" {% if profile.user_type == 0 %}selected{% endif %}>🏢 Yük Veren (İlan Açan)</option>
+                        <option value="1" {% if profile.user_type == 1 %}selected{% endif %}>🚛 Taşıyıcı (Teklif Veren)</option>
+                    </select>
+                    <small style="color: #7f8c8d; font-size: 13px;">Yük veren iseniz belge yüklemenize gerek yoktur</small>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="phone_number" style="display: block; color: #555; font-weight: 600; margin-bottom: 8px;">
+                        📱 Telefon Numarası *
+                    </label>
+                    <input type="tel" id="phone_number" name="phone_number"
+                           value="{{ profile.phone_number }}"
+                           placeholder="+90 555 123 45 67"
+                           required
+                           style="width: 100%; padding: 12px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px;">
+                    <small style="color: #7f8c8d; font-size: 13px;">Ödeme ve iletişim için gereklidir</small>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="iban" style="display: block; color: #555; font-weight: 600; margin-bottom: 8px;">
+                        🏦 IBAN Numarası *
+                    </label>
+                    <input type="text" id="iban" name="iban"
+                           value="{{ profile.iban }}"
+                           placeholder="TR00 0000 0000 0000 0000 0000 00"
+                           maxlength="26"
+                           pattern="TR[0-9]{24}"
+                           required
+                           style="width: 100%; padding: 12px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px; text-transform: uppercase;">
+                    <small style="color: #7f8c8d; font-size: 13px;">Ödeme alımları için (TR ile başlamalı, 26 karakter)</small>
+                </div>
+
+                <!-- Shipper Specific Fields -->
+                <div id="shipper-fields" style="{% if profile.user_type == 1 %}display: none;{% endif %}">
+                    <div style="margin-bottom: 20px;">
+                        <label for="company_name" style="display: block; color: #555; font-weight: 600; margin-bottom: 8px;">
+                            🏢 Şirket Adı (Opsiyonel)
+                        </label>
+                        <input type="text" id="company_name" name="company_name"
+                               value="{{ profile.company_name }}"
+                               placeholder="Şirket adınız"
+                               style="width: 100%; padding: 12px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label for="tax_id" style="display: block; color: #555; font-weight: 600; margin-bottom: 8px;">
+                            🆔 Vergi/TC Kimlik No
+                        </label>
+                        <input type="text" id="tax_id" name="tax_id"
+                               value="{{ profile.tax_id }}"
+                               placeholder="12345678901"
+                               maxlength="11"
+                               style="width: 100%; padding: 12px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px;">
+                        <small style="color: #7f8c8d; font-size: 13px;">Fatura için gerekli</small>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label for="billing_address" style="display: block; color: #555; font-weight: 600; margin-bottom: 8px;">
+                            📍 Fatura Adresi
+                        </label>
+                        <textarea id="billing_address" name="billing_address" rows="3"
+                                  placeholder="Fatura adresiniz"
+                                  style="width: 100%; padding: 12px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px; resize: vertical;">{{ profile.billing_address }}</textarea>
+                    </div>
+                </div>
+
+                <!-- Carrier Specific Fields -->
+                <div id="carrier-fields" style="{% if profile.user_type == 0 %}display: none;{% endif %}">
+                    <div style="margin-bottom: 20px;">
+                        <label for="service_areas" style="display: block; color: #555; font-weight: 600; margin-bottom: 8px;">
+                            🗺️ Hizmet Verdiğiniz Şehirler
+                        </label>
+                        <input type="text" id="service_areas" name="service_areas"
+                               value="{{ profile.service_areas }}"
+                               placeholder="İstanbul, Ankara, İzmir, Bursa"
+                               style="width: 100%; padding: 12px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px;">
+                        <small style="color: #7f8c8d; font-size: 13px;">Virgülle ayırarak yazın</small>
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label for="working_hours" style="display: block; color: #555; font-weight: 600; margin-bottom: 8px;">
+                            ⏰ Çalışma Saatleri
+                        </label>
+                        <input type="text" id="working_hours" name="working_hours"
+                               value="{{ profile.working_hours|default:'09:00-18:00' }}"
+                               placeholder="09:00-18:00"
+                               style="width: 100%; padding: 12px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px;">
+                    </div>
+
+                    <div style="margin-bottom: 20px;">
+                        <label for="bio" style="display: block; color: #555; font-weight: 600; margin-bottom: 8px;">
+                            📝 Hakkınızda (Max 500 karakter)
+                        </label>
+                        <textarea id="bio" name="bio" rows="4" maxlength="500"
+                                  placeholder="Kendinizi ve hizmetlerinizi tanıtın..."
+                                  style="width: 100%; padding: 12px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px; resize: vertical;">{{ profile.bio }}</textarea>
+                        <small style="color: #7f8c8d; font-size: 13px;">Yük sahiplerine gösterilecek açıklama</small>
+                    </div>
+                </div>
+
+                <button type="submit" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer; transition: transform 0.2s;">
+                    💾 Bilgileri Kaydet
+                </button>
+            </form>
+
+            <!-- Profile Status -->
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 2px solid #ecf0f1;">
+                <h3 style="color: #34495e; margin-bottom: 15px; font-size: 18px;">📊 Profil Durumu</h3>
+
+                <div style="margin-bottom: 10px;">
+                    {% if profile.profile_completed %}
+                        <span style="display: inline-block; padding: 6px 12px; background-color: #27ae60; color: white; border-radius: 20px; font-size: 14px;">✓ Profil Tamamlandı</span>
+                    {% else %}
+                        <span style="display: inline-block; padding: 6px 12px; background-color: #e74c3c; color: white; border-radius: 20px; font-size: 14px;">⚠ Profil Eksik</span>
+                    {% endif %}
+                </div>
+
+                <div>
+                    {% if profile.documents_verified %}
+                        <span style="display: inline-block; padding: 6px 12px; background-color: #27ae60; color: white; border-radius: 20px; font-size: 14px;">✓ Belgeler Onaylandı</span>
+                    {% else %}
+                        <span style="display: inline-block; padding: 6px 12px; background-color: #f39c12; color: white; border-radius: 20px; font-size: 14px;">⏳ Belge Onayı Bekleniyor</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Document Upload Card (Only for Carriers) -->
+        <div id="document-section" style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); {% if profile.user_type == 0 %}display: none;{% endif %}">
+            <h2 style="color: #34495e; margin-bottom: 20px; font-size: 24px;">
+                📁 Belgelerim (Sadece Taşıyıcılar)
+            </h2>
+
+            <div style="margin-bottom: 30px;">
+                <p style="color: #7f8c8d; margin-bottom: 15px;">Taşımacılık yapmak için aşağıdaki belgeleri yüklemeniz gerekmektedir:</p>
+
+                {% for doc_type in doc_types %}
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: 15px; margin-bottom: 10px; background-color: #f8f9fa; border-radius: 8px; border-left: 4px solid {% if doc_type.value in uploaded_types %}#27ae60{% else %}#e0e0e0{% endif %};">
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <span style="font-size: 24px;">{{ doc_type.icon }}</span>
+                            <span style="font-weight: 600; color: #2c3e50;">{{ doc_type.label }}</span>
+                        </div>
+
+                        {% if doc_type.value in uploaded_types %}
+                            {% for doc in documents %}
+                                {% if doc.document_type == doc_type.value %}
+                                    {% if doc.status == 'approved' %}
+                                        <span style="padding: 4px 10px; background-color: #27ae60; color: white; border-radius: 12px; font-size: 12px;">✓ Onaylandı</span>
+                                    {% elif doc.status == 'rejected' %}
+                                        <span style="padding: 4px 10px; background-color: #e74c3c; color: white; border-radius: 12px; font-size: 12px;">✗ Reddedildi</span>
+                                    {% else %}
+                                        <span style="padding: 4px 10px; background-color: #f39c12; color: white; border-radius: 12px; font-size: 12px;">⏳ Bekliyor</span>
+                                    {% endif %}
+                                {% endif %}
+                            {% endfor %}
+                        {% else %}
+                            <span style="padding: 4px 10px; background-color: #95a5a6; color: white; border-radius: 12px; font-size: 12px;">Yüklenmedi</span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            </div>
+
+            <!-- Upload Form -->
+            <form method="post" action="{% url 'website:belge_yukle' %}" enctype="multipart/form-data" style="border-top: 2px solid #ecf0f1; padding-top: 20px;">
+                {% csrf_token %}
+
+                <h3 style="color: #34495e; margin-bottom: 15px; font-size: 18px;">📤 Yeni Belge Yükle</h3>
+
+                <div style="margin-bottom: 15px;">
+                    <label for="document_type" style="display: block; color: #555; font-weight: 600; margin-bottom: 8px;">
+                        Belge Türü
+                    </label>
+                    <select id="document_type" name="document_type" required
+                            style="width: 100%; padding: 12px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px;">
+                        <option value="">Seçiniz...</option>
+                        {% for doc_type in doc_types %}
+                            <option value="{{ doc_type.value }}">{{ doc_type.icon }} {{ doc_type.label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label for="document_file" style="display: block; color: #555; font-weight: 600; margin-bottom: 8px;">
+                        Dosya Seç
+                    </label>
+                    <input type="file" id="document_file" name="document_file"
+                           accept="image/*,application/pdf"
+                           required
+                           style="width: 100%; padding: 12px; border: 2px dashed #3498db; border-radius: 8px; background-color: #f8f9fa;">
+                    <small style="color: #7f8c8d; font-size: 13px;">PDF veya resim dosyası (Max 10MB)</small>
+                </div>
+
+                <button type="submit" style="width: 100%; padding: 14px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; border-radius: 8px; font-size: 16px; font-weight: 600; cursor: pointer;">
+                    📤 Belgeyi Yükle
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Uploaded Documents List -->
+    {% if documents %}
+    <div style="background: white; border-radius: 12px; padding: 30px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+        <h2 style="color: #34495e; margin-bottom: 20px; font-size: 24px;">
+            📄 Yüklenen Belgeler
+        </h2>
+
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse;">
+                <thead>
+                    <tr style="background-color: #f8f9fa;">
+                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Belge Türü</th>
+                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Yüklenme Tarihi</th>
+                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">Durum</th>
+                        <th style="padding: 12px; text-align: left; border-bottom: 2px solid #dee2e6;">İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for doc in documents %}
+                    <tr style="border-bottom: 1px solid #ecf0f1;">
+                        <td style="padding: 12px;">{{ doc.get_document_type_display }}</td>
+                        <td style="padding: 12px;">{{ doc.uploaded_at|date:"d.m.Y H:i" }}</td>
+                        <td style="padding: 12px;">
+                            {% if doc.status == 'approved' %}
+                                <span style="padding: 4px 10px; background-color: #27ae60; color: white; border-radius: 12px; font-size: 12px;">✓ Onaylandı</span>
+                            {% elif doc.status == 'rejected' %}
+                                <span style="padding: 4px 10px; background-color: #e74c3c; color: white; border-radius: 12px; font-size: 12px;">✗ Reddedildi</span>
+                                {% if doc.rejection_reason %}
+                                    <br><small style="color: #e74c3c;">{{ doc.rejection_reason }}</small>
+                                {% endif %}
+                            {% else %}
+                                <span style="padding: 4px 10px; background-color: #f39c12; color: white; border-radius: 12px; font-size: 12px;">⏳ Onay Bekliyor</span>
+                            {% endif %}
+                        </td>
+                        <td style="padding: 12px;">
+                            <a href="{{ doc.document_url }}" target="_blank" style="color: #3498db; text-decoration: none; font-weight: 600;">Görüntüle →</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<style>
+    button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+
+    input:focus, select:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+
+    @media (max-width: 768px) {
+        div[style*="grid-template-columns"] {
+            grid-template-columns: 1fr !important;
+        }
+    }
+</style>
+
+<script>
+    function toggleDocumentSection() {
+        const userType = document.getElementById('user_type').value;
+        const documentSection = document.getElementById('document-section');
+        const shipperFields = document.getElementById('shipper-fields');
+        const carrierFields = document.getElementById('carrier-fields');
+
+        if (userType === '1') { // Taşıyıcı
+            documentSection.style.display = 'block';
+            shipperFields.style.display = 'none';
+            carrierFields.style.display = 'block';
+        } else { // Yük Veren
+            documentSection.style.display = 'none';
+            shipperFields.style.display = 'block';
+            carrierFields.style.display = 'none';
+        }
+    }
+
+    // Initialize on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleDocumentSection();
+    });
+</script>
+{% endblock %}

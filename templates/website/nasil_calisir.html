@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container my-5">
+    <h1 class="mb-4 text-center">Nasıl Çalışır?</h1>
+
+    <div class="row g-4 mt-4">
+        <div class="col-md-6 col-lg-3">
+            <div class="text-center">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                     style="width: 80px; height: 80px;">
+                    <span class="fs-3 fw-bold">1</span>
+                </div>
+                <h3 class="h5">Uygulamayı İndirin</h3>
+                <p>iOS veya Android cihazınıza ücretsiz indirin</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="text-center">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                     style="width: 80px; height: 80px;">
+                    <span class="fs-3 fw-bold">2</span>
+                </div>
+                <h3 class="h5">İlan Oluşturun</h3>
+                <p>Yükünüzün detaylarını girin ve ilanı yayınlayın</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="text-center">
+                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                     style="width: 80px; height: 80px;">
+                    <span class="fs-3 fw-bold">3</span>
+                </div>
+                <h3 class="h5">Teklif Alın</h3>
+                <p>Taşıyıcılardan gelen teklifleri karşılaştırın</p>
+            </div>
+        </div>
+        <div class="col-md-6 col-lg-3">
+            <div class="text-center">
+                <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                     style="width: 80px; height: 80px;">
+                    <i class="bi bi-check-lg fs-3"></i>
+                </div>
+                <h3 class="h5">Taşıma Başlasın</h3>
+                <p>En uygun teklifi seçin ve güvenle taşıyın</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="{{ IOS_APP_URL }}" target="_blank" class="btn btn-primary btn-lg me-2">
+            <i class="bi bi-apple me-2"></i>App Store
+        </a>
+        <a href="{{ ANDROID_APP_URL }}" target="_blank" class="btn btn-success btn-lg">
+            <i class="bi bi-google-play me-2"></i>Google Play
+        </a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,409 @@
+{% extends "base.html" %}
+
+{% block extra_css %}
+<style>
+    .profile-container {
+        max-width: 900px;
+        margin: 3rem auto;
+        padding: 0 1rem;
+    }
+
+    .profile-header {
+        background: linear-gradient(135deg, var(--primary-color), #1976D2);
+        color: white;
+        padding: 2rem;
+        border-radius: 12px 12px 0 0;
+        text-align: center;
+    }
+
+    .profile-avatar {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        border: 4px solid white;
+        margin-bottom: 1rem;
+        object-fit: cover;
+        background: white;
+    }
+
+    .profile-name {
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .profile-email {
+        opacity: 0.9;
+        font-size: 0.95rem;
+    }
+
+    .profile-body {
+        background: white;
+        border-radius: 0 0 12px 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        padding: 2rem;
+    }
+
+    .profile-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--primary-color);
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+        color: #666;
+        margin-top: 0.25rem;
+    }
+
+    .profile-section {
+        margin-bottom: 2rem;
+    }
+
+    .profile-section h3 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+        color: #333;
+        border-bottom: 2px solid #f0f0f0;
+        padding-bottom: 0.5rem;
+    }
+
+    .form-control {
+        padding: 0.75rem;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+    }
+
+    .form-control:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 0.2rem rgba(33, 150, 243, 0.25);
+    }
+
+    .btn-update {
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        border-radius: 8px;
+    }
+
+    .badge-user-type {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-size: 0.9rem;
+        font-weight: 600;
+    }
+
+    .badge-shipper {
+        background: rgba(33, 150, 243, 0.1);
+        color: var(--primary-color);
+    }
+
+    .badge-carrier {
+        background: rgba(76, 175, 80, 0.1);
+        color: var(--success-color);
+    }
+
+    .alert {
+        border-radius: 8px;
+        margin-bottom: 1.5rem;
+    }
+
+    .verification-status {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 1rem;
+        background: #f8f9fa;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .verification-status.verified {
+        background: rgba(76, 175, 80, 0.1);
+        color: var(--success-color);
+    }
+
+    .verification-status.not-verified {
+        background: rgba(255, 193, 7, 0.1);
+        color: #FFC107;
+    }
+
+    .rating-display {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.2rem;
+    }
+
+    .star-rating {
+        color: #FFC107;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+    <!-- Profile Header -->
+    <div class="profile-header">
+        {% if profile.photoURL %}
+            <img src="{{ profile.photoURL }}" alt="{{ profile.displayName }}" class="profile-avatar">
+        {% else %}
+            <div class="profile-avatar">
+                <i class="bi bi-person-circle" style="font-size: 92px; color: var(--primary-color);"></i>
+            </div>
+        {% endif %}
+
+        <div class="profile-name">{{ profile.displayName|default:"Kullanıcı" }}</div>
+        <div class="profile-email">{{ profile.email }}</div>
+
+        <div class="mt-3">
+            {% if profile.userType == 0 %}
+                <span class="badge-user-type badge-shipper">
+                    <i class="bi bi-box-seam"></i> Yük Sahibi
+                </span>
+            {% else %}
+                <span class="badge-user-type badge-carrier">
+                    <i class="bi bi-truck"></i> Taşıyıcı
+                </span>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Profile Body -->
+    <div class="profile-body">
+        <!-- Messages -->
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                    {{ message }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <!-- Profile Stats -->
+        <div class="profile-stats">
+            <div class="stat-item">
+                <div class="stat-value">{{ profile.completedShipments|default:0 }}</div>
+                <div class="stat-label">Tamamlanan İş</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">
+                    <div class="rating-display">
+                        <span class="star-rating">★</span>
+                        {{ profile.rating|default:0|floatformat:1 }}
+                    </div>
+                </div>
+                <div class="stat-label">Ortalama Puan</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value">{{ profile.reviewCount|default:0 }}</div>
+                <div class="stat-label">Değerlendirme</div>
+            </div>
+        </div>
+
+        <!-- Verification Status -->
+        <div class="profile-section">
+            <h3>Doğrulama Durumu</h3>
+
+            <div class="verification-status {% if profile.isEmailVerified %}verified{% else %}not-verified{% endif %}">
+                <i class="bi bi-envelope-check" style="font-size: 1.5rem;"></i>
+                <div>
+                    <strong>E-posta Doğrulama</strong>
+                    <div style="font-size: 0.9rem;">
+                        {% if profile.isEmailVerified %}
+                            E-posta adresiniz doğrulanmış
+                        {% else %}
+                            E-posta adresiniz doğrulanmamış
+                            <a href="#" id="send-verification-email">Doğrulama e-postası gönder</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="verification-status {% if profile.isPhoneVerified %}verified{% else %}not-verified{% endif %}">
+                <i class="bi bi-phone-check" style="font-size: 1.5rem;"></i>
+                <div>
+                    <strong>Telefon Doğrulama</strong>
+                    <div style="font-size: 0.9rem;">
+                        {% if profile.isPhoneVerified %}
+                            Telefon numaranız doğrulanmış
+                        {% else %}
+                            Telefon numaranız doğrulanmamış
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Edit Profile Form -->
+        <div class="profile-section">
+            <h3>Profil Bilgileri</h3>
+
+            <form method="post" id="profile-form">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label for="display_name" class="form-label">Ad Soyad</label>
+                    <input type="text" class="form-control" id="display_name" name="display_name"
+                           value="{{ profile.displayName }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">E-posta</label>
+                    <input type="email" class="form-control" id="email" name="email"
+                           value="{{ profile.email }}" disabled>
+                    <small class="text-muted">E-posta adresi değiştirilemez</small>
+                </div>
+
+                <div class="mb-3">
+                    <label for="phone_number" class="form-label">Telefon</label>
+                    <input type="tel" class="form-control" id="phone_number" name="phone_number"
+                           value="{{ profile.phoneNumber }}" placeholder="+90 555 123 4567">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Kullanıcı Tipi</label>
+                    <select class="form-control" name="user_type">
+                        <option value="0" {% if profile.userType == 0 %}selected{% endif %}>Yük Sahibi</option>
+                        <option value="1" {% if profile.userType == 1 %}selected{% endif %}>Taşıyıcı</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="uid" class="form-label">Kullanıcı ID</label>
+                    <input type="text" class="form-control" id="uid" value="{{ firebase_uid }}" disabled>
+                    <small class="text-muted">Benzersiz kullanıcı kimliğiniz</small>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-update">
+                    <i class="bi bi-save"></i> Değişiklikleri Kaydet
+                </button>
+            </form>
+        </div>
+
+        <!-- Account Settings -->
+        <div class="profile-section">
+            <h3>Hesap Ayarları</h3>
+
+            <div class="d-flex flex-column gap-2">
+                <a href="{% url 'website:password_reset' %}" class="btn btn-outline-primary">
+                    <i class="bi bi-key"></i> Şifreyi Değiştir
+                </a>
+
+                <a href="{% url 'website:logout' %}" class="btn btn-outline-danger">
+                    <i class="bi bi-box-arrow-right"></i> Çıkış Yap
+                </a>
+            </div>
+        </div>
+
+        <!-- Danger Zone -->
+        <div class="profile-section">
+            <h3 class="text-danger">Tehlikeli Bölge</h3>
+            <p class="text-muted">Hesabınızı kalıcı olarak silmek isterseniz aşağıdaki butona tıklayın. Bu işlem geri alınamaz!</p>
+
+            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteAccountModal">
+                <i class="bi bi-trash"></i> Hesabı Sil
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Account Modal -->
+<div class="modal fade" id="deleteAccountModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Hesabı Sil</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Hesabınızı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz ve tüm verileriniz kalıcı olarak silinecektir.</p>
+                <p class="text-danger fw-bold">Bu işlemi onaylamak için "SİL" yazın:</p>
+                <input type="text" class="form-control" id="delete-confirmation" placeholder="SİL">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">İptal</button>
+                <button type="button" class="btn btn-danger" id="confirm-delete-btn" disabled>Hesabı Sil</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+
+<script>
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "{{ FIREBASE_API_KEY }}",
+        authDomain: "{{ FIREBASE_AUTH_DOMAIN }}",
+        projectId: "{{ FIREBASE_PROJECT_ID }}",
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+
+    // Send email verification
+    document.getElementById('send-verification-email')?.addEventListener('click', function(e) {
+        e.preventDefault();
+
+        auth.currentUser.sendEmailVerification()
+            .then(() => {
+                alert('Doğrulama e-postası gönderildi. Lütfen e-posta adresinizi kontrol edin.');
+            })
+            .catch((error) => {
+                console.error('Email verification error:', error);
+                alert('E-posta gönderilirken bir hata oluştu: ' + error.message);
+            });
+    });
+
+    // Delete account confirmation
+    document.getElementById('delete-confirmation')?.addEventListener('input', function() {
+        const confirmBtn = document.getElementById('confirm-delete-btn');
+        confirmBtn.disabled = this.value !== 'SİL';
+    });
+
+    document.getElementById('confirm-delete-btn')?.addEventListener('click', function() {
+        if (confirm('Son kez soruyoruz: Hesabınızı silmek istediğinizden emin misiniz?')) {
+            const user = auth.currentUser;
+
+            user.delete()
+                .then(() => {
+                    alert('Hesabınız silindi.');
+                    window.location.href = '{% url "website:index" %}';
+                })
+                .catch((error) => {
+                    console.error('Delete account error:', error);
+
+                    if (error.code === 'auth/requires-recent-login') {
+                        alert('Güvenlik nedeniyle, hesabınızı silmek için tekrar giriş yapmanız gerekiyor.');
+                        window.location.href = '{% url "website:login" %}';
+                    } else {
+                        alert('Hesap silinirken bir hata oluştu: ' + error.message);
+                    }
+                });
+        }
+    });
+</script>
+{% endblock %}

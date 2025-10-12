@@ -1,0 +1,432 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+{% block description %}{{ description }}{% endblock %}
+{% block keywords %}{{ keywords }}{% endblock %}
+
+{% block canonical %}
+<link rel="canonical" href="{{ canonical }}">
+{% endblock %}
+
+{% block structured_data %}
+<!-- Schema.org Structured Data -->
+<script type="application/ld+json">
+{{ schema_org|safe }}
+</script>
+
+<!-- Breadcrumbs Schema -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Ana Sayfa",
+      "item": "{{ SITE_URL }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "İlanlar",
+      "item": "{{ SITE_URL }}{% url 'website:ilanlar' %}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{{ shipment.title }}",
+      "item": "{{ canonical }}"
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Breadcrumbs -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb" itemscope itemtype="https://schema.org/BreadcrumbList">
+            <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <a href="/" itemprop="item"><span itemprop="name">Ana Sayfa</span></a>
+                <meta itemprop="position" content="1" />
+            </li>
+            <li class="breadcrumb-item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <a href="{% url 'website:ilanlar' %}" itemprop="item"><span itemprop="name">İlanlar</span></a>
+                <meta itemprop="position" content="2" />
+            </li>
+            <li class="breadcrumb-item active" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem">
+                <span itemprop="name">{{ shipment.title }}</span>
+                <meta itemprop="position" content="3" />
+            </li>
+        </ol>
+    </nav>
+
+    <div class="row">
+        <!-- Ana İçerik -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <!-- Başlık -->
+                    <h1 class="h3 mb-3">{{ shipment.title }}</h1>
+
+                    <!-- İlan Numarası ve Durum -->
+                    <div class="d-flex align-items-center mb-4">
+                        <span class="badge bg-primary me-2">İlan No: {{ shipment.tracking_number }}</span>
+                        <span class="badge bg-success">{{ shipment.get_status_display }}</span>
+                    </div>
+
+                    <!-- Açıklama -->
+                    {% if shipment.description %}
+                    <div class="mb-4">
+                        <h2 class="h5">Yük Detayları</h2>
+                        <p>{{ shipment.description }}</p>
+                    </div>
+                    {% endif %}
+
+                    <!-- Güzergah -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start mb-3">
+                                <i class="bi bi-geo-alt-fill text-primary fs-4 me-2"></i>
+                                <div>
+                                    <h3 class="h6 mb-1">Nereden</h3>
+                                    <p class="mb-0">{{ shipment.from_address_city }} / {{ shipment.from_address_district }}</p>
+                                    {% if user.is_authenticated and user.profile == shipment.shipper or user.profile == assigned_carrier %}
+                                        <small class="text-muted">{{ shipment.from_address_full }}</small>
+                                    {% else %}
+                                        <small class="text-muted text-warning">
+                                            <i class="bi bi-lock-fill"></i> Tam adres iş kabul edildiğinde görünür
+                                        </small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="d-flex align-items-start mb-3">
+                                <i class="bi bi-geo-fill text-success fs-4 me-2"></i>
+                                <div>
+                                    <h3 class="h6 mb-1">Nereye</h3>
+                                    <p class="mb-0">{{ shipment.to_address_city }} / {{ shipment.to_address_district }}</p>
+                                    {% if user.is_authenticated and user.profile == shipment.shipper or user.profile == assigned_carrier %}
+                                        <small class="text-muted">{{ shipment.to_address_full }}</small>
+                                    {% else %}
+                                        <small class="text-muted text-warning">
+                                            <i class="bi bi-lock-fill"></i> Tam adres iş kabul edildiğinde görünür
+                                        </small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- İletişim Bilgileri -->
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <div class="d-flex align-items-start mb-3">
+                                <i class="bi bi-telephone-fill text-info fs-4 me-2"></i>
+                                <div>
+                                    <h3 class="h6 mb-1">İletişim</h3>
+                                    {% if user.is_authenticated and user.profile == shipment.shipper or user.profile == assigned_carrier %}
+                                        <p class="mb-0"><a href="tel:{{ shipment.shipper_phone }}">{{ shipment.shipper_phone }}</a></p>
+                                    {% else %}
+                                        <small class="text-muted text-warning">
+                                            <i class="bi bi-lock-fill"></i> Telefon numarası iş kabul edildiğinde görünür
+                                        </small>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Özellikler -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-3">
+                            <div class="p-3 bg-light rounded">
+                                <i class="bi bi-box-seam text-primary fs-4"></i>
+                                <div class="mt-2">
+                                    <small class="text-muted d-block">Ağırlık</small>
+                                    <strong>{{ shipment.weight }} kg</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 bg-light rounded">
+                                <i class="bi bi-rulers text-primary fs-4"></i>
+                                <div class="mt-2">
+                                    <small class="text-muted d-block">Boyutlar (cm)</small>
+                                    <strong>
+                                        {% if shipment.length or shipment.width or shipment.height %}
+                                            {{ shipment.length|default:"-" }} x {{ shipment.width|default:"-" }} x {{ shipment.height|default:"-" }}
+                                        {% else %}
+                                            -
+                                        {% endif %}
+                                    </strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 bg-light rounded">
+                                <i class="bi bi-lightning-fill text-warning fs-4"></i>
+                                <div class="mt-2">
+                                    <small class="text-muted d-block">Tip</small>
+                                    <strong>{{ shipment.get_cargo_type_display }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="p-3 bg-light rounded">
+                                <i class="bi bi-currency-lira text-success fs-4"></i>
+                                <div class="mt-2">
+                                    <small class="text-muted d-block">Fiyat</small>
+                                    <strong>{{ shipment.suggested_price }} ₺</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Yükleme/İndirme Sorumlulukları -->
+                    <div class="row g-3 mb-4">
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded">
+                                <i class="bi bi-arrow-up-circle text-info fs-4"></i>
+                                <div class="mt-2">
+                                    <small class="text-muted d-block">Yükleme</small>
+                                    <strong>{{ shipment.get_loading_responsibility_display }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="p-3 bg-light rounded">
+                                <i class="bi bi-arrow-down-circle text-info fs-4"></i>
+                                <div class="mt-2">
+                                    <small class="text-muted d-block">İndirme</small>
+                                    <strong>{{ shipment.get_unloading_responsibility_display }}</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tarihler -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <i class="bi bi-calendar-event me-2"></i>
+                            <strong>Alış Tarihi:</strong> {{ shipment.pickup_date|date:"d.m.Y" }}
+                        </div>
+                        {% if shipment.delivery_date %}
+                        <div class="col-md-6">
+                            <i class="bi bi-calendar-check me-2"></i>
+                            <strong>Teslim Tarihi:</strong> {{ shipment.delivery_date|date:"d.m.Y" }}
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gelen Teklifler -->
+            {% if bids %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h2 class="h5 mb-0">
+                        <i class="bi bi-tags me-2"></i>
+                        Gelen Teklifler ({{ bid_count }})
+                    </h2>
+                </div>
+                <div class="card-body">
+                    {% for bid in bids %}
+                    <div class="border-bottom pb-3 mb-3">
+                        <div class="d-flex justify-content-between align-items-start">
+                            <div>
+                                <h6 class="mb-1">
+                                    <i class="bi bi-person-circle me-1"></i>
+                                    {{ bid.carrier_name }}
+                                </h6>
+                                <p class="text-muted small mb-2">
+                                    <i class="bi bi-clock me-1"></i>
+                                    {{ bid.created_at|date:"d.m.Y H:i" }}
+                                </p>
+                                {% if bid.message %}
+                                <p class="small mb-0">{{ bid.message }}</p>
+                                {% endif %}
+                            </div>
+                            <div class="text-end">
+                                <div class="fs-4 fw-bold text-success">
+                                    {{ bid.offered_price }} ₺
+                                </div>
+                                <small class="text-muted">
+                                    {{ bid.estimated_delivery_days }} gün
+                                </small>
+                                <div class="mt-2">
+                                    {% if bid.status == 'pending' %}
+                                        <span class="badge bg-warning">Beklemede</span>
+                                    {% elif bid.status == 'accepted' %}
+                                        <span class="badge bg-success">Kabul Edildi</span>
+                                    {% elif bid.status == 'rejected' %}
+                                        <span class="badge bg-danger">Reddedildi</span>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- SEO İçerik -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h2 class="h5 mb-3">{{ from_city }} - {{ to_city }} Nakliye Hizmeti</h2>
+                    <p>
+                        Bu ilan {{ from_city }} bölgesinden {{ to_city }} bölgesine {{ shipment.weight }} kg ağırlığında
+                        yük taşıması için oluşturulmuştur. Güvenli taşıma hizmeti sunulmaktadır.
+                    </p>
+                    <p>
+                        <strong>{{ shipment.get_cargo_type_display }}</strong> kategorisindeki bu nakliye işi için en uygun teklifi almak
+                        için mobil uygulamamızı indirin ve hemen teklif verin.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Yan Panel - CTA -->
+        <div class="col-lg-4">
+            {% if user.is_authenticated and user.profile.user_type == 1 %}
+                <!-- Web'den Teklif Verme Formu - Tüm Taşıyıcılar -->
+                <div class="card shadow-sm mb-4 sticky-top" style="top: 20px;">
+                    <div class="card-body">
+                        <h3 class="h5 mb-4">
+                            💼 Teklif Ver
+                            {% if user.profile.documents_verified %}
+                                <span class="badge bg-success ms-2" title="Belgeler Onaylı">
+                                    <i class="bi bi-patch-check-fill"></i> Verified
+                                </span>
+                            {% endif %}
+                        </h3>
+
+                        {% if not user.profile.documents_verified %}
+                            <div class="alert alert-info small mb-3">
+                                <i class="bi bi-info-circle me-1"></i>
+                                Belgelerinizi onaylayarak <strong>Verified</strong> rozeti kazanın ve daha fazla güven oluşturun!
+                                <a href="{% url 'website:profil' %}" class="alert-link">Profilime Git</a>
+                            </div>
+                        {% endif %}
+
+                        {% if user_has_bid %}
+                            <div class="alert alert-success">
+                                <i class="bi bi-check-circle me-2"></i>
+                                Bu ilana zaten teklif verdiniz!
+                            </div>
+                        {% else %}
+                            <form method="post" action="{% url 'website:teklif_ver' tracking_number=shipment.tracking_number %}">
+                                {% csrf_token %}
+
+                                <div class="mb-3">
+                                    <label for="offered_price" class="form-label">Teklif Fiyatınız (₺) *</label>
+                                    <input type="number" class="form-control" id="offered_price" name="offered_price"
+                                           min="1" step="0.01" required
+                                           placeholder="{{ shipment.suggested_price }}">
+                                    <small class="text-muted">Önerilen: {{ shipment.suggested_price }} ₺</small>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="estimated_delivery_days" class="form-label">Teslimat Süresi (Gün) *</label>
+                                    <input type="number" class="form-control" id="estimated_delivery_days" name="estimated_delivery_days"
+                                           min="1" max="30" value="1" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="message" class="form-label">Mesajınız (Opsiyonel)</label>
+                                    <textarea class="form-control" id="message" name="message" rows="3"
+                                              placeholder="Yük sahibine not bırakın..."></textarea>
+                                </div>
+
+                                <button type="submit" class="btn btn-primary w-100">
+                                    <i class="bi bi-send me-2"></i>Teklif Gönder
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% elif user.is_authenticated and user.profile.user_type == 0 %}
+                <!-- Yük Veren -->
+                <div class="card shadow-sm mb-4 sticky-top" style="top: 20px;">
+                    <div class="card-body text-center">
+                        <h3 class="h5 mb-4">📊 İlan Takibi</h3>
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Bu ilana {{ bid_count }} teklif geldi!
+                        </div>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Giriş Yapmamış -->
+                <div class="card shadow-sm mb-4 sticky-top" style="top: 20px;">
+                    <div class="card-body text-center">
+                        <h3 class="h5 mb-4">Teklif Vermek İster Misiniz?</h3>
+
+                        <div class="alert alert-info mb-4">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Teklif vermek için giriş yapmalısınız.
+                        </div>
+
+                        <a href="{% url 'website:login' %}?next={{ request.path }}" class="btn btn-primary btn-lg w-100 mb-2">
+                            <i class="bi bi-box-arrow-in-right me-2"></i>
+                            Giriş Yap
+                        </a>
+
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Paylaş Butonu -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body">
+                    <h4 class="h6 mb-3">Bu İlanı Paylaş</h4>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ web_deep_link|urlencode }}"
+                           target="_blank" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="https://twitter.com/intent/tweet?url={{ web_deep_link|urlencode }}&text={{ shipment.title|urlencode }}"
+                           target="_blank" class="btn btn-outline-info btn-sm">
+                            <i class="bi bi-twitter"></i>
+                        </a>
+                        <a href="https://wa.me/?text={{ shipment.title|urlencode }}%20{{ web_deep_link|urlencode }}"
+                           target="_blank" class="btn btn-outline-success btn-sm">
+                            <i class="bi bi-whatsapp"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Güvenlik Bilgisi -->
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h4 class="h6 mb-3"><i class="bi bi-shield-check text-success me-2"></i>Güvenli Taşıma</h4>
+                    <ul class="small mb-0">
+                        <li>Tüm taşıyıcılar belgelendirilir</li>
+                        <li>Sigorta seçenekleri mevcuttur</li>
+                        <li>7/24 müşteri desteği</li>
+                        <li>Güvenli ödeme sistemi</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Benzer İlanlar (SEO için) -->
+    <div class="mt-5">
+        <h2 class="h4 mb-4">{{ from_city }} Bölgesindeki Diğer İlanlar</h2>
+        <div class="row">
+            <div class="col-12">
+                <a href="{% url 'website:ilanlar' %}?sehir={{ from_city }}" class="btn btn-outline-primary">
+                    {{ from_city }} İlanlarını Gör <i class="bi bi-arrow-right ms-2"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,165 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="bg-primary text-white py-5">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-6 mb-4 mb-lg-0">
+                <h1 class="display-4 fw-bold mb-3">Türkiye'nin Dijital Yük Pazaryeri</h1>
+                <p class="lead mb-4">Yük gönderin, teklif alın, güvenle taşıyın. Binlerce taşıyıcı arasından en uygun teklifi seçin.</p>
+                <a href="{% url 'website:ilanlar' %}" class="btn btn-light btn-lg">
+                    <i class="bi bi-truck me-2"></i>İlanları Gör
+                </a>
+            </div>
+            <div class="col-lg-6">
+                <img src="{% static 'images/hero-image.png' %}" alt="NAKLIYE NET App" class="img-fluid rounded shadow-lg">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- İstatistikler -->
+<div class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center g-4">
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <i class="bi bi-truck fs-1 text-primary mb-3"></i>
+                        <h3 class="display-5 fw-bold">{{ stats.active_shipments }}</h3>
+                        <p class="text-muted">Aktif İlan</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <i class="bi bi-check-circle fs-1 text-success mb-3"></i>
+                        <h3 class="display-5 fw-bold">{{ stats.completed_shipments }}</h3>
+                        <p class="text-muted">Tamamlanan Taşıma</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <i class="bi bi-people fs-1 text-info mb-3"></i>
+                        <h3 class="display-5 fw-bold">{{ stats.total_users }}+</h3>
+                        <p class="text-muted">Kayıtlı Kullanıcı</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Son İlanlar -->
+<div class="py-5">
+    <div class="container">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="h3">Son Eklenen İlanlar</h2>
+            <a href="{% url 'website:ilanlar' %}" class="btn btn-outline-primary">
+                Tümünü Gör <i class="bi bi-arrow-right ms-2"></i>
+            </a>
+        </div>
+
+        <div class="row g-4">
+            {% for shipment in recent_shipments %}
+            <div class="col-md-6 col-lg-4">
+                <a href="{% url 'website:ilan_detay' shipment.tracking_number %}" class="text-decoration-none text-dark">
+                    <div class="shipment-card">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h3 class="h6 mb-0">{{ shipment.title|truncatewords:8 }}</h3>
+                            <span class="badge badge-status bg-success">{{ shipment.get_status_display }}</span>
+                        </div>
+
+                        <p class="text-muted small mb-3">{{ shipment.description|truncatewords:15 }}</p>
+
+                        <div class="d-flex justify-content-between text-sm mb-2">
+                            <span><i class="bi bi-geo-alt me-1"></i>{{ shipment.from_address_city }}</span>
+                            <span><i class="bi bi-arrow-right mx-2"></i></span>
+                            <span><i class="bi bi-geo-fill me-1"></i>{{ shipment.to_address_city }}</span>
+                        </div>
+
+                        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
+                            <span class="text-muted small">
+                                <i class="bi bi-box me-1"></i>{{ shipment.weight }} kg
+                            </span>
+                            <span class="fw-bold text-primary">{{ shipment.suggested_price }} ₺</span>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-5">
+                <i class="bi bi-inbox fs-1 text-muted mb-3 d-block"></i>
+                <p class="text-muted">Henüz ilan bulunmuyor</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Nasıl Çalışır -->
+<div class="py-5 bg-light">
+    <div class="container">
+        <h2 class="h3 text-center mb-5">Nasıl Çalışır?</h2>
+        <div class="row g-4">
+            <div class="col-md-3 text-center">
+                <div class="mb-3">
+                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <span class="fs-3 fw-bold">1</span>
+                    </div>
+                </div>
+                <h4 class="h6">Kayıt Olun</h4>
+                <p class="small text-muted">Hemen ücretsiz kayıt olun</p>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="mb-3">
+                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <span class="fs-3 fw-bold">2</span>
+                    </div>
+                </div>
+                <h4 class="h6">İlan Oluştur</h4>
+                <p class="small text-muted">Yükünüzün detaylarını girin ve ilanı yayınlayın</p>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="mb-3">
+                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <span class="fs-3 fw-bold">3</span>
+                    </div>
+                </div>
+                <h4 class="h6">Teklif Al</h4>
+                <p class="small text-muted">Taşıyıcılardan gelen teklifleri karşılaştırın</p>
+            </div>
+            <div class="col-md-3 text-center">
+                <div class="mb-3">
+                    <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
+                        <span class="fs-3 fw-bold">✓</span>
+                    </div>
+                </div>
+                <h4 class="h6">Taşıma Başlasın</h4>
+                <p class="small text-muted">En uygun teklifi seçin ve güvenle taşıyın</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CTA Section -->
+<div class="app-download-section text-center">
+    <div class="container">
+        <h2 class="h2 mb-3">Hemen Başlayın!</h2>
+        <p class="lead mb-4">Kayıt olun ve ilk yükünüzü gönderin</p>
+        <div class="d-flex justify-content-center gap-3">
+            <a href="{% url 'website:register' %}" class="btn btn-light btn-lg">
+                <i class="bi bi-person-plus me-2"></i>Kayıt Ol
+            </a>
+            <a href="{% url 'website:ilanlar' %}" class="btn btn-outline-light btn-lg">
+                <i class="bi bi-search me-2"></i>İlanları Gör
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

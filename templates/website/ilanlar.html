@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Başlık -->
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <h1 class="h2">{{ title|default:"Yük İlanları" }}</h1>
+            <p class="text-muted">{{ total_count }} aktif ilan bulundu</p>
+        </div>
+        <div class="col-md-4 text-md-end">
+            <a href="{% url 'website:ilan_olustur' %}" class="btn btn-primary">
+                <i class="bi bi-plus-circle me-2"></i>İlan Oluştur
+            </a>
+        </div>
+    </div>
+
+    <!-- Filtreler -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label">Şehir</label>
+                    <input type="text" name="sehir" class="form-control"
+                           placeholder="Örn: İstanbul" value="{{ city }}">
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label">Kategori</label>
+                    <select name="kategori" class="form-select">
+                        <option value="">Tümü</option>
+                        <option value="standart" {% if category == 'standart' %}selected{% endif %}>Standart</option>
+                        <option value="ekspres" {% if category == 'ekspres' %}selected{% endif %}>Ekspres</option>
+                        <option value="kirilabilir" {% if category == 'kirilabilir' %}selected{% endif %}>Kırılabilir</option>
+                        <option value="agir-yuk" {% if category == 'agir-yuk' %}selected{% endif %}>Ağır Yük</option>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="bi bi-search me-2"></i>Ara
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- İlanlar -->
+    <div class="row g-4">
+        {% for shipment in shipments %}
+        <div class="col-md-6 col-lg-4">
+            <a href="{% url 'website:ilan_detay' shipment.tracking_number %}"
+               class="text-decoration-none text-dark">
+                <div class="shipment-card h-100">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <h3 class="h6 mb-0">{{ shipment.title|truncatewords:8 }}</h3>
+                        <span class="badge badge-status bg-success">
+                            Aktif
+                        </span>
+                    </div>
+
+                    <p class="text-muted small mb-3">
+                        {{ shipment.description|truncatewords:15 }}
+                    </p>
+
+                    <div class="mb-3">
+                        <div class="d-flex align-items-center mb-2">
+                            <i class="bi bi-geo-alt text-primary me-2"></i>
+                            <small>{{ shipment.pickup_city }} / {{ shipment.pickup_district }}</small>
+                        </div>
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-geo-fill text-success me-2"></i>
+                            <small>{{ shipment.delivery_city }} / {{ shipment.delivery_district }}</small>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                        <span class="text-muted small">
+                            <i class="bi bi-box me-1"></i>{{ shipment.weight }} kg
+                        </span>
+                        <span class="fw-bold text-primary">{{ shipment.suggested_price }} ₺</span>
+                    </div>
+
+                    <div class="mt-2">
+                        <small class="text-muted">
+                            <i class="bi bi-tag me-1"></i>{{ shipment.tracking_number }}
+                        </small>
+                    </div>
+                </div>
+            </a>
+        </div>
+        {% empty %}
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-inbox fs-1 text-muted mb-3 d-block"></i>
+            <h3 class="h5 text-muted">İlan bulunamadı</h3>
+            <p class="text-muted">Filtreleri değiştirerek tekrar deneyin</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Pagination -->
+    {% if shipments.has_other_pages %}
+    <nav class="mt-5">
+        <ul class="pagination justify-content-center">
+            {% if shipments.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ shipments.previous_page_number }}{% if city %}&sehir={{ city }}{% endif %}{% if category %}&kategori={{ category }}{% endif %}">
+                    Önceki
+                </a>
+            </li>
+            {% endif %}
+
+            {% for num in shipments.paginator.page_range %}
+            <li class="page-item {% if shipments.number == num %}active{% endif %}">
+                <a class="page-link" href="?page={{ num }}{% if city %}&sehir={{ city }}{% endif %}{% if category %}&kategori={{ category }}{% endif %}">
+                    {{ num }}
+                </a>
+            </li>
+            {% endfor %}
+
+            {% if shipments.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ shipments.next_page_number }}{% if city %}&sehir={{ city }}{% endif %}{% if category %}&kategori={{ category }}{% endif %}">
+                    Sonraki
+                </a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+</div>
+{% endblock %}

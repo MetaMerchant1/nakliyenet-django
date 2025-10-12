@@ -1,0 +1,32 @@
+# RENDER ENVIRONMENT VARIABLES
+# Bu değerleri Render dashboard'da "Environment" sekmesine ekleyin
+
+# 1. DEBUG
+DEBUG=False
+
+# 2. SECRET_KEY (Aşağıdaki key'i kullanın)
+SECRET_KEY=$5bw)o!40dmbmn!87$v(uh#=o7mm3rg=o8jm@6-u_a11_fa@yq
+
+# 3. ALLOWED_HOSTS
+ALLOWED_HOSTS=.onrender.com,nakliyenet.com,www.nakliyenet.com
+
+# 4. PYTHON_VERSION
+PYTHON_VERSION=3.11.5
+
+# 5. FIREBASE_CREDENTIALS_BASE64
+# Bu değeri almak için PowerShell'de şu komutu çalıştırın:
+#
+#   .\generate_base64.ps1
+#
+# Çıkan UZUN metni kopyalayıp Render'a ekleyin
+
+---
+
+NOT: Render'da her satırı ayrı ayrı ekleyeceksiniz:
+- Key: DEBUG
+- Value: False
+
+- Key: SECRET_KEY
+- Value: $5bw)o!40dmbmn!87$v(uh#=o7mm3rg=o8jm@6-u_a11_fa@yq
+
+(devamı için RENDER_DEPLOYMENT.md dosyasına bakın)

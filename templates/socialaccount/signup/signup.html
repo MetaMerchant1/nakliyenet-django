@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+{% load socialaccount %}
+
+{% block extra_css %}
+<style>
+    .auth-container {
+        max-width: 500px;
+        margin: 4rem auto;
+        padding: 0 1rem;
+    }
+
+    .auth-card {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        padding: 2.5rem;
+        text-align: center;
+    }
+
+    .google-avatar {
+        width: 80px;
+        height: 80px;
+        border-radius: 50%;
+        margin: 0 auto 1.5rem;
+        border: 3px solid #4285F4;
+    }
+
+    .welcome-text {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .email-text {
+        color: #666;
+        margin-bottom: 2rem;
+    }
+
+    .btn-continue {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 8px;
+        background: #4285F4;
+        color: white;
+        border: none;
+        transition: background 0.2s;
+    }
+
+    .btn-continue:hover {
+        background: #357ae8;
+    }
+
+    .privacy-note {
+        margin-top: 1.5rem;
+        font-size: 0.85rem;
+        color: #666;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card">
+        {% if account.get_avatar_url %}
+            <img src="{{ account.get_avatar_url }}" alt="Profile" class="google-avatar">
+        {% endif %}
+
+        <h1 class="welcome-text">Hoş Geldiniz!</h1>
+        <p class="email-text">{{ account.extra_data.email }}</p>
+
+        <p style="color: #666; margin-bottom: 2rem;">
+            Google hesabınızla NAKLIYE NET'e giriş yapmak üzeresiniz.
+        </p>
+
+        <form method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary btn-continue">
+                Devam Et
+            </button>
+        </form>
+
+        <p class="privacy-note">
+            Devam ederek <a href="#">Kullanım Koşullarını</a> ve
+            <a href="#">Gizlilik Politikasını</a> kabul etmiş olursunuz.
+        </p>
+    </div>
+</div>
+{% endblock %}

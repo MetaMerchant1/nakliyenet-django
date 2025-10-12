@@ -1,0 +1,28 @@
+# robots.txt for nakliyenet.com
+# SEO optimization for Google, Bing, Yandex
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /api/
+Disallow: /accounts/
+Disallow: /giris/
+Disallow: /kayit/
+Disallow: /cikis/
+Disallow: /profil/
+Disallow: /profilim/
+Disallow: /belge-yukle/
+
+# Important pages for crawling
+Allow: /ilanlar/
+Allow: /ilan/
+Allow: /hakkimizda/
+Allow: /iletisim/
+Allow: /nasil-calisir/
+Allow: /sss/
+
+# Sitemap location
+Sitemap: https://nakliyenet.com/sitemap.xml
+
+# Crawl delay for polite bots
+Crawl-delay: 1

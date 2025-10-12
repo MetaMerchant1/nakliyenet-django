@@ -1,0 +1,47 @@
+"""
+Sitemaps - Google için dinamik sitemap oluşturma
+"""
+from django.contrib.sitemaps import Sitemap
+from django.urls import reverse
+from django.conf import settings
+from .models import Shipment
+
+
+class ShipmentSitemap(Sitemap):
+    """
+    Aktif ilanlar için sitemap
+    Google her ilan için ayrı URL indexler
+    """
+    changefreq = "daily"
+    priority = 0.9
+    protocol = 'https'
+
+    def items(self):
+        """Aktif ilanları getir"""
+        return Shipment.objects.filter(
+            status='active'
+        ).order_by('-created_at')[:1000]
+
+    def location(self, item):
+        """Her ilan için URL"""
+        return f'/ilan/{item.tracking_number}/'
+
+    def lastmod(self, item):
+        """Son değişiklik tarihi"""
+        return item.updated_at or item.created_at
+
+
+class StaticViewSitemap(Sitemap):
+    """
+    Statik sayfalar için sitemap
+    """
+    priority = 0.7
+    changefreq = 'weekly'
+    protocol = 'https'
+
+    def items(self):
+        return ['website:index', 'website:ilanlar', 'website:hakkimizda',
+                'website:iletisim', 'website:nasil_calisir', 'website:sss']
+
+    def location(self, item):
+        return reverse(item)
