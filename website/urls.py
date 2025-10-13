@@ -4,6 +4,7 @@ Website URL Configuration - SEO friendly URLs
 from django.urls import path
 from . import views
 from . import auth_views
+from . import oauth_views
 
 app_name = 'website'
 
@@ -41,4 +42,16 @@ urlpatterns = [
     path('iletisim/', views.iletisim, name='iletisim'),
     path('nasil-calisir/', views.nasil_calisir, name='nasil_calisir'),
     path('sss/', views.sss, name='sss'),
+
+    # Yasal sayfalar
+    path('gizlilik-politikasi/', views.gizlilik_politikasi, name='gizlilik_politikasi'),
+    path('kullanim-kosullari/', views.kullanim_kosullari, name='kullanim_kosullari'),
+
+    # SEO - Şehir sayfaları
+    path('nakliye/<str:sehir_slug>/', views.sehir_nakliye, name='sehir_nakliye'),
+
+    # OAuth - Custom Google Login
+    path('oauth/google/login/', oauth_views.google_login_start, name='google_login_start'),
+    path('oauth/google/callback/', oauth_views.google_oauth_callback, name='google_oauth_callback'),
+    path('oauth/google/debug/', oauth_views.google_login_debug, name='google_oauth_debug'),
 ]

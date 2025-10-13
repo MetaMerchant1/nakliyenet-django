@@ -1,0 +1,413 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ sehir }} Nakliye - Evden Eve Nakliyat | NAKLIYE NET{% endblock %}
+
+{% block meta_description %}{{ sehir }} nakliye ve evden eve nakliyat hizmetleri. Güvenilir taşıyıcılardan anında teklif alın. {{ sehir }}'da %30'a kadar tasarruf edin. Hemen ilan oluşturun!{% endblock %}
+
+{% block extra_meta %}
+<!-- Open Graph / Facebook -->
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://nakliyenet.com/nakliye/{{ sehir_slug }}/">
+<meta property="og:title" content="{{ sehir }} Nakliye - Evden Eve Nakliyat | NAKLIYE NET">
+<meta property="og:description" content="{{ sehir }} nakliye ve evden eve nakliyat hizmetleri. Güvenilir taşıyıcılardan anında teklif alın.">
+<meta property="og:image" content="{% static 'images/og-image.jpg' %}">
+
+<!-- Twitter -->
+<meta property="twitter:card" content="summary_large_image">
+<meta property="twitter:url" content="https://nakliyenet.com/nakliye/{{ sehir_slug }}/">
+<meta property="twitter:title" content="{{ sehir }} Nakliye - Evden Eve Nakliyat | NAKLIYE NET">
+<meta property="twitter:description" content="{{ sehir }} nakliye ve evden eve nakliyat hizmetleri. Güvenilir taşıyıcılardan anında teklif alın.">
+<meta property="twitter:image" content="{% static 'images/og-image.jpg' %}">
+
+<!-- Schema.org markup for Google -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Service",
+  "name": "{{ sehir }} Nakliye ve Evden Eve Nakliyat",
+  "provider": {
+    "@type": "Organization",
+    "name": "NAKLIYE NET",
+    "url": "https://nakliyenet.com"
+  },
+  "areaServed": {
+    "@type": "City",
+    "name": "{{ sehir }}"
+  },
+  "description": "{{ sehir }} nakliye ve evden eve nakliyat hizmetleri. Güvenilir taşıyıcılardan anında teklif alın.",
+  "serviceType": "Nakliye ve Taşımacılık"
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<section class="bg-primary text-white py-5" style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-lg-8 mx-auto text-center">
+                <h1 class="display-4 fw-bold mb-4">{{ sehir }} Nakliye ve Evden Eve Nakliyat</h1>
+                <p class="lead mb-4 fs-4">{{ sehir }}'da Güvenilir Taşıyıcılardan 3 Saatte Teklif Alın</p>
+                <p class="fs-5 mb-4">
+                    <i class="bi bi-check-circle-fill me-2"></i>%30'a Kadar Tasarruf
+                    <i class="bi bi-check-circle-fill ms-4 me-2"></i>{{ stats.verified_carriers }}+ Doğrulanmış Taşıyıcı
+                    <i class="bi bi-check-circle-fill ms-4 me-2"></i>Güvenli Ödeme
+                </p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="{% url 'website:ilan_olustur' %}" class="btn btn-warning btn-lg px-5">
+                        <i class="bi bi-box-seam me-2"></i>Ücretsiz İlan Oluştur
+                    </a>
+                    <a href="#ilanlar" class="btn btn-light btn-lg px-5">
+                        <i class="bi bi-truck me-2"></i>{{ sehir }} İlanlarını Gör
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- İstatistikler -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <i class="bi bi-geo-alt text-primary" style="font-size: 3rem;"></i>
+                        <h3 class="fw-bold text-primary mt-3">{{ stats.active_shipments }}</h3>
+                        <p class="text-muted mb-0">{{ sehir }}'da Aktif İlan</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <i class="bi bi-people text-success" style="font-size: 3rem;"></i>
+                        <h3 class="fw-bold text-success mt-3">{{ stats.verified_carriers }}+</h3>
+                        <p class="text-muted mb-0">Doğrulanmış Taşıyıcı</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <i class="bi bi-clock-history text-info" style="font-size: 3rem;"></i>
+                        <h3 class="fw-bold text-info mt-3">3 Saat</h3>
+                        <p class="text-muted mb-0">Ortalama Teklif Süresi</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="card border-0 shadow-sm h-100">
+                    <div class="card-body">
+                        <i class="bi bi-piggy-bank text-warning" style="font-size: 3rem;"></i>
+                        <h3 class="fw-bold text-warning mt-3">%{{ stats.avg_savings }}</h3>
+                        <p class="text-muted mb-0">Ortalama Tasarruf</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- {{ sehir }} Nakliye Hakkında SEO İçerik -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="fw-bold text-primary mb-4">{{ sehir }} Nakliye ve Evden Eve Nakliyat Hizmeti</h2>
+
+                <div class="content-section mb-4">
+                    <p class="lead">
+                        {{ sehir }} nakliye hizmetleri için en uygun fiyatları NAKLIYE NET'te bulabilirsiniz.
+                        {{ sehir }} evden eve nakliyat, ofis taşımacılığı, şehirler arası nakliye ve her türlü
+                        taşımacılık ihtiyacınız için güvenilir taşıyıcılardan anında teklif alın.
+                    </p>
+                </div>
+
+                <div class="content-section mb-4">
+                    <h3 class="h4 fw-bold mb-3">{{ sehir }}'da Neden NAKLIYE NET?</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <i class="bi bi-check-circle-fill text-success me-3 fs-4"></i>
+                                <div>
+                                    <strong>Güvenilir Taşıyıcılar:</strong> {{ sehir }}'da belgeli ve doğrulanmış {{ stats.verified_carriers }}+ taşıyıcı
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <i class="bi bi-check-circle-fill text-success me-3 fs-4"></i>
+                                <div>
+                                    <strong>Hızlı Teklif:</strong> 3 saat içinde birden fazla teklif alın
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <i class="bi bi-check-circle-fill text-success me-3 fs-4"></i>
+                                <div>
+                                    <strong>Uygun Fiyat:</strong> Karşılaştırın ve %30'a kadar tasarruf edin
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="d-flex">
+                                <i class="bi bi-check-circle-fill text-success me-3 fs-4"></i>
+                                <div>
+                                    <strong>Güvenli Ödeme:</strong> Güvenli ödeme sistemi ile koruma altında
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-section mb-4">
+                    <h3 class="h4 fw-bold mb-3">{{ sehir }} Nakliye Hizmetlerimiz</h3>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-truck text-primary me-2"></i><strong>{{ sehir }} Evden Eve Nakliyat:</strong> Ev taşımacılığınız için profesyonel hizmet</li>
+                        <li class="mb-2"><i class="bi bi-building text-primary me-2"></i><strong>{{ sehir }} Ofis Taşıma:</strong> İşyeri ve ofis taşımacılığı</li>
+                        <li class="mb-2"><i class="bi bi-box-seam text-primary me-2"></i><strong>{{ sehir }} Eşya Taşıma:</strong> Küçük veya büyük eşya taşıma hizmeti</li>
+                        <li class="mb-2"><i class="bi bi-signpost-2 text-primary me-2"></i><strong>{{ sehir }} Şehirler Arası Nakliye:</strong> Türkiye'nin her yerine taşımacılık</li>
+                        <li class="mb-2"><i class="bi bi-archive text-primary me-2"></i><strong>{{ sehir }} Paketleme Hizmeti:</strong> Profesyonel paketleme ve montaj</li>
+                    </ul>
+                </div>
+
+                <div class="content-section mb-4">
+                    <h3 class="h4 fw-bold mb-3">{{ sehir }} Nakliye Nasıl Çalışır?</h3>
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-primary h-100">
+                                <div class="card-body">
+                                    <div class="text-primary fw-bold fs-3 mb-2">1</div>
+                                    <h5 class="card-title">İlan Oluşturun</h5>
+                                    <p class="card-text">{{ sehir }}'daki taşıma detaylarınızı girin</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-success h-100">
+                                <div class="card-body">
+                                    <div class="text-success fw-bold fs-3 mb-2">2</div>
+                                    <h5 class="card-title">Teklifleri İnceleyin</h5>
+                                    <p class="card-text">Doğrulanmış taşıyıcılardan teklif alın</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-info h-100">
+                                <div class="card-body">
+                                    <div class="text-info fw-bold fs-3 mb-2">3</div>
+                                    <h5 class="card-title">Taşıyıcı Seçin</h5>
+                                    <p class="card-text">En uygun fiyat ve profili seçin</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <div class="card border-warning h-100">
+                                <div class="card-body">
+                                    <div class="text-warning fw-bold fs-3 mb-2">4</div>
+                                    <h5 class="card-title">Taşıma Tamamlansın</h5>
+                                    <p class="card-text">Güvenli ödeme ile işlemi tamamlayın</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    <strong>{{ sehir }} Nakliye İpucu:</strong> En iyi fiyatı almak için ilanınızı detaylı oluşturun
+                    ve birden fazla taşıyıcıdan teklif alın. Fotoğraf eklemek güven artırır!
+                </div>
+
+                <div class="text-center my-5">
+                    <a href="{% url 'website:ilan_olustur' %}" class="btn btn-primary btn-lg px-5 py-3">
+                        <i class="bi bi-plus-circle me-2"></i>{{ sehir }} Nakliye İlanı Oluştur
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- {{ sehir }}'daki Aktif İlanlar -->
+<section id="ilanlar" class="py-5 bg-light">
+    <div class="container">
+        <h2 class="fw-bold text-primary mb-4 text-center">{{ sehir }}'daki Aktif Nakliye İlanları</h2>
+
+        {% if shipments %}
+        <div class="row">
+            {% for shipment in shipments %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 shadow-sm hover-shadow">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <h5 class="card-title mb-0">
+                                <i class="bi bi-geo-alt-fill text-primary me-1"></i>
+                                {{ shipment.pickup_city }} → {{ shipment.delivery_city }}
+                            </h5>
+                            {% if shipment.urgent %}
+                            <span class="badge bg-danger">ACİL</span>
+                            {% endif %}
+                        </div>
+
+                        <p class="card-text text-muted small mb-3">
+                            <i class="bi bi-box-seam me-1"></i>{{ shipment.cargo_type }}
+                            {% if shipment.weight %}
+                            <br><i class="bi bi-weight me-1"></i>{{ shipment.weight }} kg
+                            {% endif %}
+                        </p>
+
+                        <div class="mb-3">
+                            <small class="text-muted">
+                                <i class="bi bi-calendar-event me-1"></i>
+                                Taşıma Tarihi: {{ shipment.pickup_date|date:"d.m.Y" }}
+                            </small>
+                        </div>
+
+                        {% if shipment.suggested_price %}
+                        <div class="alert alert-success py-2 mb-3">
+                            <small><strong>Tahmini Bütçe:</strong> {{ shipment.suggested_price }} TL</small>
+                        </div>
+                        {% endif %}
+
+                        <a href="{% url 'website:ilan_detay' shipment.tracking_number %}" class="btn btn-primary w-100">
+                            <i class="bi bi-eye me-2"></i>İlan Detayı ve Teklif Ver
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{% url 'website:ilanlar' %}?sehir={{ sehir }}" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-list-ul me-2"></i>Tüm {{ sehir }} İlanlarını Gör
+            </a>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <i class="bi bi-inbox" style="font-size: 4rem; color: #ccc;"></i>
+            <h4 class="text-muted mt-3">Şu anda {{ sehir }}'da aktif ilan bulunmuyor</h4>
+            <p class="text-muted">İlk {{ sehir }} nakliye ilanını siz oluşturun!</p>
+            <a href="{% url 'website:ilan_olustur' %}" class="btn btn-primary btn-lg mt-3">
+                <i class="bi bi-plus-circle me-2"></i>İlan Oluştur
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<!-- SSS - {{ sehir }} Nakliye -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="fw-bold text-primary mb-4 text-center">{{ sehir }} Nakliye Hakkında Sık Sorulan Sorular</h2>
+
+                <div class="accordion" id="sssAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#sss1">
+                                {{ sehir }}'da nakliye fiyatları nasıl belirleniyor?
+                            </button>
+                        </h2>
+                        <div id="sss1" class="accordion-collapse collapse show" data-bs-parent="#sssAccordion">
+                            <div class="accordion-body">
+                                {{ sehir }} nakliye fiyatları; taşınacak eşyanın miktarı, mesafe, taşıma tarihi,
+                                kat sayısı ve asansör durumu gibi faktörlere göre belirlenir. NAKLIYE NET'te birden
+                                fazla taşıyıcıdan teklif alarak en uygun fiyatı bulabilirsiniz.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sss2">
+                                {{ sehir }} evden eve nakliyat ne kadar sürer?
+                            </button>
+                        </h2>
+                        <div id="sss2" class="accordion-collapse collapse" data-bs-parent="#sssAccordion">
+                            <div class="accordion-body">
+                                {{ sehir }} içi evden eve nakliyat genellikle 4-8 saat arasında tamamlanır.
+                                Süre, taşınacak eşya miktarı ve mesafeye göre değişir. Şehirler arası taşımalarda
+                                ise mesafeye bağlı olarak 1-3 gün sürebilir.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sss3">
+                                {{ sehir }}'da güvenilir nakliyeci nasıl bulabilirim?
+                            </button>
+                        </h2>
+                        <div id="sss3" class="accordion-collapse collapse" data-bs-parent="#sssAccordion">
+                            <div class="accordion-body">
+                                NAKLIYE NET'te tüm taşıyıcılar belge doğrulamasından geçer. Taşıyıcıların profillerinde
+                                daha önceki müşteri yorumları, değerlendirme puanları ve tamamladıkları iş sayısını
+                                görebilirsiniz. Böylece {{ sehir }}'da en güvenilir nakliyeciyi seçebilirsiniz.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sss4">
+                                {{ sehir }} nakliye için sigorta var mı?
+                            </button>
+                        </h2>
+                        <div id="sss4" class="accordion-collapse collapse" data-bs-parent="#sssAccordion">
+                            <div class="accordion-body">
+                                Taşıyıcılarımızın çoğu nakliye sigortası sunmaktadır. İlan detaylarında veya
+                                teklif aşamasında taşıyıcıya sigorta konusunu sorabilir ve ekstra sigorta
+                                yaptırabilirsiniz. Değerli eşyalarınız için mutlaka sigorta yapılmasını öneririz.
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#sss5">
+                                {{ sehir }}'da aynı gün nakliye mümkün mü?
+                            </button>
+                        </h2>
+                        <div id="sss5" class="accordion-collapse collapse" data-bs-parent="#sssAccordion">
+                            <div class="accordion-body">
+                                Evet, acil nakliye ihtiyaçlarınız için "Acil" seçeneğini işaretleyerek ilan
+                                oluşturabilirsiniz. {{ sehir }}'da müsait taşıyıcılar aynı gün taşıma
+                                yapabilmektedir. Ancak aynı gün taşımalarda fiyatlar standart fiyatlara göre
+                                daha yüksek olabilir.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="bg-primary text-white py-5">
+    <div class="container text-center">
+        <h2 class="display-5 fw-bold mb-4">{{ sehir }} Nakliye İçin Hemen Başlayın</h2>
+        <p class="lead mb-4">Ücretsiz ilan oluşturun, teklifleri karşılaştırın ve en uygun taşıyıcıyı seçin!</p>
+        <a href="{% url 'website:ilan_olustur' %}" class="btn btn-warning btn-lg px-5 py-3">
+            <i class="bi bi-box-seam me-2"></i>Ücretsiz İlan Oluştur
+        </a>
+    </div>
+</section>
+
+<style>
+.hover-shadow {
+    transition: all 0.3s ease;
+}
+.hover-shadow:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15) !important;
+}
+</style>
+{% endblock %}
