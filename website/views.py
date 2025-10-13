@@ -674,41 +674,9 @@ def teklif_ver(request, tracking_number):
 
         messages.success(request, f'Teklifiniz başarıyla gönderildi! Teklif: {offered_price} TL')
 
-        # Send email notification to shipment owner
-        try:
-            shipper_email = shipment.shipper_email
-            if shipper_email:
-                from django.core.mail import send_mail
-                from django.conf import settings
-
-                subject = f'Yeni Teklif Aldınız! - {tracking_number}'
-                email_message = f'''
-Merhaba,
-
-"{shipment.title}" başlıklı ilanınıza yeni bir teklif geldi!
-
-Teklif Detayları:
-- Taşıyıcı: {request.user.get_full_name() or request.user.username}
-- Teklif Fiyatı: {offered_price} TL
-- Tahmini Teslimat: {estimated_days} gün
-{f'- Mesaj: {message}' if message else ''}
-
-İlanınızı görüntülemek için: https://nakliyenet.com/ilan/{tracking_number}/
-
-Saygılarımızla,
-NAKLIYE NET Ekibi
-                '''
-
-                send_mail(
-                    subject,
-                    email_message,
-                    settings.DEFAULT_FROM_EMAIL,
-                    [shipper_email],
-                    fail_silently=True,  # Don't fail if email can't be sent
-                )
-        except Exception as email_error:
-            print(f"Error sending notification email: {email_error}")
-            # Continue even if email fails
+        # TODO: Send email notification asynchronously (celery/background task)
+        # Email sending temporarily disabled for performance
+        # Will be re-enabled with async implementation
 
     except Exception as e:
         print(f"Error creating bid: {e}")
