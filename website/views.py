@@ -206,11 +206,68 @@ def ilan_detay(request, tracking_number):
 
 
 def hakkimizda(request):
-    """Hakkımızda sayfası"""
+    """Hakkımızda sayfası - Canlı istatistiklerle"""
+    from .models import UserProfile, Shipment
+    from django.db.models import Avg, Count
+
+    # Canlı istatistikler
+    try:
+        # Toplam aktif kullanıcılar
+        total_users = UserProfile.objects.count()
+
+        # Doğrulanmış taşıyıcılar (user_type=1 ve belgesi onaylı)
+        verified_carriers = UserProfile.objects.filter(
+            user_type=1,
+            documents_verified=True
+        ).count()
+
+        # Tamamlanan shipment'lar
+        completed_shipments = Shipment.objects.filter(status='completed').count()
+
+        # Ortalama tasarruf hesapla (suggested_price vs final_price)
+        shipments_with_price = Shipment.objects.filter(
+            status='completed',
+            final_price__isnull=False,
+            suggested_price__gt=0
+        )
+
+        if shipments_with_price.exists():
+            avg_savings = 0
+            total_savings = 0
+            count = 0
+
+            for shipment in shipments_with_price:
+                if shipment.suggested_price > 0:
+                    savings_percent = ((shipment.suggested_price - shipment.final_price) / shipment.suggested_price) * 100
+                    if savings_percent > 0:
+                        total_savings += savings_percent
+                        count += 1
+
+            if count > 0:
+                avg_savings = int(total_savings / count)
+        else:
+            avg_savings = 30  # Default değer
+
+        stats = {
+            'total_users': total_users,
+            'verified_carriers': verified_carriers,
+            'completed_shipments': completed_shipments,
+            'avg_savings': avg_savings if avg_savings > 0 else 30,
+        }
+    except Exception as e:
+        print(f"Error calculating stats: {e}")
+        stats = {
+            'total_users': 0,
+            'verified_carriers': 0,
+            'completed_shipments': 0,
+            'avg_savings': 30,
+        }
+
     context = {
         'title': 'Hakkımızda - NAKLIYE NET',
         'description': 'NAKLIYE NET Türkiye\'nin en güvenilir dijital nakliye ve taşımacılık platformudur. Misyonumuz ve vizyonumuz.',
         'keywords': 'hakkımızda, nakliye net, taşımacılık platformu, dijital nakliye',
+        'stats': stats,
     }
     return render(request, 'website/hakkimizda.html', context)
 
@@ -263,6 +320,150 @@ def sss(request):
         'faqs': faqs,
     }
     return render(request, 'website/sss.html', context)
+
+
+def gizlilik_politikasi(request):
+    """Gizlilik Politikası sayfası"""
+    context = {
+        'title': 'Gizlilik Politikası - NAKLIYE NET',
+        'description': 'NAKLIYE NET gizlilik politikası ve kişisel verilerin korunması.',
+        'keywords': 'gizlilik, kvkk, kişisel veriler, gizlilik politikası',
+    }
+    return render(request, 'website/gizlilik_politikasi.html', context)
+
+
+def kullanim_kosullari(request):
+    """Kullanım Koşulları sayfası"""
+    context = {
+        'title': 'Kullanım Koşulları - NAKLIYE NET',
+        'description': 'NAKLIYE NET kullanım koşulları ve hizmet şartları.',
+        'keywords': 'kullanım koşulları, hizmet şartları, şartlar ve koşullar',
+    }
+    return render(request, 'website/kullanim_kosullari.html', context)
+
+
+def sehir_nakliye(request, sehir_slug):
+    """
+    Şehir bazlı nakliye landing page - SEO optimize
+    Örnek: /nakliye/istanbul/, /nakliye/gebze/
+    """
+    from .models import Shipment, UserProfile
+    from django.db.models import Q
+
+    # Slug'ı şehir adına çevir
+    sehir_map = {
+        'istanbul': 'İstanbul',
+        'ankara': 'Ankara',
+        'izmir': 'İzmir',
+        'gebze': 'Gebze',
+        'kocaeli': 'Kocaeli',
+        'darica': 'Darıca',
+        'bursa': 'Bursa',
+        'antalya': 'Antalya',
+        'adana': 'Adana',
+        'gaziantep': 'Gaziantep',
+        'konya': 'Konya',
+        'mersin': 'Mersin',
+        'kayseri': 'Kayseri',
+        'eskisehir': 'Eskişehir',
+        'diyarbakir': 'Diyarbakır',
+        'samsun': 'Samsun',
+        'denizli': 'Denizli',
+        'sanliurfa': 'Şanlıurfa',
+        'adapazari': 'Adapazarı',
+        'malatya': 'Malatya',
+        'kahramanmaras': 'Kahramanmaraş',
+        'erzurum': 'Erzurum',
+        'van': 'Van',
+        'batman': 'Batman',
+        'elazig': 'Elazığ',
+        'erzincan': 'Erzincan',
+        'tekirdag': 'Tekirdağ',
+        'balikesir': 'Balıkesir',
+        'aydin': 'Aydın',
+        'manisa': 'Manisa',
+        'muğla': 'Muğla',
+        'trabzon': 'Trabzon',
+        'ordu': 'Ordu',
+        'rize': 'Rize',
+        'sakarya': 'Sakarya',
+        'edirne': 'Edirne',
+    }
+
+    sehir = sehir_map.get(sehir_slug.lower())
+
+    if not sehir:
+        # 404 yerine varsayılan bir şehir gösterelim
+        sehir = sehir_slug.capitalize()
+
+    # Şehre ait ilanlar (hem kalkış hem varış şehri)
+    try:
+        shipments = Shipment.objects.filter(
+            Q(from_address_city__icontains=sehir) | Q(to_address_city__icontains=sehir),
+            status='active'
+        ).order_by('-created_at')[:6]
+    except Exception as e:
+        print(f"Error fetching city shipments: {e}")
+        shipments = []
+
+    # İstatistikler
+    try:
+        # Şehirdeki aktif ilanlar
+        active_shipments = Shipment.objects.filter(
+            Q(from_address_city__icontains=sehir) | Q(to_address_city__icontains=sehir),
+            status='active'
+        ).count()
+
+        # Doğrulanmış taşıyıcılar
+        verified_carriers = UserProfile.objects.filter(
+            user_type=1,
+            documents_verified=True
+        ).count()
+
+        # Ortalama tasarruf (tüm platformdan)
+        completed_shipments = Shipment.objects.filter(
+            status='completed',
+            final_price__isnull=False,
+            suggested_price__gt=0
+        )
+
+        if completed_shipments.exists():
+            avg_savings = 0
+            total_savings = 0
+            count = 0
+
+            for shipment in completed_shipments:
+                if shipment.suggested_price > 0:
+                    savings_percent = ((shipment.suggested_price - shipment.final_price) / shipment.suggested_price) * 100
+                    if savings_percent > 0:
+                        total_savings += savings_percent
+                        count += 1
+
+            if count > 0:
+                avg_savings = int(total_savings / count)
+        else:
+            avg_savings = 30
+
+        stats = {
+            'active_shipments': active_shipments,
+            'verified_carriers': verified_carriers,
+            'avg_savings': avg_savings if avg_savings > 0 else 30,
+        }
+    except Exception as e:
+        print(f"Error calculating city stats: {e}")
+        stats = {
+            'active_shipments': 0,
+            'verified_carriers': 2,
+            'avg_savings': 30,
+        }
+
+    context = {
+        'sehir': sehir,
+        'sehir_slug': sehir_slug,
+        'shipments': shipments,
+        'stats': stats,
+    }
+    return render(request, 'website/sehir_nakliye.html', context)
 
 
 @login_required

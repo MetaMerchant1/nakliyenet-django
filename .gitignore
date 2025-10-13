@@ -16,3 +16,4 @@ ssl/
 # Deployment files with secrets
 .env.production
 DEPLOY_TO_DROPLET.md
+deploy_to_digitalocean.sh

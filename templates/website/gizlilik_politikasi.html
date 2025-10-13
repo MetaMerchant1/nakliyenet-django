@@ -1,0 +1,125 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-primary mb-3">Gizlilik Politikası</h1>
+                <p class="lead text-muted">NAKLIYE NET - Kişisel Verilerin Korunması ve İşlenmesi</p>
+                <hr class="w-25 mx-auto">
+            </div>
+
+            <!-- Content Area - User will fill this -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-primary mb-3">1. Giriş</h3>
+                    <p class="text-muted">
+                        [Bu bölüme gizlilik politikanızın giriş metnini ekleyin. Örneğin: NAKLIYE NET olarak,
+                        kullanıcılarımızın gizliliğini korumayı ve kişisel verilerini güvenli bir şekilde işlemeyi
+                        taahhüt ediyoruz...]
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-primary mb-3">2. Toplanan Bilgiler</h3>
+                    <p class="text-muted">
+                        [Hangi bilgileri topladığınızı açıklayın. Örneğin:]
+                    </p>
+                    <ul class="text-muted">
+                        <li>Ad, soyad ve iletişim bilgileri</li>
+                        <li>E-posta adresi ve telefon numarası</li>
+                        <li>Kimlik doğrulama belgeleri (taşıyıcılar için)</li>
+                        <li>Konum bilgileri</li>
+                        <li>Ödeme bilgileri</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-primary mb-3">3. Bilgilerin Kullanımı</h3>
+                    <p class="text-muted">
+                        [Toplanan bilgileri nasıl kullandığınızı açıklayın...]
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-primary mb-3">4. Bilgilerin Paylaşımı</h3>
+                    <p class="text-muted">
+                        [Bilgileri kimlerle paylaştığınızı açıklayın...]
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-primary mb-3">5. Çerezler (Cookies)</h3>
+                    <p class="text-muted">
+                        [Çerez kullanımınızı açıklayın...]
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-primary mb-3">6. Güvenlik</h3>
+                    <p class="text-muted">
+                        [Veri güvenliği önlemlerinizi açıklayın...]
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-primary mb-3">7. Kullanıcı Hakları (KVKK)</h3>
+                    <p class="text-muted">
+                        [6698 sayılı KVKK kapsamında kullanıcı haklarını açıklayın...]
+                    </p>
+                    <ul class="text-muted">
+                        <li>Kişisel verilerinizin işlenip işlenmediğini öğrenme</li>
+                        <li>Kişisel verileriniz işlenmişse buna ilişkin bilgi talep etme</li>
+                        <li>Kişisel verilerin işlenme amacını ve bunların amacına uygun kullanılıp kullanılmadığını öğrenme</li>
+                        <li>Yurt içinde veya yurt dışında kişisel verilerin aktarıldığı üçüncü kişileri bilme</li>
+                        <li>Kişisel verilerin eksik veya yanlış işlenmiş olması hâlinde bunların düzeltilmesini isteme</li>
+                        <li>Kişisel verilerin silinmesini veya yok edilmesini isteme</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-primary mb-3">8. İletişim</h3>
+                    <p class="text-muted">
+                        Gizlilik politikamız hakkında sorularınız için bizimle iletişime geçebilirsiniz:
+                    </p>
+                    <ul class="text-muted">
+                        <li><strong>E-posta:</strong> info@nakliyenet.com</li>
+                        <li><strong>Adres:</strong> [Şirket adresinizi ekleyin]</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Son Güncelleme:</strong> [Tarih ekleyin]
+            </div>
+
+            <!-- Back Button -->
+            <div class="text-center mt-5">
+                <a href="{% url 'website:index' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-arrow-left me-2"></i>Ana Sayfaya Dön
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,27 +1,148 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container my-5">
-    <h1 class="mb-4">Hakkımızda</h1>
-
-    <div class="row">
-        <div class="col-lg-8">
-            <p class="lead">NAKLIYE NET, Türkiye'nin en güvenilir dijital nakliye ve taşımacılık platformudur.</p>
-
-            <h2 class="h4 mt-4">Misyonumuz</h2>
-            <p>Yük sahipleri ile profesyonel taşıyıcıları bir araya getirerek, güvenli, hızlı ve ekonomik taşımacılık çözümleri sunmak.</p>
-
-            <h2 class="h4 mt-4">Vizyonumuz</h2>
-            <p>Türkiye'de lojistik sektörünü dijitalleştirmek ve her yük sahibinin en uygun taşıma çözümüne ulaşmasını sağlamak.</p>
-
-            <h2 class="h4 mt-4">Değerlerimiz</h2>
-            <ul>
-                <li>Güvenilirlik</li>
-                <li>Şeffaflık</li>
-                <li>Müşteri Memnuniyeti</li>
-                <li>Teknoloji Odaklılık</li>
-            </ul>
+<!-- Hero Banner Section -->
+<section class="bg-primary text-white py-5" style="background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);">
+    <div class="container py-5">
+        <div class="row align-items-center">
+            <div class="col-lg-7">
+                <h1 class="display-4 fw-bold mb-4">3 Saatte Güvenilir Taşıyıcı Bulun</h1>
+                <p class="lead mb-4 fs-3">%30'a Kadar Tasarruf Edin</p>
+                <p class="fs-5 mb-4">NAKLIYE NET ile yük taşımacılığı artık çok daha kolay, güvenli ve ekonomik. Binlerce profesyonel taşıyıcı arasından size en uygun olanı bulun.</p>
+                <a href="{% url 'website:ilan_olustur' %}" class="btn btn-light btn-lg px-5 py-3">Hemen Başlayın</a>
+            </div>
+            <div class="col-lg-5 text-center">
+                <div class="p-4">
+                    <i class="bi bi-truck" style="font-size: 12rem; opacity: 0.2;"></i>
+                </div>
+            </div>
         </div>
     </div>
-</div>
+</section>
+
+<!-- Stats Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <div class="row text-center">
+            <div class="col-md-3 mb-4">
+                <div class="stat-card p-4">
+                    <i class="bi bi-clock-history text-primary mb-3" style="font-size: 3rem;"></i>
+                    <h3 class="fw-bold text-primary">3 Saat</h3>
+                    <p class="text-muted">Ortalama Taşıyıcı Bulma Süresi</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-card p-4">
+                    <i class="bi bi-piggy-bank text-success mb-3" style="font-size: 3rem;"></i>
+                    <h3 class="fw-bold text-success">%{{ stats.avg_savings }}</h3>
+                    <p class="text-muted">Ortalama Tasarruf</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-card p-4">
+                    <i class="bi bi-people text-info mb-3" style="font-size: 3rem;"></i>
+                    <h3 class="fw-bold text-info">{{ stats.verified_carriers }}+</h3>
+                    <p class="text-muted">Aktif Taşıyıcı</p>
+                </div>
+            </div>
+            <div class="col-md-3 mb-4">
+                <div class="stat-card p-4">
+                    <i class="bi bi-shield-check text-warning mb-3" style="font-size: 3rem;"></i>
+                    <h3 class="fw-bold text-warning">100%</h3>
+                    <p class="text-muted">Güvenli Ödeme</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- About Section -->
+<section class="py-5">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 mx-auto">
+                <h2 class="display-5 fw-bold text-center mb-5">Türkiye'nin Dijital Nakliye Platformu</h2>
+                <p class="lead text-center mb-5">NAKLIYE NET, yük sahipleri ile profesyonel taşıyıcıları bir araya getiren Türkiye'nin en güvenilir dijital nakliye platformudur.</p>
+            </div>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-bullseye text-primary me-3" style="font-size: 2.5rem;"></i>
+                            <h3 class="h4 mb-0">Misyonumuz</h3>
+                        </div>
+                        <p class="text-muted">Yük sahipleri ile profesyonel taşıyıcıları bir araya getirerek, güvenli, hızlı ve ekonomik taşımacılık çözümleri sunmak. Lojistik sektöründe dijital dönüşümü hızlandırmak.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center mb-3">
+                            <i class="bi bi-eye text-primary me-3" style="font-size: 2.5rem;"></i>
+                            <h3 class="h4 mb-0">Vizyonumuz</h3>
+                        </div>
+                        <p class="text-muted">Türkiye'de lojistik sektörünü dijitalleştirmek ve her yük sahibinin en uygun taşıma çözümüne kolayca ulaşmasını sağlamak. Sektörde lider platform olmak.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Values Section -->
+<section class="py-5 bg-light">
+    <div class="container">
+        <h2 class="display-6 fw-bold text-center mb-5">Değerlerimiz</h2>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="text-center p-4">
+                    <i class="bi bi-shield-fill-check text-primary mb-3" style="font-size: 3rem;"></i>
+                    <h4>Güvenilirlik</h4>
+                    <p class="text-muted">Tüm taşıyıcılarımız doğrulanmış ve güvenilirdir</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center p-4">
+                    <i class="bi bi-eye-fill text-success mb-3" style="font-size: 3rem;"></i>
+                    <h4>Şeffaflık</h4>
+                    <p class="text-muted">Her adımda net bilgi ve açık iletişim</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center p-4">
+                    <i class="bi bi-emoji-smile text-info mb-3" style="font-size: 3rem;"></i>
+                    <h4>Müşteri Memnuniyeti</h4>
+                    <p class="text-muted">Müşteri memnuniyeti önceliğimizdir</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="text-center p-4">
+                    <i class="bi bi-cpu text-warning mb-3" style="font-size: 3rem;"></i>
+                    <h4>Teknoloji Odaklılık</h4>
+                    <p class="text-muted">En yeni teknolojilerle sürekli gelişim</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Section -->
+<section class="py-5 bg-primary text-white">
+    <div class="container py-4">
+        <div class="row align-items-center">
+            <div class="col-lg-8">
+                <h2 class="display-6 fw-bold mb-3">Hemen Başlayın!</h2>
+                <p class="lead mb-0">İlk ilanınızı oluşturun ve güvenilir taşıyıcılardan teklifler almaya başlayın.</p>
+            </div>
+            <div class="col-lg-4 text-lg-end">
+                <a href="{% url 'website:ilan_olustur' %}" class="btn btn-light btn-lg px-5 py-3">İlan Oluştur</a>
+            </div>
+        </div>
+    </div>
+</section>
+
 {% endblock %}

@@ -163,6 +163,9 @@
                         <a class="nav-link" href="{% url 'website:ilanlar' %}">İlanlar</a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="{% url 'website:hakkimizda' %}">Hakkımızda</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="{% url 'blog:list' %}">Blog</a>
                     </li>
                     <li class="nav-item">
@@ -251,8 +254,8 @@
                 <div class="col-md-2 mb-4">
                     <h6>Yasal</h6>
                     <ul class="list-unstyled">
-                        <li><a href="#">Gizlilik Politikası</a></li>
-                        <li><a href="#">Kullanım Koşulları</a></li>
+                        <li><a href="{% url 'website:gizlilik_politikasi' %}">Gizlilik Politikası</a></li>
+                        <li><a href="{% url 'website:kullanim_kosullari' %}">Kullanım Koşulları</a></li>
                     </ul>
                 </div>
             </div>

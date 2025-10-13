@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-10 mx-auto">
+            <!-- Header -->
+            <div class="text-center mb-5">
+                <h1 class="display-4 fw-bold text-primary mb-3">Kullanım Koşulları</h1>
+                <p class="lead text-muted">NAKLIYE NET - Hizmet Şartları ve Kullanım Kuralları</p>
+                <hr class="w-25 mx-auto">
+            </div>
+
+            <!-- Content Area - User will fill this -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-primary mb-3">1. Genel Hükümler</h3>
+                    <p class="text-muted">
+                        [Bu bölüme genel hükümleri ekleyin. Örneğin: Bu kullanım koşulları, NAKLIYE NET platformunun
+                        kullanımına ilişkin şartları belirler. Platformu kullanarak bu şartları kabul etmiş sayılırsınız...]
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-primary mb-3">2. Tanımlar</h3>
+                    <p class="text-muted">
+                        [Kullanılan terimleri tanımlayın:]
+                    </p>
+                    <ul class="text-muted">
+                        <li><strong>Platform:</strong> NAKLIYE NET web sitesi ve mobil uygulamaları</li>
+                        <li><strong>Kullanıcı:</strong> Platformu kullanan her gerçek veya tüzel kişi</li>
+                        <li><strong>Yükleyen:</strong> Nakliye ilanı oluşturan kullanıcı</li>
+                        <li><strong>Taşıyıcı:</strong> Nakliye teklifinde bulunan doğrulanmış kullanıcı</li>
+                        <li><strong>İlan:</strong> Platformda oluşturulan nakliye talebi</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-primary mb-3">3. Üyelik ve Hesap</h3>
+                    <p class="text-muted">
+                        [Üyelik şartlarını açıklayın:]
+                    </p>
+                    <ul class="text-muted">
+                        <li>18 yaşından büyük olmak zorundasınız</li>
+                        <li>Doğru ve güncel bilgiler vermelisiniz</li>
+                        <li>Hesap güvenliğinizden siz sorumlusunuz</li>
+                        <li>Hesabınızı başkasına devredemezsiniz</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-primary mb-3">4. Hizmet Kullanımı</h3>
+                    <p class="text-muted">
+                        [Platform kullanım kurallarını belirtin...]
+                    </p>
+                    <h5 class="text-secondary mt-4">4.1. Yükleyen Kullanıcılar İçin</h5>
+                    <ul class="text-muted">
+                        <li>İlan bilgileri doğru ve eksiksiz olmalıdır</li>
+                        <li>Yasaklı veya tehlikeli madde ilanı yapılamaz</li>
+                        <li>Ödeme yükümlülüklerinizi zamanında yerine getirmelisiniz</li>
+                    </ul>
+                    <h5 class="text-secondary mt-4">4.2. Taşıyıcı Kullanıcılar İçin</h5>
+                    <ul class="text-muted">
+                        <li>Gerekli yasal belgelere sahip olmalısınız</li>
+                        <li>Belge doğrulamasından geçmelisiniz</li>
+                        <li>Verdiğiniz teklif ve sözlere bağlı kalmalısınız</li>
+                        <li>Yükü güvenli bir şekilde taşımalısınız</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-primary mb-3">5. Ücretlendirme ve Ödemeler</h3>
+                    <p class="text-muted">
+                        [Ücretlendirme politikanızı açıklayın:]
+                    </p>
+                    <ul class="text-muted">
+                        <li>Platform komisyon oranları</li>
+                        <li>Ödeme yöntemleri ve süreleri</li>
+                        <li>İptal ve iade koşulları</li>
+                        <li>Fatura düzenleme</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-primary mb-3">6. Sorumluluklar</h3>
+                    <p class="text-muted">
+                        [Sorumluluk sınırlarını belirtin...]
+                    </p>
+                    <h5 class="text-secondary mt-4">6.1. Platform Sorumluluğu</h5>
+                    <p class="text-muted">
+                        [NAKLIYE NET'in sorumluluklarını açıklayın...]
+                    </p>
+                    <h5 class="text-secondary mt-4">6.2. Kullanıcı Sorumluluğu</h5>
+                    <p class="text-muted">
+                        [Kullanıcıların sorumluluklarını açıklayın...]
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-primary mb-3">7. Uyuşmazlık Çözümü</h3>
+                    <p class="text-muted">
+                        [Uyuşmazlık durumunda izlenecek yolu açıklayın:]
+                    </p>
+                    <ul class="text-muted">
+                        <li>Önce platform içi iletişim ve anlaşma denemesi</li>
+                        <li>Platform arabuluculuk desteği</li>
+                        <li>Yasal süreçler ve yetkili mahkeme</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-primary mb-3">8. Yasaklı Kullanımlar</h3>
+                    <p class="text-muted">
+                        Aşağıdaki eylemler kesinlikle yasaktır:
+                    </p>
+                    <ul class="text-muted">
+                        <li>Sahte bilgi ve belge kullanımı</li>
+                        <li>Platform güvenliğini tehdit eden işlemler</li>
+                        <li>Yasal olmayan madde taşımacılığı</li>
+                        <li>Başka kullanıcıları yanıltıcı davranışlar</li>
+                        <li>Spam ve istenmeyen mesajlar</li>
+                        <li>Platform dışı ödeme yapma/alma girişimleri</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-primary mb-3">9. Hesap Askıya Alma ve İptal</h3>
+                    <p class="text-muted">
+                        [Hangi durumlarda hesap askıya alınabileceğini veya iptal edilebileceğini açıklayın...]
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-primary mb-3">10. Değişiklikler</h3>
+                    <p class="text-muted">
+                        NAKLIYE NET, kullanım koşullarında değişiklik yapma hakkını saklı tutar. Önemli değişiklikler
+                        kullanıcılara bildirilecektir.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h3 class="text-primary mb-3">11. İletişim</h3>
+                    <p class="text-muted">
+                        Kullanım koşulları hakkında sorularınız için:
+                    </p>
+                    <ul class="text-muted">
+                        <li><strong>E-posta:</strong> info@nakliyenet.com</li>
+                        <li><strong>Telefon:</strong> [Telefon numaranızı ekleyin]</li>
+                        <li><strong>Adres:</strong> [Şirket adresinizi ekleyin]</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="alert alert-info">
+                <i class="bi bi-info-circle me-2"></i>
+                <strong>Son Güncelleme:</strong> [Tarih ekleyin]
+            </div>
+
+            <div class="alert alert-warning">
+                <i class="bi bi-exclamation-triangle me-2"></i>
+                Bu kullanım koşullarını kabul ederek, NAKLIYE NET platformunu kullanma hakkına sahip olursunuz.
+            </div>
+
+            <!-- Back Button -->
+            <div class="text-center mt-5">
+                <a href="{% url 'website:index' %}" class="btn btn-outline-primary btn-lg">
+                    <i class="bi bi-arrow-left me-2"></i>Ana Sayfaya Dön
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
