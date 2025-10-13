@@ -41,7 +41,30 @@ class StaticViewSitemap(Sitemap):
 
     def items(self):
         return ['website:index', 'website:ilanlar', 'website:hakkimizda',
-                'website:iletisim', 'website:nasil_calisir', 'website:sss']
+                'website:iletisim', 'website:nasil_calisir', 'website:sss',
+                'website:gizlilik_politikasi', 'website:kullanim_kosullari']
 
     def location(self, item):
         return reverse(item)
+
+
+class CitySitemap(Sitemap):
+    """
+    Şehir nakliye sayfaları için sitemap - SEO için önemli
+    """
+    priority = 0.8
+    changefreq = 'daily'
+    protocol = 'https'
+
+    def items(self):
+        """Popüler şehirler için URL'ler"""
+        return [
+            'istanbul', 'ankara', 'izmir', 'bursa', 'antalya',
+            'adana', 'gaziantep', 'konya', 'mersin', 'kayseri',
+            'eskisehir', 'diyarbakir', 'samsun', 'denizli', 'sanliurfa',
+            'gebze', 'kocaeli', 'darica', 'adapazari', 'tekirdag',
+            'balikesir', 'aydin', 'manisa', 'trabzon', 'sakarya',
+        ]
+
+    def location(self, item):
+        return f'/nakliye/{item}/'

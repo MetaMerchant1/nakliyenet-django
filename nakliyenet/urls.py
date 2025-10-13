@@ -7,12 +7,13 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.sitemaps.views import sitemap
 from django.views.generic import TemplateView
-from website.sitemaps import ShipmentSitemap, StaticViewSitemap
+from website.sitemaps import ShipmentSitemap, StaticViewSitemap, CitySitemap
 from website.admin import admin_site  # Import custom admin site
 
 sitemaps = {
     'shipments': ShipmentSitemap,
     'static': StaticViewSitemap,
+    'cities': CitySitemap,  # Şehir sayfaları için
 }
 
 urlpatterns = [
