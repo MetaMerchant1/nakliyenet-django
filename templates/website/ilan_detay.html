@@ -101,7 +101,7 @@
                                 <div>
                                     <h3 class="h6 mb-1">Nereden</h3>
                                     <p class="mb-0">{{ shipment.from_address_city }} / {{ shipment.from_address_district }}</p>
-                                    {% if user.is_authenticated and user.profile == shipment.shipper or user.profile == assigned_carrier %}
+                                    {% if user.is_authenticated and (user.profile == shipment.shipper or user.profile == assigned_carrier) %}
                                         <small class="text-muted">{{ shipment.from_address_full }}</small>
                                     {% else %}
                                         <small class="text-muted text-warning">
@@ -117,7 +117,7 @@
                                 <div>
                                     <h3 class="h6 mb-1">Nereye</h3>
                                     <p class="mb-0">{{ shipment.to_address_city }} / {{ shipment.to_address_district }}</p>
-                                    {% if user.is_authenticated and user.profile == shipment.shipper or user.profile == assigned_carrier %}
+                                    {% if user.is_authenticated and (user.profile == shipment.shipper or user.profile == assigned_carrier) %}
                                         <small class="text-muted">{{ shipment.to_address_full }}</small>
                                     {% else %}
                                         <small class="text-muted text-warning">
@@ -356,7 +356,7 @@
                             </div>
 
                             <!-- Yorum Ekleme Formu -->
-                            {% if user.is_authenticated and user.profile == shipment.shipper or user.profile == bid.carrier %}
+                            {% if user.is_authenticated and (user.profile == shipment.shipper or user.profile == bid.carrier) %}
                             <form method="post" action="{% url 'website:bid_comment' bid_id=bid.bid_id %}" class="d-flex gap-2">
                                 {% csrf_token %}
                                 <input type="text" name="comment" class="form-control form-control-sm" placeholder="Yorum ekleyin..." required>
