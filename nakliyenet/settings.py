@@ -279,8 +279,8 @@ if SENTRY_DSN and not DEBUG:
         before_send=lambda event, hint: event if not DEBUG else None,
     )
     
-    print(f"✅ Sentry initialized - Environment: {config('SENTRY_ENVIRONMENT', default='production')}")
+    print(f"[OK] Sentry initialized - Environment: {config('SENTRY_ENVIRONMENT', default='production')}")
 elif DEBUG:
-    print("⚠️  Sentry disabled in DEBUG mode")
+    print("[INFO] Sentry disabled in DEBUG mode")
 else:
-    print("⚠️  Sentry DSN not configured")
+    print("[WARN] Sentry DSN not configured")

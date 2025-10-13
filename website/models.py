@@ -372,6 +372,7 @@ class Bid(models.Model):
         ('accepted', 'Kabul Edildi'),
         ('rejected', 'Reddedildi'),
         ('withdrawn', 'Geri Çekildi'),
+        ('counter_offered', 'Karşı Teklif Verildi'),
     ]
 
     # Bid identification
@@ -395,7 +396,11 @@ class Bid(models.Model):
     offered_price = models.DecimalField(max_digits=10, decimal_places=2, help_text="Teklif edilen fiyat (TRY)")
     estimated_delivery_days = models.IntegerField(default=1, help_text="Tahmini teslimat günü")
     message = models.TextField(blank=True, help_text="Taşıyıcının mesajı")
-    shipper_comment = models.TextField(blank=True, help_text="Yük sahibinin yanıt mesajı")
+
+    # Counter offer (shipper can propose different price)
+    counter_offer_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text="Karşı teklif fiyatı (TRY)")
+    counter_offer_message = models.TextField(blank=True, help_text="Karşı teklif mesajı")
+    counter_offered_at = models.DateTimeField(null=True, blank=True)
 
     # Status
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
@@ -404,6 +409,7 @@ class Bid(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
     accepted_at = models.DateTimeField(null=True, blank=True)
+    rejected_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         ordering = ['-created_at']
@@ -416,6 +422,45 @@ class Bid(models.Model):
 
     def __str__(self):
         return f"{self.tracking_number} - {self.carrier_email} - {self.offered_price} TL"
+
+    def get_final_price(self):
+        """Get the final negotiated price"""
+        return self.counter_offer_price if self.counter_offer_price else self.offered_price
+
+
+class BidComment(models.Model):
+    """
+    Comments on bids - Both shipper and carrier can comment
+    """
+    # Comment identification
+    comment_id = models.AutoField(primary_key=True)
+
+    # Related bid
+    bid = models.ForeignKey('Bid', on_delete=models.CASCADE, related_name='comments', help_text="Teklif")
+
+    # Author (can be shipper or carrier)
+    author = models.ForeignKey('UserProfile', on_delete=models.CASCADE, related_name='bid_comments', help_text="Yorum yazarı")
+    author_email = models.EmailField()
+    author_name = models.CharField(max_length=255)
+    is_shipper = models.BooleanField(default=False, help_text="Yük sahibi mi?")
+
+    # Comment content
+    comment = models.TextField(help_text="Yorum metni")
+
+    # Timestamps
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['created_at']
+        verbose_name = "Teklif Yorumu"
+        verbose_name_plural = "Teklif Yorumları"
+        indexes = [
+            models.Index(fields=['bid', 'created_at']),
+        ]
+
+    def __str__(self):
+        return f"{self.author_name} - {self.bid.bid_id} - {self.created_at}"
 
 
 class Payment(models.Model):

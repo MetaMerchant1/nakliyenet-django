@@ -6,6 +6,7 @@ from . import views
 from . import auth_views
 from . import oauth_views
 from . import sentry_test
+from . import bid_views
 
 app_name = 'website'
 
@@ -59,4 +60,10 @@ urlpatterns = [
     # Sentry Test Endpoints (production test - remove after verification)
     path('test-sentry-error/', sentry_test.sentry_test_error, name='test_sentry_error'),
     path('test-sentry-status/', sentry_test.sentry_test_success, name='test_sentry_status'),
+
+    # Bid Management API
+    path('teklif/<str:bid_id>/kabul/', bid_views.bid_accept, name='bid_accept'),
+    path('teklif/<str:bid_id>/reddet/', bid_views.bid_reject, name='bid_reject'),
+    path('teklif/<str:bid_id>/karsi-teklif/', bid_views.bid_counter_offer, name='bid_counter_offer'),
+    path('teklif/<str:bid_id>/yorum/', bid_views.bid_comment, name='bid_comment'),
 ]

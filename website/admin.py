@@ -7,7 +7,7 @@ from django.utils.html import format_html
 from django.utils import timezone
 from django.urls import reverse
 from django.db.models import Count, Q
-from .models import UserDocument, AdminActivity, UserProfile, Bid, Vehicle, Shipment, Payment
+from .models import UserDocument, AdminActivity, UserProfile, Bid, BidComment, Vehicle, Shipment, Payment
 
 
 @admin.register(UserDocument)
@@ -1171,12 +1171,74 @@ class NakliyeNetAdminSite(AdminSite):
 # Replace default admin site
 admin_site = NakliyeNetAdminSite(name='admin')
 
+@admin.register(BidComment)
+class BidCommentAdmin(admin.ModelAdmin):
+    """Admin interface for bid comments"""
+
+    list_display = [
+        'bid_id_short',
+        'author_name',
+        'is_shipper',
+        'comment_short',
+        'created_at',
+    ]
+
+    list_filter = [
+        'is_shipper',
+        'created_at',
+    ]
+
+    search_fields = [
+        'bid__bid_id',
+        'author_name',
+        'author_email',
+        'comment',
+    ]
+
+    readonly_fields = [
+        'bid',
+        'author',
+        'author_email',
+        'author_name',
+        'is_shipper',
+        'created_at',
+        'updated_at',
+    ]
+
+    fieldsets = (
+        ('Teklif Bilgileri', {
+            'fields': ('bid',)
+        }),
+        ('Yorum Yazarı', {
+            'fields': ('author', 'author_name', 'author_email', 'is_shipper')
+        }),
+        ('Yorum İçeriği', {
+            'fields': ('comment',)
+        }),
+        ('Tarihler', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+
+    def bid_id_short(self, obj):
+        """Display short bid ID"""
+        return obj.bid.bid_id[:13] + '...'
+    bid_id_short.short_description = 'Teklif ID'
+
+    def comment_short(self, obj):
+        """Display shortened comment"""
+        return obj.comment[:50] + '...' if len(obj.comment) > 50 else obj.comment
+    comment_short.short_description = 'Yorum'
+
+
 # Re-register all models with the new admin site
 admin_site.register(UserDocument, UserDocumentAdmin)
 admin_site.register(AdminActivity, AdminActivityAdmin)
 admin_site.register(UserProfile, UserProfileAdmin)
 admin_site.register(Shipment, ShipmentAdmin)
 admin_site.register(Bid, BidAdmin)
+admin_site.register(BidComment, BidCommentAdmin)
 admin_site.register(Vehicle, VehicleAdmin)
 admin_site.register(Payment, PaymentAdmin)
 
