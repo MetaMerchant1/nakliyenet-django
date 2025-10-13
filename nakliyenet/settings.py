@@ -258,23 +258,29 @@ if SENTRY_DSN and not DEBUG:
         ],
         # Performance Monitoring
         traces_sample_rate=0.1,  # 10% of transactions for performance monitoring
-        
+
         # Error Sampling
         sample_rate=1.0,  # 100% error sampling
-        
+
         # Send user context
         send_default_pii=False,  # GDPR compliance - don't send PII
-        
+
         # Environment
         environment=config('SENTRY_ENVIRONMENT', default='production'),
-        
+
         # Release tracking
         release=config('SENTRY_RELEASE', default='1.0.0'),
-        
+
         # Additional options
         attach_stacktrace=True,
         max_breadcrumbs=50,
-        
+
+        # Ignore common errors (bot traffic, security probes)
+        ignore_errors=[
+            'DisallowedHost',  # Bot traffic with invalid Host headers
+            'SuspiciousOperation',  # Security probe attempts
+        ],
+
         # Before send hook - customize what gets sent
         before_send=lambda event, hint: event if not DEBUG else None,
     )
