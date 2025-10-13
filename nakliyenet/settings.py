@@ -5,6 +5,8 @@ Django settings for nakliyenet project.
 import os
 from pathlib import Path
 from decouple import config
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -236,3 +238,43 @@ REST_FRAMEWORK = {
         'rest_framework.renderers.BrowsableAPIRenderer',
     ],
 }
+
+# ==============================
+# Sentry Configuration - Error Tracking & Performance Monitoring
+# ==============================
+SENTRY_DSN = config('SENTRY_DSN', default='')
+
+if SENTRY_DSN and not DEBUG:
+    sentry_sdk.init(
+        dsn=SENTRY_DSN,
+        integrations=[
+            DjangoIntegration(),
+        ],
+        # Performance Monitoring
+        traces_sample_rate=0.1,  # 10% of transactions for performance monitoring
+        
+        # Error Sampling
+        sample_rate=1.0,  # 100% error sampling
+        
+        # Send user context
+        send_default_pii=False,  # GDPR compliance - don't send PII
+        
+        # Environment
+        environment=config('SENTRY_ENVIRONMENT', default='production'),
+        
+        # Release tracking
+        release=config('SENTRY_RELEASE', default='1.0.0'),
+        
+        # Additional options
+        attach_stacktrace=True,
+        max_breadcrumbs=50,
+        
+        # Before send hook - customize what gets sent
+        before_send=lambda event, hint: event if not DEBUG else None,
+    )
+    
+    print(f"✅ Sentry initialized - Environment: {config('SENTRY_ENVIRONMENT', default='production')}")
+elif DEBUG:
+    print("⚠️  Sentry disabled in DEBUG mode")
+else:
+    print("⚠️  Sentry DSN not configured")
