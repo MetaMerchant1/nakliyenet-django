@@ -443,11 +443,23 @@
             {% elif user.is_authenticated and user.profile.user_type == 0 %}
                 <!-- Yük Veren -->
                 <div class="card shadow-sm mb-4 sticky-top" style="top: 20px;">
-                    <div class="card-body text-center">
-                        <h3 class="h5 mb-4">📊 İlan Takibi</h3>
-                        <div class="alert alert-info">
+                    <div class="card-body">
+                        <h3 class="h5 mb-3 text-center">📊 İlan Takibi</h3>
+                        <div class="alert alert-info text-center mb-3">
                             <i class="bi bi-info-circle me-2"></i>
                             Bu ilana {{ bid_count }} teklif geldi!
+                        </div>
+
+                        <hr class="my-3">
+
+                        <div class="text-center">
+                            <h4 class="h6 mb-3">🚛 Taşıyıcı mısınız?</h4>
+                            <p class="small text-muted mb-3">
+                                Teklif vermek için hesap tipinizi "Taşıyıcı" olarak değiştirmeniz gerekiyor.
+                            </p>
+                            <a href="{% url 'website:profil' %}" class="btn btn-primary btn-sm w-100">
+                                <i class="bi bi-person-gear me-2"></i>Profilimi Güncelle
+                            </a>
                         </div>
                     </div>
                 </div>
