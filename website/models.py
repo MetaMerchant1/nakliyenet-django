@@ -240,7 +240,9 @@ class Shipment(models.Model):
     STATUS_CHOICES = [
         ('active', 'Aktif'),
         ('assigned', 'Atandı'),
+        ('picked_up', 'Yük Toplandı'),
         ('in_transit', 'Yolda'),
+        ('delivered', 'Teslim Edildi'),
         ('completed', 'Tamamlandı'),
         ('cancelled', 'İptal'),
     ]
@@ -548,3 +550,154 @@ class Payment(models.Model):
             self.is_delivery_confirmed() and
             not self.admin_transferred
         )
+
+
+class ShipmentTracking(models.Model):
+    """
+    Tracking updates for shipments - Status history log
+    Records each status change with timestamp and location
+    """
+    # Tracking ID
+    tracking_id = models.AutoField(primary_key=True)
+
+    # Related shipment
+    shipment = models.ForeignKey('Shipment', on_delete=models.CASCADE, related_name='tracking_updates', help_text="İlan")
+
+    # Status update
+    status = models.CharField(max_length=20, help_text="Durum")
+    status_display = models.CharField(max_length=100, help_text="Durum açıklaması")
+
+    # Location
+    location = models.CharField(max_length=200, blank=True, help_text="Konum (şehir/ilçe)")
+    latitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
+    longitude = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
+
+    # Details
+    note = models.TextField(blank=True, help_text="Ek notlar")
+
+    # Who updated (carrier or system)
+    updated_by = models.ForeignKey('UserProfile', on_delete=models.SET_NULL, null=True, blank=True, help_text="Güncelleyen")
+    is_automatic = models.BooleanField(default=False, help_text="Otomatik güncelleme mi?")
+
+    # Timestamp
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Takip Kaydı"
+        verbose_name_plural = "Takip Kayıtları"
+        indexes = [
+            models.Index(fields=['shipment', '-created_at']),
+        ]
+
+    def __str__(self):
+        return f"{self.shipment.tracking_number} - {self.status_display} - {self.created_at}"
+
+
+class DeliveryProof(models.Model):
+    """
+    Delivery proof - Photos, signatures, notes at delivery
+    Both shipper and carrier can upload proof
+    """
+    # Proof ID
+    proof_id = models.AutoField(primary_key=True)
+
+    # Related shipment
+    shipment = models.ForeignKey('Shipment', on_delete=models.CASCADE, related_name='delivery_proofs', help_text="İlan")
+
+    # Uploader
+    uploaded_by = models.ForeignKey('UserProfile', on_delete=models.CASCADE, related_name='uploaded_proofs', help_text="Yükleyen")
+    is_shipper = models.BooleanField(default=False, help_text="Yük sahibi mi?")
+
+    # Proof type
+    PROOF_TYPES = [
+        ('photo', 'Fotoğraf'),
+        ('signature', 'İmza'),
+        ('document', 'Belge'),
+    ]
+    proof_type = models.CharField(max_length=20, choices=PROOF_TYPES, default='photo')
+
+    # File
+    file_url = models.URLField(help_text="Firebase Storage URL veya data URL")
+
+    # Description
+    description = models.TextField(blank=True, help_text="Açıklama")
+
+    # Timestamp
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Teslimat Kanıtı"
+        verbose_name_plural = "Teslimat Kanıtları"
+        indexes = [
+            models.Index(fields=['shipment', '-created_at']),
+        ]
+
+    def __str__(self):
+        return f"{self.shipment.tracking_number} - {self.get_proof_type_display()} - {self.created_at}"
+
+
+class Review(models.Model):
+    """
+    Reviews and ratings - Both parties rate each other after delivery
+    Shipper rates carrier, carrier rates shipper
+    """
+    # Review ID
+    review_id = models.AutoField(primary_key=True)
+
+    # Related shipment and bid
+    shipment = models.ForeignKey('Shipment', on_delete=models.CASCADE, related_name='reviews', help_text="İlan")
+    bid = models.ForeignKey('Bid', on_delete=models.CASCADE, related_name='reviews', help_text="Teklif")
+
+    # Reviewer and reviewed
+    reviewer = models.ForeignKey('UserProfile', on_delete=models.CASCADE, related_name='reviews_given', help_text="Değerlendiren")
+    reviewed = models.ForeignKey('UserProfile', on_delete=models.CASCADE, related_name='reviews_received', help_text="Değerlendirilen")
+
+    # Rating (1-5 stars)
+    rating = models.IntegerField(help_text="Puan (1-5)")
+
+    # Rating categories
+    communication_rating = models.IntegerField(default=5, help_text="İletişim puanı (1-5)")
+    professionalism_rating = models.IntegerField(default=5, help_text="Profesyonellik puanı (1-5)")
+    punctuality_rating = models.IntegerField(default=5, help_text="Zamanında teslimat puanı (1-5)")
+
+    # Review content
+    comment = models.TextField(blank=True, help_text="Yorum (opsiyonel)")
+
+    # Review type
+    is_shipper_review = models.BooleanField(default=False, help_text="Yük sahibinin yazdığı değerlendirme mi?")
+
+    # Moderation
+    is_visible = models.BooleanField(default=True, help_text="Görünür mü?")
+    is_flagged = models.BooleanField(default=False, help_text="Şikayet edildi mi?")
+
+    # Timestamps
+    created_at = models.DateTimeField(default=timezone.now)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created_at']
+        verbose_name = "Değerlendirme"
+        verbose_name_plural = "Değerlendirmeler"
+        indexes = [
+            models.Index(fields=['reviewed', '-created_at']),
+            models.Index(fields=['shipment']),
+        ]
+        # Ensure one review per person per shipment
+        unique_together = ['shipment', 'reviewer']
+
+    def __str__(self):
+        return f"{self.reviewer.user.email} → {self.reviewed.user.email} - {self.rating}⭐ - {self.shipment.tracking_number}"
+
+    def save(self, *args, **kwargs):
+        """Update user's average rating when review is saved"""
+        super().save(*args, **kwargs)
+
+        # Recalculate average rating for reviewed user
+        reviews = Review.objects.filter(reviewed=self.reviewed, is_visible=True)
+        if reviews.exists():
+            avg_rating = reviews.aggregate(models.Avg('rating'))['rating__avg']
+            self.reviewed.rating_avg = round(avg_rating, 2)
+            self.reviewed.rating_count = reviews.count()
+            self.reviewed.save(update_fields=['rating_avg', 'rating_count'])
