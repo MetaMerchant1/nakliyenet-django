@@ -136,7 +136,7 @@
                                 <i class="bi bi-telephone-fill text-info fs-4 me-2"></i>
                                 <div>
                                     <h3 class="h6 mb-1">İletişim</h3>
-                                    {% if user.is_authenticated and user.profile == shipment.shipper or user.profile == assigned_carrier %}
+                                    {% if user.is_authenticated and (user.profile == shipment.shipper or user.profile == assigned_carrier) %}
                                         <p class="mb-0"><a href="tel:{{ shipment.shipper_phone }}">{{ shipment.shipper_phone }}</a></p>
                                     {% else %}
                                         <small class="text-muted text-warning">
