@@ -571,6 +571,15 @@
                             </button>
                         </form>
                     </div>
+                    {% elif bid.status == 'accepted' %}
+                    <div class="bid-actions">
+                        <a href="{% url 'website:shipment_tracking' shipment.tracking_number %}" class="btn-accept" style="text-decoration: none; display: inline-block;">
+                            📍 Yükü Takip Et
+                        </a>
+                        <a href="{% url 'website:ilan_detay' shipment.tracking_number %}" class="btn-accept" style="text-decoration: none; display: inline-block; background: #2196f3;">
+                            💬 Mesajlaş
+                        </a>
+                    </div>
                     {% endif %}
                 </div>
                 {% endfor %}
