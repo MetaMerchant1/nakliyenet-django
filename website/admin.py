@@ -362,7 +362,6 @@ class BidInline(admin.StackedInline):
         ('carrier_name', 'carrier_email', 'carrier_verified'),
         ('offered_price', 'estimated_delivery_days', 'status_badge'),
         'message',
-        'shipper_comment',
         'created_at',
     ]
 
@@ -705,7 +704,7 @@ class BidAdmin(admin.ModelAdmin):
             'fields': ('shipper_email',)
         }),
         ('Teklif Detayları', {
-            'fields': ('offered_price', 'estimated_delivery_days', 'message', 'shipper_comment')
+            'fields': ('offered_price', 'estimated_delivery_days', 'message')
         }),
         ('Durum', {
             'fields': ('status', 'accepted_at')
