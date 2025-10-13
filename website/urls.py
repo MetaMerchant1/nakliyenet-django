@@ -7,6 +7,7 @@ from . import auth_views
 from . import oauth_views
 from . import sentry_test
 from . import bid_views
+from . import tracking_views
 
 app_name = 'website'
 
@@ -66,4 +67,10 @@ urlpatterns = [
     path('teklif/<str:bid_id>/reddet/', bid_views.bid_reject, name='bid_reject'),
     path('teklif/<str:bid_id>/karsi-teklif/', bid_views.bid_counter_offer, name='bid_counter_offer'),
     path('teklif/<str:bid_id>/yorum/', bid_views.bid_comment, name='bid_comment'),
+
+    # Tracking & Delivery
+    path('takip/<str:tracking_number>/', tracking_views.shipment_tracking, name='shipment_tracking'),
+    path('takip/<str:tracking_number>/guncelle/', tracking_views.update_tracking, name='update_tracking'),
+    path('takip/<str:tracking_number>/teslim-onayla/', tracking_views.confirm_delivery, name='confirm_delivery'),
+    path('takip/<str:tracking_number>/degerlendirme/', tracking_views.add_review, name='add_review'),
 ]

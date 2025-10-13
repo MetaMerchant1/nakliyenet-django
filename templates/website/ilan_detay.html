@@ -73,9 +73,16 @@
                     <h1 class="h3 mb-3">{{ shipment.title }}</h1>
 
                     <!-- İlan Numarası ve Durum -->
-                    <div class="d-flex align-items-center mb-4">
-                        <span class="badge bg-primary me-2">İlan No: {{ shipment.tracking_number }}</span>
-                        <span class="badge bg-success">{{ shipment.get_status_display }}</span>
+                    <div class="d-flex align-items-center justify-content-between mb-4">
+                        <div>
+                            <span class="badge bg-primary me-2">İlan No: {{ shipment.tracking_number }}</span>
+                            <span class="badge bg-success">{{ shipment.get_status_display }}</span>
+                        </div>
+                        {% if shipment.status in 'assigned,picked_up,in_transit,delivered,completed' %}
+                        <a href="{% url 'website:shipment_tracking' tracking_number=shipment.tracking_number %}" class="btn btn-outline-primary btn-sm">
+                            <i class="bi bi-pin-map me-1"></i>Gönderi Takibi
+                        </a>
+                        {% endif %}
                     </div>
 
                     <!-- Açıklama -->

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Teslimatı Onayla - {{ shipment.tracking_number }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0"><i class="bi bi-check-circle me-2"></i>Teslimat Onayı</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h6 class="mb-2">{{ shipment.tracking_number }}</h6>
+                        <p class="mb-0">{{ shipment.title }}</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6 class="mb-3">Gönderi Detayları</h6>
+                        <div class="row">
+                            <div class="col-6 mb-2">
+                                <small class="text-muted d-block">Nereden</small>
+                                <strong>{{ shipment.from_address_city }}</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <small class="text-muted d-block">Nereye</small>
+                                <strong>{{ shipment.to_address_city }}</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <small class="text-muted d-block">Ağırlık</small>
+                                <strong>{{ shipment.weight }} kg</strong>
+                            </div>
+                            <div class="col-6 mb-2">
+                                <small class="text-muted d-block">Fiyat</small>
+                                <strong class="text-success">{{ shipment.final_price }} ₺</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning">
+                        <i class="bi bi-exclamation-triangle me-2"></i>
+                        <strong>Dikkat!</strong>
+                        <p class="mb-0 mt-2">
+                            Teslimatı onayladığınızda:
+                        </p>
+                        <ul class="mb-0 mt-2">
+                            <li>Gönderi durumu "Tamamlandı" olarak işaretlenecek</li>
+                            <li>Taşıyıcıyı değerlendirebileceksiniz</li>
+                            <li>Bu işlem geri alınamaz</li>
+                        </ul>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="confirm_checkbox" required>
+                            <label class="form-check-label" for="confirm_checkbox">
+                                Yükümü eksiksiz ve hasarsız teslim aldığımı onaylıyorum
+                            </label>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>Teslimatı Onayla
+                            </button>
+                            <a href="{% url 'website:shipment_tracking' tracking_number=shipment.tracking_number %}" class="btn btn-secondary">
+                                İptal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,327 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ shipment.tracking_number }} - Gönderi Takibi{% endblock %}
+
+{% block extra_css %}
+<style>
+    .tracking-timeline {
+        position: relative;
+        padding-left: 30px;
+    }
+
+    .tracking-timeline::before {
+        content: '';
+        position: absolute;
+        left: 10px;
+        top: 0;
+        bottom: 0;
+        width: 3px;
+        background: linear-gradient(to bottom, #28a745 50%, #e9ecef 50%);
+    }
+
+    .tracking-item {
+        position: relative;
+        padding: 20px;
+        margin-bottom: 20px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+
+    .tracking-item::before {
+        content: '';
+        position: absolute;
+        left: -24px;
+        top: 25px;
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+        background: white;
+        border: 3px solid #28a745;
+        z-index: 1;
+    }
+
+    .tracking-item.pending::before {
+        background: white;
+        border-color: #6c757d;
+    }
+
+    .status-badge {
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 20px;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    .status-active { background: #cfe2ff; color: #084298; }
+    .status-assigned { background: #fff3cd; color: #664d03; }
+    .status-picked-up { background: #e7d6f5; color: #59267c; }
+    .status-in-transit { background: #ffe5cc; color: #cc5200; }
+    .status-delivered { background: #d1e7dd; color: #0f5132; }
+    .status-completed { background: #d1e7dd; color: #0a3622; }
+
+    .proof-gallery {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 15px;
+        margin-top: 20px;
+    }
+
+    .proof-item {
+        border: 2px solid #dee2e6;
+        border-radius: 8px;
+        overflow: hidden;
+        cursor: pointer;
+        transition: transform 0.2s;
+    }
+
+    .proof-item:hover {
+        transform: scale(1.05);
+        border-color: #0d6efd;
+    }
+
+    .proof-item img {
+        width: 100%;
+        height: 150px;
+        object-fit: cover;
+    }
+
+    .proof-caption {
+        padding: 10px;
+        background: #f8f9fa;
+        font-size: 12px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <!-- Header -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'website:ilanlar' %}">İlanlar</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'website:ilan_detay' tracking_number=shipment.tracking_number %}">{{ shipment.tracking_number }}</a></li>
+                    <li class="breadcrumb-item active">Takip</li>
+                </ol>
+            </nav>
+
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <h1 class="h3 mb-2">Gönderi Takibi</h1>
+                    <p class="text-muted mb-0">{{ shipment.tracking_number }}</p>
+                </div>
+                <span class="status-badge status-{{ shipment.status }}">
+                    {{ shipment.get_status_display }}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Left Column - Tracking Timeline -->
+        <div class="col-lg-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i>Gönderi Geçmişi</h5>
+                </div>
+                <div class="card-body">
+                    {% if tracking_updates %}
+                        <div class="tracking-timeline">
+                            {% for update in tracking_updates %}
+                            <div class="tracking-item {% if forloop.first %}current{% else %}pending{% endif %}">
+                                <div class="d-flex justify-content-between align-items-start mb-2">
+                                    <h6 class="mb-0">
+                                        <i class="bi bi-check-circle-fill text-success me-2"></i>
+                                        {{ update.status_display }}
+                                    </h6>
+                                    <small class="text-muted">{{ update.created_at|date:"d.m.Y H:i" }}</small>
+                                </div>
+
+                                {% if update.location %}
+                                <p class="mb-2 text-muted">
+                                    <i class="bi bi-geo-alt me-1"></i>{{ update.location }}
+                                </p>
+                                {% endif %}
+
+                                {% if update.note %}
+                                <p class="mb-2">{{ update.note }}</p>
+                                {% endif %}
+
+                                {% if update.updated_by %}
+                                <small class="text-muted">
+                                    <i class="bi bi-person me-1"></i>
+                                    {% if update.is_automatic %}
+                                        Otomatik Güncelleme
+                                    {% else %}
+                                        {{ update.updated_by.user.get_full_name|default:update.updated_by.user.email }}
+                                    {% endif %}
+                                </small>
+                                {% endif %}
+                            </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5 text-muted">
+                            <i class="bi bi-clock display-4 d-block mb-3"></i>
+                            <p>Henüz takip kaydı bulunmuyor</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Delivery Proof Section -->
+            {% if delivery_proofs %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-camera me-2"></i>Teslimat Kanıtları</h5>
+                </div>
+                <div class="card-body">
+                    <div class="proof-gallery">
+                        {% for proof in delivery_proofs %}
+                        <div class="proof-item" data-bs-toggle="modal" data-bs-target="#proofModal{{ proof.proof_id }}">
+                            <img src="{{ proof.file_url }}" alt="{{ proof.get_proof_type_display }}">
+                            <div class="proof-caption">
+                                <strong>{{ proof.get_proof_type_display }}</strong>
+                                <br>
+                                <small class="text-muted">
+                                    {% if proof.is_shipper %}Yük Sahibi{% else %}Taşıyıcı{% endif %}
+                                </small>
+                            </div>
+                        </div>
+
+                        <!-- Modal for proof -->
+                        <div class="modal fade" id="proofModal{{ proof.proof_id }}" tabindex="-1">
+                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h5 class="modal-title">{{ proof.get_proof_type_display }}</h5>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                    </div>
+                                    <div class="modal-body text-center">
+                                        <img src="{{ proof.file_url }}" alt="{{ proof.get_proof_type_display }}" class="img-fluid mb-3">
+                                        {% if proof.description %}
+                                        <p class="text-muted">{{ proof.description }}</p>
+                                        {% endif %}
+                                        <small class="text-muted">
+                                            {{ proof.created_at|date:"d.m.Y H:i" }} -
+                                            {% if proof.is_shipper %}Yük Sahibi{% else %}Taşıyıcı{% endif %}
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <!-- Right Column - Shipment Details -->
+        <div class="col-lg-4">
+            <!-- Shipment Info Card -->
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-box-seam me-2"></i>Gönderi Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="mb-3">{{ shipment.title }}</h6>
+
+                    <div class="mb-3">
+                        <small class="text-muted d-block mb-1">Nereden</small>
+                        <strong>{{ shipment.from_address_city }}, {{ shipment.from_address_district }}</strong>
+                    </div>
+
+                    <div class="mb-3">
+                        <small class="text-muted d-block mb-1">Nereye</small>
+                        <strong>{{ shipment.to_address_city }}, {{ shipment.to_address_district }}</strong>
+                    </div>
+
+                    {% if shipment.pickup_date %}
+                    <div class="mb-3">
+                        <small class="text-muted d-block mb-1">Alım Tarihi</small>
+                        <strong>{{ shipment.pickup_date|date:"d.m.Y" }}</strong>
+                    </div>
+                    {% endif %}
+
+                    {% if shipment.weight %}
+                    <div class="mb-3">
+                        <small class="text-muted d-block mb-1">Ağırlık</small>
+                        <strong>{{ shipment.weight }} kg</strong>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Carrier Info Card -->
+            {% if assigned_bid %}
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-white">
+                    <h5 class="mb-0"><i class="bi bi-truck me-2"></i>Taşıyıcı Bilgileri</h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="mb-2">{{ assigned_bid.carrier.company_name|default:assigned_bid.carrier.user.get_full_name }}</h6>
+
+                    {% if assigned_bid.carrier.rating_avg > 0 %}
+                    <div class="mb-3">
+                        <span class="text-warning">
+                            {% for i in "12345" %}
+                                {% if forloop.counter <= assigned_bid.carrier.rating_avg %}
+                                    <i class="bi bi-star-fill"></i>
+                                {% else %}
+                                    <i class="bi bi-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                        <small class="text-muted ms-2">{{ assigned_bid.carrier.rating_avg }}/5</small>
+                    </div>
+                    {% endif %}
+
+                    {% if shipment.status == 'delivered' or shipment.status == 'completed' %}
+                    <div class="mb-2">
+                        <small class="text-muted d-block mb-1">İletişim</small>
+                        <strong>{{ assigned_bid.carrier.phone_number }}</strong>
+                    </div>
+                    {% endif %}
+
+                    <div class="mb-0">
+                        <small class="text-muted d-block mb-1">Fiyat</small>
+                        <strong class="text-success fs-5">{{ assigned_bid.offered_price }} ₺</strong>
+                    </div>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Action Buttons -->
+            {% if user.is_authenticated %}
+                {% if user.profile == shipment.shipper and shipment.status == 'delivered' %}
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body text-center">
+                        <h6 class="mb-3">Teslim Aldınız mı?</h6>
+                        <a href="{% url 'website:confirm_delivery' tracking_number=shipment.tracking_number %}" class="btn btn-success btn-lg w-100 mb-2">
+                            <i class="bi bi-check-circle me-2"></i>Teslimatı Onayla
+                        </a>
+                        <small class="text-muted d-block">Onayladıktan sonra değerlendirme yapabileceksiniz</small>
+                    </div>
+                </div>
+                {% endif %}
+
+                {% if user.profile == assigned_bid.carrier and shipment.status in 'assigned,picked_up,in_transit' %}
+                <div class="card shadow-sm mb-4">
+                    <div class="card-body text-center">
+                        <h6 class="mb-3">Durum Güncelleme</h6>
+                        <a href="{% url 'website:update_tracking' tracking_number=shipment.tracking_number %}" class="btn btn-primary btn-lg w-100">
+                            <i class="bi bi-arrow-clockwise me-2"></i>Durumu Güncelle
+                        </a>
+                    </div>
+                </div>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

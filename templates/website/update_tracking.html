@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Durum Güncelle - {{ shipment.tracking_number }}{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-arrow-clockwise me-2"></i>Durum Güncelleme</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <strong>{{ shipment.tracking_number }}</strong>
+                        <p class="mb-0 mt-1">{{ shipment.title }}</p>
+                    </div>
+
+                    <form method="post">
+                        {% csrf_token %}
+
+                        <div class="mb-3">
+                            <label for="status" class="form-label">Yeni Durum *</label>
+                            <select name="status" id="status" class="form-select" required>
+                                <option value="">Durum Seçin</option>
+                                {% for value, label in status_choices %}
+                                    <option value="{{ value }}" {% if value == current_status %}selected{% endif %}>
+                                        {{ label }}
+                                    </option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="location" class="form-label">Konum</label>
+                            <input type="text" name="location" id="location" class="form-control" placeholder="Örn: Ankara, Keçiören">
+                            <small class="text-muted">Şu anki bulunduğunuz şehir/ilçe</small>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="note" class="form-label">Not</label>
+                            <textarea name="note" id="note" rows="3" class="form-control" placeholder="Ek bilgi veya açıklama (opsiyonel)"></textarea>
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-check-circle me-2"></i>Durumu Güncelle
+                            </button>
+                            <a href="{% url 'website:shipment_tracking' tracking_number=shipment.tracking_number %}" class="btn btn-secondary">
+                                İptal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Status Guide -->
+            <div class="card shadow-sm mt-4">
+                <div class="card-header">
+                    <h6 class="mb-0">Durum Rehberi</h6>
+                </div>
+                <div class="card-body">
+                    <ul class="list-unstyled mb-0">
+                        <li class="mb-2">
+                            <strong>Taşıyıcı atandı:</strong> Teklif kabul edildi, hazırlık aşaması
+                        </li>
+                        <li class="mb-2">
+                            <strong>Yük Toplandı:</strong> Yükü alım adresinden topladınız
+                        </li>
+                        <li class="mb-2">
+                            <strong>Yolda:</strong> Yük hedef adrese doğru yolda
+                        </li>
+                        <li class="mb-0">
+                            <strong>Teslim Edildi:</strong> Yük teslim adresine ulaştı
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

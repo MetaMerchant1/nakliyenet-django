@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Değerlendirme Yap - {{ shipment.tracking_number }}{% endblock %}
+
+{% block extra_css %}
+<style>
+    .star-rating {
+        display: flex;
+        flex-direction: row-reverse;
+        justify-content: flex-end;
+        gap: 5px;
+    }
+
+    .star-rating input {
+        display: none;
+    }
+
+    .star-rating label {
+        cursor: pointer;
+        font-size: 2rem;
+        color: #ddd;
+        transition: color 0.2s;
+    }
+
+    .star-rating input:checked ~ label,
+    .star-rating label:hover,
+    .star-rating label:hover ~ label {
+        color: #ffc107;
+    }
+
+    .rating-category {
+        border: 1px solid #dee2e6;
+        border-radius: 8px;
+        padding: 15px;
+        margin-bottom: 15px;
+        background: #f8f9fa;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0"><i class="bi bi-star me-2"></i>Değerlendirme Yap</h5>
+                </div>
+                <div class="card-body">
+                    <div class="alert alert-info mb-4">
+                        <h6 class="mb-2">{{ shipment.tracking_number }}</h6>
+                        <p class="mb-0">{{ shipment.title }}</p>
+                    </div>
+
+                    <div class="mb-4">
+                        <h6>{{ reviewed_role }} Değerlendiriyorsunuz:</h6>
+                        <div class="d-flex align-items-center">
+                            <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px; font-size: 20px;">
+                                <i class="bi bi-person-fill"></i>
+                            </div>
+                            <div class="ms-3">
+                                <strong>{{ reviewed_user.company_name|default:reviewed_user.user.get_full_name|default:reviewed_user.user.email }}</strong>
+                                {% if reviewed_user.rating_avg > 0 %}
+                                <div class="text-warning">
+                                    {% for i in "12345" %}
+                                        {% if forloop.counter <= reviewed_user.rating_avg %}
+                                            <i class="bi bi-star-fill"></i>
+                                        {% else %}
+                                            <i class="bi bi-star"></i>
+                                        {% endif %}
+                                    {% endfor %}
+                                    <small class="text-muted ms-1">{{ reviewed_user.rating_avg }}/5</small>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <form method="post" id="reviewForm">
+                        {% csrf_token %}
+
+                        <!-- Overall Rating -->
+                        <div class="mb-4">
+                            <label class="form-label d-block">
+                                <strong>Genel Değerlendirme *</strong>
+                            </label>
+                            <div class="star-rating">
+                                <input type="radio" name="rating" value="5" id="star5" required>
+                                <label for="star5" title="5 yıldız">★</label>
+                                <input type="radio" name="rating" value="4" id="star4">
+                                <label for="star4" title="4 yıldız">★</label>
+                                <input type="radio" name="rating" value="3" id="star3">
+                                <label for="star3" title="3 yıldız">★</label>
+                                <input type="radio" name="rating" value="2" id="star2">
+                                <label for="star2" title="2 yıldız">★</label>
+                                <input type="radio" name="rating" value="1" id="star1">
+                                <label for="star1" title="1 yıldız">★</label>
+                            </div>
+                        </div>
+
+                        <!-- Detailed Ratings -->
+                        <h6 class="mb-3">Detaylı Değerlendirme</h6>
+
+                        <div class="rating-category">
+                            <label class="form-label mb-2">
+                                <i class="bi bi-chat-dots me-2"></i><strong>İletişim</strong>
+                            </label>
+                            <div class="star-rating">
+                                <input type="radio" name="communication_rating" value="5" id="comm5" checked>
+                                <label for="comm5">★</label>
+                                <input type="radio" name="communication_rating" value="4" id="comm4">
+                                <label for="comm4">★</label>
+                                <input type="radio" name="communication_rating" value="3" id="comm3">
+                                <label for="comm3">★</label>
+                                <input type="radio" name="communication_rating" value="2" id="comm2">
+                                <label for="comm2">★</label>
+                                <input type="radio" name="communication_rating" value="1" id="comm1">
+                                <label for="comm1">★</label>
+                            </div>
+                        </div>
+
+                        <div class="rating-category">
+                            <label class="form-label mb-2">
+                                <i class="bi bi-award me-2"></i><strong>Profesyonellik</strong>
+                            </label>
+                            <div class="star-rating">
+                                <input type="radio" name="professionalism_rating" value="5" id="prof5" checked>
+                                <label for="prof5">★</label>
+                                <input type="radio" name="professionalism_rating" value="4" id="prof4">
+                                <label for="prof4">★</label>
+                                <input type="radio" name="professionalism_rating" value="3" id="prof3">
+                                <label for="prof3">★</label>
+                                <input type="radio" name="professionalism_rating" value="2" id="prof2">
+                                <label for="prof2">★</label>
+                                <input type="radio" name="professionalism_rating" value="1" id="prof1">
+                                <label for="prof1">★</label>
+                            </div>
+                        </div>
+
+                        <div class="rating-category">
+                            <label class="form-label mb-2">
+                                <i class="bi bi-clock me-2"></i><strong>Zamanında Teslimat</strong>
+                            </label>
+                            <div class="star-rating">
+                                <input type="radio" name="punctuality_rating" value="5" id="punct5" checked>
+                                <label for="punct5">★</label>
+                                <input type="radio" name="punctuality_rating" value="4" id="punct4">
+                                <label for="punct4">★</label>
+                                <input type="radio" name="punctuality_rating" value="3" id="punct3">
+                                <label for="punct3">★</label>
+                                <input type="radio" name="punctuality_rating" value="2" id="punct2">
+                                <label for="punct2">★</label>
+                                <input type="radio" name="punctuality_rating" value="1" id="punct1">
+                                <label for="punct1">★</label>
+                            </div>
+                        </div>
+
+                        <!-- Comment -->
+                        <div class="mb-4">
+                            <label for="comment" class="form-label">
+                                <strong>Yorumunuz</strong> <span class="text-muted">(Opsiyonel)</span>
+                            </label>
+                            <textarea name="comment" id="comment" rows="4" class="form-control" placeholder="Deneyiminizi paylaşın..." maxlength="500"></textarea>
+                            <small class="text-muted">Maksimum 500 karakter</small>
+                        </div>
+
+                        <div class="alert alert-secondary">
+                            <i class="bi bi-info-circle me-2"></i>
+                            Değerlendirmeniz diğer kullanıcılar tarafından görülebilecektir.
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                <i class="bi bi-send me-2"></i>Değerlendirmeyi Gönder
+                            </button>
+                            <a href="{% url 'website:shipment_tracking' tracking_number=shipment.tracking_number %}" class="btn btn-secondary">
+                                İptal
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
