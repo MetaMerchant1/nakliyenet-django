@@ -688,9 +688,9 @@ def teklif_ver(request, tracking_number):
 @login_required
 def ilanlarim(request):
     """
-    İlanlarım sayfası - Kullanıcının oluşturduğu ilanları listeler
-    Teklifleri görüntüleme ve kabul/ret etme
-    İlan istatistikleri (görüntülenme sayısı vs)
+    İlanlarım sayfası - Kullanıcı tipine göre farklı içerik gösterir
+    - Yük Sahibi (shipper): Oluşturduğu ilanları ve gelen teklifleri görür
+    - Taşıyıcı (carrier): Verdiği teklifleri ve durumlarını görür
     """
     try:
         profile = request.user.profile
@@ -698,53 +698,92 @@ def ilanlarim(request):
         messages.error(request, 'Profil bulunamadı.')
         return redirect('website:profil')
 
-    # PostgreSQL'den kullanıcının ilanlarını al
-    from .models import Shipment
+    from .models import Shipment, Bid
     from django.db.models import Count, Q
 
-    try:
-        # Kullanıcının ilanlarını getir (prefetch bids for performance)
-        shipments_queryset = Shipment.objects.filter(shipper=profile).prefetch_related('bids').order_by('-created_at')
+    # Yük Sahibi görünümü
+    if profile.user_type == 0:
+        try:
+            # Kullanıcının ilanlarını getir (prefetch bids for performance)
+            shipments_queryset = Shipment.objects.filter(shipper=profile).prefetch_related('bids').order_by('-created_at')
 
-        # Convert to list and prepare bid lists
-        shipments_list = list(shipments_queryset)
+            # Convert to list and prepare bid lists
+            shipments_list = list(shipments_queryset)
 
-        # Her shipment için bid sayılarını hesapla ve bid listesini hazırla
-        for shipment in shipments_list:
-            shipment.bids_list = list(shipment.bids.all().order_by('-created_at'))  # Template'de iterate edilebilir liste
-            shipment.pending_bids_count = shipment.bids.filter(status='pending').count()
+            # Her shipment için bid sayılarını hesapla ve bid listesini hazırla
+            for shipment in shipments_list:
+                shipment.bids_list = list(shipment.bids.all().order_by('-created_at'))  # Template'de iterate edilebilir liste
+                shipment.pending_bids_count = shipment.bids.filter(status='pending').count()
 
-        # İstatistikler
-        stats = {
-            'total_shipments': len(shipments_list),
-            'active_shipments': len([s for s in shipments_list if s.status == 'active']),
-            'completed_shipments': len([s for s in shipments_list if s.status == 'completed']),
-            'total_bids': sum([s.bid_count for s in shipments_list]),
-            'total_views': sum([s.view_count for s in shipments_list]),
+            # İstatistikler
+            stats = {
+                'total_shipments': len(shipments_list),
+                'active_shipments': len([s for s in shipments_list if s.status == 'active']),
+                'completed_shipments': len([s for s in shipments_list if s.status == 'completed']),
+                'total_bids': sum([s.bid_count for s in shipments_list]),
+                'total_views': sum([s.view_count for s in shipments_list]),
+            }
+
+        except Exception as e:
+            print(f"Error fetching user shipments: {e}")
+            import traceback
+            traceback.print_exc()
+            shipments_list = []
+            stats = {
+                'total_shipments': 0,
+                'active_shipments': 0,
+                'completed_shipments': 0,
+                'total_bids': 0,
+                'total_views': 0,
+            }
+            messages.error(request, 'İlanlar yüklenirken hata oluştu.')
+
+        context = {
+            'title': 'İlanlarım - NAKLIYE NET',
+            'description': 'Oluşturduğunuz ilanları görüntüleyin ve teklifleri değerlendirin.',
+            'shipments': shipments_list,
+            'stats': stats,
+            'profile': profile,
+            'is_carrier': False,
         }
+        return render(request, 'website/ilanlarim.html', context)
 
-    except Exception as e:
-        print(f"Error fetching user shipments: {e}")
-        import traceback
-        traceback.print_exc()
-        shipments_list = []
-        stats = {
-            'total_shipments': 0,
-            'active_shipments': 0,
-            'completed_shipments': 0,
-            'total_bids': 0,
-            'total_views': 0,
+    # Taşıyıcı görünümü
+    else:
+        try:
+            # Taşıyıcının verdiği teklifleri getir
+            bids_list = Bid.objects.filter(carrier=profile).select_related('shipment').order_by('-created_at')
+
+            # İstatistikler
+            stats = {
+                'total_bids': bids_list.count(),
+                'pending_bids': bids_list.filter(status='pending').count(),
+                'accepted_bids': bids_list.filter(status='accepted').count(),
+                'rejected_bids': bids_list.filter(status='rejected').count(),
+            }
+
+        except Exception as e:
+            print(f"Error fetching carrier bids: {e}")
+            import traceback
+            traceback.print_exc()
+            bids_list = []
+            stats = {
+                'total_bids': 0,
+                'pending_bids': 0,
+                'accepted_bids': 0,
+                'rejected_bids': 0,
+            }
+            messages.error(request, 'Teklifler yüklenirken hata oluştu.')
+
+        context = {
+            'title': 'Tekliflerim - NAKLIYE NET',
+            'description': 'Verdiğiniz teklifleri görüntüleyin ve durumlarını takip edin.',
+            'bids': bids_list,
+            'stats': stats,
+            'profile': profile,
+            'is_carrier': True,
         }
-        messages.error(request, 'İlanlar yüklenirken hata oluştu.')
-
-    context = {
-        'title': 'İlanlarım - NAKLIYE NET',
-        'description': 'Oluşturduğunuz ilanları görüntüleyin ve teklifleri değerlendirin.',
-        'shipments': shipments_list,
-        'stats': stats,
-        'profile': profile,
-    }
-    return render(request, 'website/ilanlarim.html', context)
+        return render(request, 'website/tekliflerim.html', context)
 
 
 @login_required
