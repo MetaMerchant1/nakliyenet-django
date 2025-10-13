@@ -73,6 +73,18 @@ def update_tracking(request, tracking_number):
         location = request.POST.get('location', '').strip()
         note = request.POST.get('note', '').strip()
 
+        # Check payment status before allowing delivery
+        if new_status == 'delivered':
+            from .models import Payment
+            try:
+                payment = Payment.objects.get(shipment=shipment)
+                if payment.status not in ['paid', 'in_transit', 'delivered']:
+                    messages.error(request, 'Yükü teslim edebilmek için önce ödeme yapılması gerekiyor. Yük sahibi henüz ödeme yapmadı.')
+                    return redirect('website:shipment_tracking', tracking_number=tracking_number)
+            except Payment.DoesNotExist:
+                messages.error(request, 'Ödeme kaydı bulunamadı. Yük sahibi henüz ödeme yapmadı.')
+                return redirect('website:shipment_tracking', tracking_number=tracking_number)
+
         # Status display map
         status_displays = {
             'assigned': 'Taşıyıcı atandı',

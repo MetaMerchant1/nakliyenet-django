@@ -751,8 +751,11 @@ def ilanlarim(request):
     # Taşıyıcı görünümü
     else:
         try:
-            # Taşıyıcının verdiği teklifleri getir
-            bids_list = Bid.objects.filter(carrier=profile).select_related('shipment').order_by('-created_at')
+            # Taşıyıcının verdiği teklifleri getir (Payment bilgisi ile)
+            bids_list = Bid.objects.filter(carrier=profile).select_related(
+                'shipment',
+                'shipment__payment'
+            ).order_by('-created_at')
 
             # İstatistikler
             stats = {

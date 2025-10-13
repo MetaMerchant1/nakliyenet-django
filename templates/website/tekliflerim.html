@@ -139,22 +139,51 @@
                                 <td colspan="6">
                                     <div class="alert alert-success mb-0">
                                         <h6><i class="bi bi-check-circle-fill"></i> Teklif Kabul Edildi!</h6>
+
+                                        {% if bid.shipment.payment %}
+                                        <div class="mb-2">
+                                            <strong>💰 Ödeme Durumu:</strong>
+                                            {% if bid.shipment.payment.status == 'pending' %}
+                                                <span class="badge bg-warning text-dark">Yük sahibi ödeme yapmadı</span>
+                                                <p class="small text-muted mb-0 mt-1">Yükü almak için önce yük sahibinin ödeme yapması gerekiyor.</p>
+                                            {% elif bid.shipment.payment.status == 'paid' %}
+                                                <span class="badge bg-success">✓ Ödeme Yapıldı!</span>
+                                                <p class="small mb-0 mt-1">
+                                                    Yük sahibi <strong>{{ bid.shipment.payment.amount }} TL</strong> ödeme yaptı.
+                                                    Teslimat sonrası <strong>{{ bid.shipment.payment.carrier_amount }} TL</strong> tarafınıza transfer edilecek.
+                                                </p>
+                                            {% elif bid.shipment.payment.status == 'in_transit' %}
+                                                <span class="badge bg-info">Yük yolda</span>
+                                            {% elif bid.shipment.payment.status == 'delivered' %}
+                                                <span class="badge bg-primary">Teslim edildi</span>
+                                            {% elif bid.shipment.payment.status == 'completed' %}
+                                                <span class="badge bg-success">✓ Para Transferi Tamamlandı!</span>
+                                                <p class="small mb-0 mt-1"><strong>{{ bid.shipment.payment.carrier_amount }} TL</strong> hesabınıza transfer edildi.</p>
+                                            {% endif %}
+                                        </div>
+                                        {% endif %}
+
                                         <p class="mb-0">
-                                            <strong>Durum:</strong>
+                                            <strong>Yük Durumu:</strong>
                                             {% if bid.shipment.status == 'assigned' %}
-                                                İş size atandı. Yükü almaya hazırlanın.
+                                                İş size atandı.
+                                                {% if bid.shipment.payment and bid.shipment.payment.status == 'paid' %}
+                                                    Ödeme alındı, yükü almaya başlayabilirsiniz!
+                                                {% else %}
+                                                    Yük sahibinin ödeme yapmasını bekleyin.
+                                                {% endif %}
                                             {% elif bid.shipment.status == 'picked_up' %}
                                                 Yük toplandı, yoldayız!
                                             {% elif bid.shipment.status == 'in_transit' %}
                                                 Taşıma devam ediyor.
                                             {% elif bid.shipment.status == 'delivered' %}
-                                                Teslim edildi!
+                                                Teslim edildi! Yük sahibi onayını bekliyor.
                                             {% elif bid.shipment.status == 'completed' %}
                                                 İş tamamlandı. Harika!
                                             {% endif %}
                                         </p>
 
-                                        {% if bid.shipment.status == 'assigned' %}
+                                        {% if bid.shipment.status in 'assigned,picked_up,in_transit' and bid.shipment.payment and bid.shipment.payment.status == 'paid' %}
                                         <div class="mt-2">
                                             <a href="{% url 'website:update_tracking' bid.tracking_number %}" class="btn btn-sm btn-primary">
                                                 <i class="bi bi-geo-alt"></i> Konumu Güncelle
