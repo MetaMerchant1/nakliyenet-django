@@ -67,7 +67,10 @@ def ilan_listesi(request):
     shipments = Shipment.objects.filter(status='active').order_by('-created_at')
 
     if city:
-        shipments = shipments.filter(from_address_city__icontains=city)
+        from django.db.models import Q
+        shipments = shipments.filter(
+            Q(from_address_city__icontains=city) | Q(to_address_city__icontains=city)
+        )
         page_title = f'{city} Nakliye İlanları'
         page_desc = f'{city} bölgesindeki aktif nakliye ve taşıma ilanları. Güvenli nakliyat hizmeti için teklif alın.'
     elif category:
