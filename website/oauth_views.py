@@ -148,10 +148,9 @@ def google_oauth_callback(request):
         try:
             UserProfile.objects.create(
                 user=user,
-                full_name=f"{given_name} {family_name}".strip(),
-                user_type=0,  # Default: shipper
-                email_verified=True
+                user_type=0,  # Default: shipper (Yük Veren)
             )
+            logger.info(f"UserProfile created for: {email}")
         except Exception as e:
             logger.error(f"Failed to create UserProfile: {e}")
 
