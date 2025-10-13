@@ -19,7 +19,16 @@
                 </div>
             </div>
             <div class="col-lg-6">
-                <img src="{% static 'images/hero-image.png' %}" alt="NAKLIYE NET App" class="img-fluid rounded shadow-lg">
+                <picture>
+                    <!-- Mobile: 800px width WebP -->
+                    <source media="(max-width: 767px)" srcset="{% static 'images/hero-image-mobile.webp' %}" type="image/webp">
+                    <!-- Tablet: 1200px width WebP -->
+                    <source media="(max-width: 1199px)" srcset="{% static 'images/hero-image-tablet.webp' %}" type="image/webp">
+                    <!-- Desktop: Full size WebP -->
+                    <source srcset="{% static 'images/hero-image.webp' %}" type="image/webp">
+                    <!-- Fallback: Original PNG for old browsers -->
+                    <img src="{% static 'images/hero-image.png' %}" alt="NAKLIYE NET - Türkiye'nin Dijital Yük Pazaryeri" class="img-fluid rounded shadow-lg" width="1536" height="1024" loading="eager">
+                </picture>
             </div>
         </div>
     </div>

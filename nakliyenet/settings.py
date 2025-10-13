@@ -162,6 +162,12 @@ STATICFILES_DIRS = [BASE_DIR / 'static']
 # WhiteNoise configuration
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
 
+# WhiteNoise cache optimization (1 year cache for static files)
+WHITENOISE_MAX_AGE = 31536000  # 1 year in seconds
+
+# Immutable files (with content hash in filename) get forever cache
+WHITENOISE_IMMUTABLE_FILE_TEST = lambda path, url: True
+
 # Media files
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'mediafiles'
