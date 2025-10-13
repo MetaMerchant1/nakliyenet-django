@@ -14,8 +14,9 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'nakliyenet.settings')
 django.setup()
 
 from django.contrib.auth.models import User
-from website.models import UserProfile, Shipment, Bid
+from website.models import UserProfile, Shipment, Bid, ShipmentTracking, DeliveryProof, Review
 from django.utils import timezone
+from decimal import Decimal
 
 def create_test_users():
     """Create test users"""
@@ -39,18 +40,11 @@ def create_test_users():
         profile, _ = UserProfile.objects.get_or_create(
             user=user,
             defaults={
-                'firebase_uid': f'test-{username}-uid',
                 'user_type': user_type,
                 'phone_number': f'+905{ord(username[0]) % 10}{ord(username[1]) % 10}1234567',
                 'company_name': f'{first} Nakliyat' if user_type == 1 else '',
-                'documents_verified': user_type == 1,
             }
         )
-
-        # Update firebase_uid if missing
-        if not profile.firebase_uid:
-            profile.firebase_uid = f'test-{username}-uid'
-            profile.save()
 
         created_users.append(profile)
 
@@ -62,15 +56,20 @@ def create_test_shipments():
     # Get shipper profiles
     shippers = list(UserProfile.objects.filter(user_type=0))
     if not shippers:
-        # Use testuser as shipper
-        user = User.objects.get(username='testuser')
-        shippers = [user.profile]
-
-    # Ensure all shippers have firebase_uid
-    for shipper in shippers:
-        if not shipper.firebase_uid:
-            shipper.firebase_uid = f'test-{shipper.user.username}-uid'
-            shipper.save()
+        # Create a default shipper if none exist
+        user, created = User.objects.get_or_create(
+            username='testuser',
+            defaults={'email': 'testuser@test.com'}
+        )
+        if created or not hasattr(user, 'profile'):
+            profile = UserProfile.objects.create(
+                user=user,
+                user_type=0,
+                phone_number='+905001234567'
+            )
+            shippers = [profile]
+        else:
+            shippers = [user.profile]
 
     # Shipment data
     shipments_data = [
@@ -164,7 +163,6 @@ def create_test_shipments():
             shipment_id=shipment_id,
             tracking_number=tracking_number,
             shipper=shipper,
-            shipper_uid=shipper.firebase_uid,
             shipper_email=shipper.user.email or f'{shipper.user.username}@test.com',
             shipper_phone=shipper.phone_number or '+905001234567',
             title=data['title'],
@@ -192,9 +190,9 @@ def create_test_shipments():
 def create_test_bids():
     """Create test bids"""
     # Get carriers
-    carriers = list(UserProfile.objects.filter(user_type=1, documents_verified=True))
+    carriers = list(UserProfile.objects.filter(user_type=1))
     if not carriers:
-        print('No verified carriers found')
+        print('No carriers found')
         return []
 
     # Get active shipments
@@ -216,11 +214,11 @@ def create_test_bids():
             carrier = carriers[j % len(carriers)]
 
             # Check if bid already exists
-            if Bid.objects.filter(shipment=shipment, carrier_uid=carrier.firebase_uid).exists():
+            if Bid.objects.filter(shipment=shipment, carrier=carrier).exists():
                 continue
 
             # Price variation: -10% to +5% of suggested price
-            price_factor = 0.90 + (j * 0.05)
+            price_factor = Decimal('0.90') + (Decimal(j) * Decimal('0.05'))
             offered_price = int(shipment.suggested_price * price_factor)
 
             bid = Bid.objects.create(
@@ -228,8 +226,6 @@ def create_test_bids():
                 shipment=shipment,
                 tracking_number=shipment.tracking_number,
                 carrier=carrier,
-                carrier_uid=carrier.firebase_uid,
-                shipper_uid=shipment.shipper_uid,
                 offered_price=offered_price,
                 message=bid_messages[j % len(bid_messages)],
                 status='pending',
@@ -245,18 +241,280 @@ def create_test_bids():
     print(f'Created {len(created_bids)} bids')
     return created_bids
 
+def create_accepted_shipments():
+    """Accept some bids and create shipments in different stages"""
+    # Get some pending bids
+    pending_bids = list(Bid.objects.filter(status='pending')[:4])
+
+    if not pending_bids:
+        print('No pending bids found to accept')
+        return []
+
+    accepted_shipments = []
+    statuses = ['assigned', 'picked_up', 'in_transit', 'delivered']
+
+    for i, bid in enumerate(pending_bids):
+        # Accept the bid
+        bid.status = 'accepted'
+        bid.accepted_at = timezone.now() - timedelta(days=i+1)
+        bid.save()
+
+        # Update shipment
+        shipment = bid.shipment
+        shipment.status = statuses[i % len(statuses)]
+        shipment.assigned_bid_id = bid.bid_id
+        shipment.final_price = bid.offered_price
+        shipment.save()
+
+        # Reject other bids for this shipment
+        Bid.objects.filter(shipment=shipment, status='pending').exclude(bid_id=bid.bid_id).update(
+            status='rejected',
+            rejected_at=timezone.now() - timedelta(days=i+1)
+        )
+
+        accepted_shipments.append(shipment)
+
+    print(f'Accepted {len(accepted_shipments)} bids and updated shipments')
+    return accepted_shipments
+
+def create_tracking_updates():
+    """Create tracking updates for shipments with accepted bids"""
+    # Get shipments with assigned status or later
+    shipments = Shipment.objects.filter(status__in=['assigned', 'picked_up', 'in_transit', 'delivered'])
+
+    created_tracking = []
+
+    # Turkish cities for location tracking
+    cities = ['Istanbul', 'Ankara', 'Izmir', 'Bursa', 'Antalya']
+
+    for shipment in shipments:
+        carrier = shipment.bids.filter(status='accepted').first()
+        if not carrier:
+            continue
+
+        carrier_profile = carrier.carrier
+
+        # Status progression based on current status
+        status_progression = {
+            'assigned': ['assigned'],
+            'picked_up': ['assigned', 'picked_up'],
+            'in_transit': ['assigned', 'picked_up', 'in_transit'],
+            'delivered': ['assigned', 'picked_up', 'in_transit', 'delivered'],
+        }
+
+        statuses = status_progression.get(shipment.status, ['assigned'])
+
+        for idx, status in enumerate(statuses):
+            status_displays = {
+                'assigned': 'Taşıyıcı atandı',
+                'picked_up': f'Yük {shipment.from_address_city} lokasyonundan toplandı',
+                'in_transit': f'Yük yolda - {cities[idx % len(cities)]} geçiş noktası',
+                'delivered': f'Yük {shipment.to_address_city} adresine teslim edildi',
+            }
+
+            notes = {
+                'assigned': 'Taşıyıcı başarıyla atandı. Yük toplama işlemi için hazırlıklar başladı.',
+                'picked_up': 'Yük başarıyla toplandı. Ambalaj ve yükleme tamamlandı.',
+                'in_transit': 'Yük güvenli bir şekilde yolda. Tahmini varış zamanı takip ediliyor.',
+                'delivered': 'Yük başarıyla teslim edildi. Teslimat onayı bekleniyor.',
+            }
+
+            # Check if tracking already exists
+            if ShipmentTracking.objects.filter(shipment=shipment, status=status).exists():
+                continue
+
+            tracking = ShipmentTracking.objects.create(
+                shipment=shipment,
+                status=status,
+                status_display=status_displays[status],
+                location=cities[idx % len(cities)] if status in ['picked_up', 'in_transit', 'delivered'] else '',
+                note=notes[status],
+                updated_by=carrier_profile,
+                is_automatic=False,
+                created_at=timezone.now() - timedelta(days=len(statuses)-idx, hours=idx*6)
+            )
+            created_tracking.append(tracking)
+
+    print(f'Created {len(created_tracking)} tracking updates')
+    return created_tracking
+
+def create_delivery_proofs():
+    """Create delivery proof for delivered shipments"""
+    # Get delivered shipments
+    delivered_shipments = Shipment.objects.filter(status='delivered')
+
+    created_proofs = []
+
+    # Sample proof URLs (you can replace with real Firebase URLs)
+    sample_photo_urls = [
+        'https://via.placeholder.com/800x600/4CAF50/FFFFFF?text=Delivered+Package+1',
+        'https://via.placeholder.com/800x600/2196F3/FFFFFF?text=Delivered+Package+2',
+        'https://via.placeholder.com/800x600/FF9800/FFFFFF?text=Delivered+Package+3',
+    ]
+
+    sample_signature_urls = [
+        'https://via.placeholder.com/400x200/9C27B0/FFFFFF?text=Signature+1',
+        'https://via.placeholder.com/400x200/E91E63/FFFFFF?text=Signature+2',
+    ]
+
+    descriptions = [
+        'Yük hasarsız teslim edildi. Tüm eşyalar eksiksiz.',
+        'Müşteri eşyalarını kontrol etti ve onayladı.',
+        'Teslimat tamamlandı. Müşteri memnuniyeti sağlandı.',
+    ]
+
+    for i, shipment in enumerate(delivered_shipments):
+        carrier = shipment.bids.filter(status='accepted').first()
+        if not carrier:
+            continue
+
+        # Check if proof already exists
+        if DeliveryProof.objects.filter(shipment=shipment).exists():
+            continue
+
+        # Create photo proof from carrier
+        photo_proof = DeliveryProof.objects.create(
+            shipment=shipment,
+            uploaded_by=carrier.carrier,
+            is_shipper=False,
+            proof_type='photo',
+            file_url=sample_photo_urls[i % len(sample_photo_urls)],
+            description=descriptions[i % len(descriptions)],
+            created_at=timezone.now() - timedelta(hours=2)
+        )
+        created_proofs.append(photo_proof)
+
+        # Create signature proof from shipper
+        signature_proof = DeliveryProof.objects.create(
+            shipment=shipment,
+            uploaded_by=shipment.shipper,
+            is_shipper=True,
+            proof_type='signature',
+            file_url=sample_signature_urls[i % len(sample_signature_urls)],
+            description='Teslimatı onaylıyorum.',
+            created_at=timezone.now() - timedelta(hours=1)
+        )
+        created_proofs.append(signature_proof)
+
+    print(f'Created {len(created_proofs)} delivery proofs')
+    return created_proofs
+
+def create_reviews():
+    """Create reviews for delivered shipments"""
+    # Get delivered shipments
+    delivered_shipments = Shipment.objects.filter(status='delivered')
+
+    created_reviews = []
+
+    # Sample review comments
+    shipper_comments = [
+        'Çok profesyonel bir hizmet aldık. Eşyalarımız hasarsız teslim edildi. Teşekkürler!',
+        'Zamanında ve güvenli teslimat. Taşıma sırasında çok dikkatli davrandılar.',
+        'Mükemmel bir deneyimdi. Hem fiyat hem de kalite açısından çok memnun kaldık.',
+        'İletişim çok iyiydi. Her aşamada bilgilendirdiler. Kesinlikle tavsiye ederim.',
+    ]
+
+    carrier_comments = [
+        'Çok düzenli ve iyi iletişim kuran bir müşteri. İşbirliği yapmak keyifliydi.',
+        'Zamanında hazır olan ve tüm detayları önceden bildiren bir müşteri. Teşekkürler!',
+        'Profesyonel ve anlayışlı bir müşteri. Tekrar çalışmaktan memnuniyet duyarız.',
+        'Her şey planlandığı gibi gitti. Güzel bir çalışmaydı.',
+    ]
+
+    for i, shipment in enumerate(delivered_shipments):
+        accepted_bid = shipment.bids.filter(status='accepted').first()
+        if not accepted_bid:
+            continue
+
+        carrier = accepted_bid.carrier
+        shipper = shipment.shipper
+
+        # Check if reviews already exist
+        if Review.objects.filter(shipment=shipment).exists():
+            continue
+
+        # Shipper reviews carrier
+        shipper_review = Review.objects.create(
+            shipment=shipment,
+            bid=accepted_bid,
+            reviewer=shipper,
+            reviewed=carrier,
+            rating=4 + (i % 2),  # 4 or 5 stars
+            communication_rating=4 + (i % 2),
+            professionalism_rating=5,
+            punctuality_rating=4 + ((i+1) % 2),
+            comment=shipper_comments[i % len(shipper_comments)],
+            is_shipper_review=True,
+            is_visible=True,
+            created_at=timezone.now() - timedelta(hours=12-i)
+        )
+        created_reviews.append(shipper_review)
+
+        # Carrier reviews shipper
+        carrier_review = Review.objects.create(
+            shipment=shipment,
+            bid=accepted_bid,
+            reviewer=carrier,
+            reviewed=shipper,
+            rating=4 + ((i+1) % 2),  # 4 or 5 stars
+            communication_rating=5,
+            professionalism_rating=4 + (i % 2),
+            punctuality_rating=5,
+            comment=carrier_comments[i % len(carrier_comments)],
+            is_shipper_review=False,
+            is_visible=True,
+            created_at=timezone.now() - timedelta(hours=10-i)
+        )
+        created_reviews.append(carrier_review)
+
+    print(f'Created {len(created_reviews)} reviews')
+    return created_reviews
+
 if __name__ == '__main__':
-    print('Populating test data...')
+    print('=' * 60)
+    print('NAKLIYENET TEST DATA POPULATION')
+    print('=' * 60)
     print('')
 
+    print('Step 1: Creating test users...')
     users = create_test_users()
     print('')
 
+    print('Step 2: Creating test shipments...')
     shipments = create_test_shipments()
     print('')
 
+    print('Step 3: Creating test bids...')
     bids = create_test_bids()
     print('')
 
-    print('Done!')
-    print(f'Total: {len(users)} users, {len(shipments)} shipments, {len(bids)} bids')
+    print('Step 4: Accepting some bids...')
+    accepted = create_accepted_shipments()
+    print('')
+
+    print('Step 5: Creating tracking updates...')
+    tracking = create_tracking_updates()
+    print('')
+
+    print('Step 6: Creating delivery proofs...')
+    proofs = create_delivery_proofs()
+    print('')
+
+    print('Step 7: Creating reviews...')
+    reviews = create_reviews()
+    print('')
+
+    print('=' * 60)
+    print('SUMMARY')
+    print('=' * 60)
+    print(f'Users:            {len(users)}')
+    print(f'Shipments:        {len(shipments)}')
+    print(f'Bids:             {len(bids)}')
+    print(f'Accepted Bids:    {len(accepted)}')
+    print(f'Tracking Updates: {len(tracking)}')
+    print(f'Delivery Proofs:  {len(proofs)}')
+    print(f'Reviews:          {len(reviews)}')
+    print('=' * 60)
+    print('')
+    print('Done! Test data populated successfully!')
+    print('')
