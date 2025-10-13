@@ -817,48 +817,9 @@ def teklif_kabul_et(request, bid_id):
 
         messages.success(request, f'Teklif kabul edildi! Ödeme sayfasına yönlendiriliyorsunuz...')
 
-        # Email notification gönder
-        try:
-            from django.core.mail import send_mail
-            from django.conf import settings
-
-            carrier_email = bid.carrier_email
-            if carrier_email:
-                subject = f'Teklifiniz Kabul Edildi! - {bid.tracking_number}'
-
-                # Yorum varsa email mesajına ekle
-                comment_section = ''
-                if shipper_comment:
-                    comment_section = f'''
-Yük Sahibinden Mesaj:
-"{shipper_comment}"
-'''
-
-                email_message = f'''
-Merhaba {bid.carrier_name},
-
-Tebrikler! {bid.offered_price} TL tutarındaki teklifiniz kabul edildi.
-
-İlan Detayları:
-- Takip No: {bid.tracking_number}
-- Yük Sahibi: {request.user.get_full_name() or request.user.email}
-- Fiyat: {bid.offered_price} TL
-{comment_section}
-Yük sahibi ödeme yaptıktan sonra iletişime geçebilirsiniz.
-
-Saygılarımızla,
-NAKLIYE NET Ekibi
-                '''
-
-                send_mail(
-                    subject,
-                    email_message,
-                    settings.DEFAULT_FROM_EMAIL,
-                    [carrier_email],
-                    fail_silently=True,
-                )
-        except Exception as email_error:
-            print(f"Error sending acceptance email: {email_error}")
+        # TODO: Send email notification asynchronously (celery/background task)
+        # Email sending temporarily disabled for performance
+        # Will be re-enabled with async implementation
 
         # Ödeme sayfasına yönlendir
         return redirect('website:odeme_yap', payment_id=payment.payment_id)
