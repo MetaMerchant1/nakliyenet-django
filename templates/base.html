@@ -36,6 +36,11 @@
     <link rel="preload" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css" rel="stylesheet"></noscript>
 
+    <!-- Google Fonts - Montserrat -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700;800&display=swap" rel="stylesheet">
+
     <!-- Font display swap for Bootstrap Icons font -->
     <style>
         @font-face {
@@ -59,9 +64,11 @@
         }
 
         .navbar-brand {
-            font-weight: bold;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 800;
             color: var(--primary-color) !important;
             font-size: 1.5rem;
+            letter-spacing: -0.5px;
         }
 
         .btn-primary {
@@ -160,19 +167,8 @@
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand" href="/" style="padding: 0;">
-                <video
-                    autoplay
-                    loop
-                    muted
-                    playsinline
-                    preload="none"
-                    style="height: 40px; width: auto; display: block;"
-                    loading="lazy"
-                    aria-label="NAKLIYE NET Logo">
-                    <source src="/static/videos/logo.mp4" type="video/mp4">
-                    🚚 {{ SITE_NAME }}
-                </video>
+            <a class="navbar-brand" href="/">
+                NAKLIYENET
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                 <span class="navbar-toggler-icon"></span>
