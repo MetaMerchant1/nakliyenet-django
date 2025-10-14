@@ -1,5 +1,13 @@
 {% extends 'base.html' %}
 
+{% block extra_head %}
+{% if schema_org %}
+<script type="application/ld+json">
+{{ schema_org|safe }}
+</script>
+{% endif %}
+{% endblock %}
+
 {% block content %}
 <div class="container my-5">
     <h1 class="mb-4 text-center">Sıkça Sorulan Sorular</h1>

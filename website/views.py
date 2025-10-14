@@ -41,6 +41,32 @@ def index(request):
         print(f"Error fetching stats: {e}")
         stats = {'active_shipments': 0, 'completed_shipments': 0, 'total_users': 0, 'total_carriers': 0}
 
+    # Schema.org Organization structured data - Google'da marka tanınırlığı için
+    organization_schema = {
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        'name': 'NAKLIYE NET',
+        'url': f'{request.scheme}://{request.get_host()}',
+        'logo': f'{request.scheme}://{request.get_host()}/static/images/logo.png',
+        'description': 'Türkiye\'nin en büyük dijital nakliye ve taşımacılık platformu',
+        'foundingDate': '2024',
+        'areaServed': {
+            '@type': 'Country',
+            'name': 'Turkey'
+        },
+        'sameAs': [
+            # Sosyal medya hesapları buraya eklenecek
+            # 'https://www.facebook.com/nakliyenet',
+            # 'https://www.instagram.com/nakliyenet',
+            # 'https://twitter.com/nakliyenet'
+        ],
+        'contactPoint': {
+            '@type': 'ContactPoint',
+            'contactType': 'customer support',
+            'availableLanguage': 'Turkish'
+        }
+    }
+
     context = {
         'title': 'NAKLIYE NET - Türkiye\'nin Dijital Yük Pazaryeri',
         'description': 'Yük gönderin, teklif alın, güvenle taşıyın. Türkiye\'nin en büyük nakliye ve taşımacılık platformu. Ev taşıma, ofis taşıma, yük taşıma hizmetleri.',
@@ -48,6 +74,7 @@ def index(request):
         'og_image': f'{request.scheme}://{request.get_host()}/static/images/og-home.jpg',
         'recent_shipments': recent_shipments,
         'stats': stats,
+        'schema_org': json.dumps(organization_schema, ensure_ascii=False),
     }
     return render(request, 'website/index.html', context)
 
@@ -296,7 +323,7 @@ def nasil_calisir(request):
 
 
 def sss(request):
-    """Sıkça Sorulan Sorular"""
+    """Sıkça Sorulan Sorular - SEO optimize FAQPage schema ile"""
     faqs = [
         {
             'question': 'NAKLIYE NET nedir?',
@@ -304,23 +331,56 @@ def sss(request):
         },
         {
             'question': 'Nasıl teklif alabilirim?',
-            'answer': 'Mobil uygulamamızı indirin, yük ilanınızı oluşturun ve taşıyıcılardan gelen teklifleri karşılaştırın.'
+            'answer': 'Web sitemizden kayıt olun, yük ilanınızı oluşturun ve doğrulanmış taşıyıcılardan gelen teklifleri karşılaştırın. En uygun teklifi seçin ve güvenle nakliye işleminizi gerçekleştirin.'
         },
         {
             'question': 'Güvenli mi?',
-            'answer': 'Evet! Tüm taşıyıcılar belge kontrolünden geçer ve kullanıcı değerlendirmeleri sistemi mevcuttur.'
+            'answer': 'Evet! Tüm taşıyıcılar belge kontrolünden geçer (ehliyet, ruhsat, SRC belgesi) ve kullanıcı değerlendirmeleri sistemi mevcuttur. Ayrıca güvenli escrow ödeme sistemiyle paranız teslim onayına kadar platformda güvende tutulur.'
         },
         {
             'question': 'Ücretlendirme nasıl?',
-            'answer': 'Platform kullanımı ücretsizdir. Sadece başarılı taşımalardan küçük bir komisyon alınır.'
+            'answer': 'Platform kullanımı ücretsizdir. Yük sahipleri ve taşıyıcılar ücretsiz kayıt olabilir. Sadece başarılı taşımalardan %10 platform komisyonu alınır.'
+        },
+        {
+            'question': 'Ödeme sistemi nasıl çalışır?',
+            'answer': 'Teklifi kabul ettikten sonra yük sahibi ödemeyi yapar. Para escrow sisteminde güvende tutulur. Taşıyıcı yükü teslim eder, her iki taraf da onayladıktan sonra ödeme taşıyıcıya transfer edilir.'
+        },
+        {
+            'question': 'Hangi şehirlerde hizmet veriyorsunuz?',
+            'answer': 'Türkiye\'nin tüm şehirlerinde hizmet vermekteyiz. İstanbul, Ankara, İzmir, Bursa, Antalya başta olmak üzere tüm il ve ilçelere nakliye hizmeti sunulmaktadır.'
+        },
+        {
+            'question': 'Taşıyıcı olarak nasıl kayıt olurum?',
+            'answer': 'Kayıt olduktan sonra profilinizden belgelerinizi (ehliyet, ruhsat, SRC belgesi) yükleyin. Belgeleriniz admin onayından geçtikten sonra ilanlara teklif verebilirsiniz.'
+        },
+        {
+            'question': 'Yükümü takip edebilir miyim?',
+            'answer': 'Evet! Taşıyıcı teslimatı kabul ettikten sonra yükünüzü gerçek zamanlı olarak takip edebilir, konum güncellemelerini görebilir ve taşıyıcı ile mesajlaşabilirsiniz.'
         },
     ]
 
+    # Schema.org FAQPage structured data - Google'da zengin snippet için
+    faq_schema = {
+        '@context': 'https://schema.org',
+        '@type': 'FAQPage',
+        'mainEntity': [
+            {
+                '@type': 'Question',
+                'name': faq['question'],
+                'acceptedAnswer': {
+                    '@type': 'Answer',
+                    'text': faq['answer']
+                }
+            } for faq in faqs
+        ]
+    }
+
     context = {
-        'title': 'Sıkça Sorulan Sorular - NAKLIYE NET',
-        'description': 'NAKLIYE NET hakkında merak ettiğiniz her şey. SSS sayfamızda tüm sorularınızın yanıtları.',
-        'keywords': 'sss, sorular, cevaplar, yardım',
+        'title': 'Sıkça Sorulan Sorular (SSS) - NAKLIYE NET',
+        'description': 'NAKLIYE NET hakkında merak ettiğiniz her şey. Nakliye platformumuz, ödeme sistemi, güvenlik, taşıyıcı olmak ve daha fazlası hakkında sık sorulan sorular ve cevapları.',
+        'keywords': 'sss, sorular, cevaplar, yardım, nakliye, taşımacılık, sık sorulan sorular',
         'faqs': faqs,
+        'schema_org': json.dumps(faq_schema, ensure_ascii=False),
     }
     return render(request, 'website/sss.html', context)
 
@@ -460,11 +520,36 @@ def sehir_nakliye(request, sehir_slug):
             'avg_savings': 30,
         }
 
+    # Schema.org LocalBusiness structured data - Lokal SEO için
+    localbusiness_schema = {
+        '@context': 'https://schema.org',
+        '@type': 'Service',
+        'serviceType': 'Nakliye ve Taşımacılık Hizmeti',
+        'provider': {
+            '@type': 'Organization',
+            'name': 'NAKLIYE NET',
+            'url': f'{request.scheme}://{request.get_host()}'
+        },
+        'areaServed': {
+            '@type': 'City',
+            'name': sehir
+        },
+        'description': f'{sehir} nakliye ve taşımacılık hizmetleri. Ev taşıma, ofis taşıma, yük taşıma.',
+        'availableChannel': {
+            '@type': 'ServiceChannel',
+            'serviceUrl': f'{request.scheme}://{request.get_host()}/nakliye/{sehir_slug}/'
+        }
+    }
+
     context = {
+        'title': f'{sehir} Nakliye - En Uygun Taşıma Fiyatları | NAKLIYE NET',
+        'description': f'{sehir} nakliye ve taşımacılık hizmetleri. Ev taşıma, ofis taşıma, yük taşıma için doğrulanmış taşıyıcılardan teklif alın. {stats["active_shipments"]} aktif ilan.',
+        'keywords': f'{sehir} nakliye, {sehir} taşımacılık, {sehir} ev taşıma, {sehir} ofis taşıma, {sehir} yük taşıma',
         'sehir': sehir,
         'sehir_slug': sehir_slug,
         'shipments': shipments,
         'stats': stats,
+        'schema_org': json.dumps(localbusiness_schema, ensure_ascii=False),
     }
     return render(request, 'website/sehir_nakliye.html', context)
 

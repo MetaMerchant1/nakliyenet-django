@@ -1,0 +1,178 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block title %}Blog Yazısı Oluşturucu - NAKLIYE NET Admin{% endblock %}
+
+{% block extrastyle %}
+<style>
+    .blog-generator-form {
+        max-width: 800px;
+        margin: 40px auto;
+        padding: 30px;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .form-group {
+        margin-bottom: 25px;
+    }
+    .form-group label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 8px;
+        color: #333;
+    }
+    .form-group input[type="text"],
+    .form-group select {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        font-size: 14px;
+    }
+    .form-group input[type="text"]:focus,
+    .form-group select:focus {
+        outline: none;
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 3px rgba(13, 110, 253, 0.1);
+    }
+    .btn-primary {
+        background: #0d6efd;
+        color: white;
+        padding: 12px 30px;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        cursor: pointer;
+        font-weight: 500;
+    }
+    .btn-primary:hover {
+        background: #0b5ed7;
+    }
+    .help-text {
+        font-size: 13px;
+        color: #666;
+        margin-top: 5px;
+    }
+    .content-type-info {
+        background: #f8f9fa;
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 10px;
+    }
+    .content-type-info h4 {
+        margin: 0 0 10px 0;
+        font-size: 14px;
+        color: #0d6efd;
+    }
+    .content-type-info ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+    .example-titles {
+        background: #fff3cd;
+        border: 1px solid #ffc107;
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 20px;
+    }
+    .example-titles h4 {
+        margin: 0 0 10px 0;
+        color: #856404;
+    }
+    .example-titles ul {
+        margin: 0;
+        padding-left: 20px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="blog-generator-form">
+    <h1 style="margin-bottom: 10px;">📝 Blog Yazısı Oluşturucu</h1>
+    <p style="color: #666; margin-bottom: 30px;">SEO-optimize edilmiş blog yazıları oluşturun. Yazı taslak olarak kaydedilir, düzenleyip yayınlayabilirsiniz.</p>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="form-group">
+            <label for="title">Blog Yazısı Başlığı *</label>
+            <input type="text" id="title" name="title" required placeholder="Örn: İstanbul'da Evden Eve Nakliye Fiyatları 2025">
+            <div class="help-text">SEO dostu, arama motorlarında üst sıralarda çıkacak bir başlık yazın (50-60 karakter ideal)</div>
+        </div>
+
+        <div class="form-group">
+            <label for="keywords">Anahtar Kelimeler</label>
+            <input type="text" id="keywords" name="keywords" placeholder="Örn: evden eve nakliye, istanbul nakliye, nakliye fiyatları">
+            <div class="help-text">Virgülle ayrılmış anahtar kelimeler. SEO için önemli.</div>
+        </div>
+
+        <div class="form-group">
+            <label for="content_type">İçerik Tipi *</label>
+            <select id="content_type" name="content_type" required onchange="updateContentInfo()">
+                <option value="guide">📚 Rehber/Kılavuz (Guide)</option>
+                <option value="tips">💡 İpuçları (Tips)</option>
+                <option value="comparison">⚖️ Karşılaştırma (Comparison)</option>
+            </select>
+
+            <div class="content-type-info" id="guide-info">
+                <h4>📚 Rehber/Kılavuz İçeriği</h4>
+                <ul>
+                    <li>Kapsamlı ve detaylı bilgi içerir</li>
+                    <li>Adım adım açıklamalar</li>
+                    <li>NAKLIYE NET'in özelliklerini vurgular</li>
+                    <li>SEO için optimize edilmiş yapı</li>
+                </ul>
+            </div>
+
+            <div class="content-type-info" id="tips-info" style="display:none;">
+                <h4>💡 İpuçları İçeriği</h4>
+                <ul>
+                    <li>Pratik öneriler ve ipuçları</li>
+                    <li>Numaralandırılmış liste formatı</li>
+                    <li>Hızlı okunabilir içerik</li>
+                    <li>Kullanıcı odaklı tavsiyeler</li>
+                </ul>
+            </div>
+
+            <div class="content-type-info" id="comparison-info" style="display:none;">
+                <h4>⚖️ Karşılaştırma İçeriği</h4>
+                <ul>
+                    <li>Geleneksel vs Dijital nakliye</li>
+                    <li>Fark ve avantajları vurgular</li>
+                    <li>NAKLIYE NET'in üstünlüklerini gösterir</li>
+                    <li>Karar vermeyi kolaylaştırır</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="example-titles">
+            <h4>💡 Örnek Blog Başlıkları (SEO İçin)</h4>
+            <ul>
+                <li>İstanbul'da Evden Eve Nakliye Fiyatları 2025 - Uygun Fiyatlı Taşıma</li>
+                <li>Nakliye Yaparken Nelere Dikkat Edilmeli? 10 Önemli İpucu</li>
+                <li>Ankara'da Ofis Taşıma - Profesyonel Nakliye Hizmeti</li>
+                <li>Nakliye Firması Seçerken Dikkat Edilecek 7 Kriter</li>
+                <li>İzmir Nakliye Şirketleri - En İyi Taşımacılık Hizmetleri</li>
+                <li>Evden Eve Nakliye Maliyetleri - 2025 Fiyat Rehberi</li>
+                <li>Gebze'de Yük Taşıma - Güvenilir Nakliye Çözümleri</li>
+                <li>Nakliye Sigortası Nedir? Neden Gereklidir?</li>
+            </ul>
+        </div>
+
+        <div style="margin-top: 30px;">
+            <button type="submit" class="btn-primary">✨ Blog Yazısı Oluştur</button>
+            <a href="{% url 'admin:blog_blogpost_changelist' %}" style="margin-left: 15px; color: #666; text-decoration: none;">← Geri Dön</a>
+        </div>
+    </form>
+</div>
+
+<script>
+function updateContentInfo() {
+    const contentType = document.getElementById('content_type').value;
+    document.getElementById('guide-info').style.display = contentType === 'guide' ? 'block' : 'none';
+    document.getElementById('tips-info').style.display = contentType === 'tips' ? 'block' : 'none';
+    document.getElementById('comparison-info').style.display = contentType === 'comparison' ? 'block' : 'none';
+}
+</script>
+{% endblock %}

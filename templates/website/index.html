@@ -1,6 +1,14 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% block extra_head %}
+{% if schema_org %}
+<script type="application/ld+json">
+{{ schema_org|safe }}
+</script>
+{% endif %}
+{% endblock %}
+
 {% block content %}
 <!-- Hero Section -->
 <div class="bg-primary text-white py-5">

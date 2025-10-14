@@ -1,9 +1,10 @@
-from django.urls import path
+from django.urls import path, re_path
 from . import views
 
 app_name = 'blog'
 
 urlpatterns = [
     path('', views.BlogListView.as_view(), name='list'),
-    path('<slug:slug>/', views.blog_detail, name='detail'),
+    # Unicode slug support for Turkish characters
+    re_path(r'^(?P<slug>[\w-]+)/$', views.blog_detail, name='detail'),
 ]

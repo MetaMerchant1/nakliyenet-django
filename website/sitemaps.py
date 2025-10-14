@@ -68,3 +68,25 @@ class CitySitemap(Sitemap):
 
     def location(self, item):
         return f'/nakliye/{item}/'
+
+
+class BlogSitemap(Sitemap):
+    """
+    Blog posts sitemap - SEO için içerik sayfaları
+    """
+    priority = 0.7
+    changefreq = 'monthly'
+    protocol = 'https'
+
+    def items(self):
+        try:
+            from blog.models import BlogPost
+            return BlogPost.objects.filter(status='published').order_by('-published_at')[:500]
+        except:
+            return []
+
+    def location(self, item):
+        return reverse('blog:detail', args=[item.slug])
+
+    def lastmod(self, item):
+        return item.updated_at or item.published_at
