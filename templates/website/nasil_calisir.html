@@ -1,59 +1,222 @@
 {% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
 <div class="container my-5">
-    <h1 class="mb-4 text-center">Nasıl Çalışır?</h1>
+    <h1 class="mb-2 text-center">Nasıl Çalışır?</h1>
+    <p class="text-center text-muted mb-5">NAKLIYE NET ile güvenli ve hızlı nakliye çözümleri</p>
 
-    <div class="row g-4 mt-4">
-        <div class="col-md-6 col-lg-3">
-            <div class="text-center">
-                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-                     style="width: 80px; height: 80px;">
-                    <span class="fs-3 fw-bold">1</span>
+    <!-- Yük Sahipleri İçin -->
+    <div class="mb-5">
+        <h2 class="h3 mb-4 text-primary"><i class="bi bi-box-seam"></i> Yük Sahipleri İçin</h2>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 80px; height: 80px;">
+                            <span class="fs-3 fw-bold">1</span>
+                        </div>
+                        <h3 class="h5">Kayıt Olun</h3>
+                        <p class="text-muted">Web sitemizden veya mobil uygulamamızdan ücretsiz kayıt olun. Profil bilgilerinizi tamamlayın.</p>
+                    </div>
                 </div>
-                <h3 class="h5">Uygulamayı İndirin</h3>
-                <p>iOS veya Android cihazınıza ücretsiz indirin</p>
             </div>
-        </div>
-        <div class="col-md-6 col-lg-3">
-            <div class="text-center">
-                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-                     style="width: 80px; height: 80px;">
-                    <span class="fs-3 fw-bold">2</span>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 80px; height: 80px;">
+                            <span class="fs-3 fw-bold">2</span>
+                        </div>
+                        <h3 class="h5">İlan Oluşturun</h3>
+                        <p class="text-muted">Yükünüzün detaylarını, nereden nereye taşınacağını ve tarihini belirtin.</p>
+                    </div>
                 </div>
-                <h3 class="h5">İlan Oluşturun</h3>
-                <p>Yükünüzün detaylarını girin ve ilanı yayınlayın</p>
             </div>
-        </div>
-        <div class="col-md-6 col-lg-3">
-            <div class="text-center">
-                <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-                     style="width: 80px; height: 80px;">
-                    <span class="fs-3 fw-bold">3</span>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 80px; height: 80px;">
+                            <span class="fs-3 fw-bold">3</span>
+                        </div>
+                        <h3 class="h5">Teklifleri Karşılaştırın</h3>
+                        <p class="text-muted">Doğrulanmış taşıyıcılardan gelen teklifleri inceleyin, en uygununu seçin.</p>
+                    </div>
                 </div>
-                <h3 class="h5">Teklif Alın</h3>
-                <p>Taşıyıcılardan gelen teklifleri karşılaştırın</p>
             </div>
-        </div>
-        <div class="col-md-6 col-lg-3">
-            <div class="text-center">
-                <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
-                     style="width: 80px; height: 80px;">
-                    <i class="bi bi-check-lg fs-3"></i>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 80px; height: 80px;">
+                            <i class="bi bi-check-lg fs-3"></i>
+                        </div>
+                        <h3 class="h5">Ödeme ve Takip</h3>
+                        <p class="text-muted">Güvenli ödeme yapın, yükünüzü gerçek zamanlı takip edin.</p>
+                    </div>
                 </div>
-                <h3 class="h5">Taşıma Başlasın</h3>
-                <p>En uygun teklifi seçin ve güvenle taşıyın</p>
             </div>
         </div>
     </div>
 
-    <div class="text-center mt-5">
-        <a href="{{ IOS_APP_URL }}" target="_blank" class="btn btn-primary btn-lg me-2">
-            <i class="bi bi-apple me-2"></i>App Store
-        </a>
-        <a href="{{ ANDROID_APP_URL }}" target="_blank" class="btn btn-success btn-lg">
-            <i class="bi bi-google-play me-2"></i>Google Play
-        </a>
+    <!-- Taşıyıcılar İçin -->
+    <div class="mb-5">
+        <h2 class="h3 mb-4 text-success"><i class="bi bi-truck"></i> Taşıyıcılar İçin</h2>
+        <div class="row g-4">
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 80px; height: 80px;">
+                            <span class="fs-3 fw-bold">1</span>
+                        </div>
+                        <h3 class="h5">Kayıt ve Belge Yükleme</h3>
+                        <p class="text-muted">Kayıt olun, belgelerinizi (ehliyet, ruhsat, SRC) yükleyin, onay bekleyin.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 80px; height: 80px;">
+                            <span class="fs-3 fw-bold">2</span>
+                        </div>
+                        <h3 class="h5">İlanları İnceleyin</h3>
+                        <p class="text-muted">Binlerce aktif ilan arasından güzergahınıza uygun olanları bulun.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 80px; height: 80px;">
+                            <span class="fs-3 fw-bold">3</span>
+                        </div>
+                        <h3 class="h5">Teklif Verin</h3>
+                        <p class="text-muted">Fiyatınızı ve teslimat sürenizi belirtin, yük sahibinin onayını bekleyin.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 col-lg-3">
+                <div class="card h-100 border-0 shadow-sm">
+                    <div class="card-body text-center">
+                        <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3"
+                             style="width: 80px; height: 80px;">
+                            <i class="bi bi-cash-coin fs-3"></i>
+                        </div>
+                        <h3 class="h5">Taşıma ve Kazanç</h3>
+                        <p class="text-muted">Yükü güvenle taşıyın, teslimat sonrası paranızı alın.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Güvenlik ve Ödeme Süreci -->
+    <div class="row mb-5">
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h3 class="h4 mb-3"><i class="bi bi-shield-check text-success"></i> Güvenlik</h3>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Tüm taşıyıcılar belge kontrolünden geçer</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Kimlik doğrulama sistemi</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Karşılıklı değerlendirme sistemi</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> 7/24 müşteri desteği</li>
+                        <li class="mb-2"><i class="bi bi-check-circle text-success me-2"></i> Güvenli escrow ödeme sistemi</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-4">
+            <div class="card border-0 shadow-sm h-100">
+                <div class="card-body">
+                    <h3 class="h4 mb-3"><i class="bi bi-credit-card text-primary"></i> Ödeme Süreci</h3>
+                    <ul class="list-unstyled">
+                        <li class="mb-2"><strong>1.</strong> Yük sahibi teklifi kabul eder</li>
+                        <li class="mb-2"><strong>2.</strong> Ödeme platformumuzda güvende tutulur (Escrow)</li>
+                        <li class="mb-2"><strong>3.</strong> Taşıyıcı ödeme bildirimini görür ve yükü alır</li>
+                        <li class="mb-2"><strong>4.</strong> Taşıyıcı yükü teslim eder</li>
+                        <li class="mb-2"><strong>5.</strong> Her iki taraf teslimatı onaylar</li>
+                        <li class="mb-2"><strong>6.</strong> Ödeme taşıyıcıya transfer edilir (%10 platform komisyonu düşülür)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Platform Özellikleri -->
+    <div class="mb-5">
+        <h2 class="h3 mb-4 text-center">Platform Özellikleri</h2>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="text-center">
+                    <i class="bi bi-geo-alt text-primary" style="font-size: 3rem;"></i>
+                    <h4 class="h5 mt-3">Gerçek Zamanlı Takip</h4>
+                    <p class="text-muted">Yükünüzün konumunu anlık olarak takip edin</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <i class="bi bi-chat-dots text-primary" style="font-size: 3rem;"></i>
+                    <h4 class="h5 mt-3">Anlık Mesajlaşma</h4>
+                    <p class="text-muted">Taşıyıcı ile direkt iletişim kurun</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <i class="bi bi-star text-primary" style="font-size: 3rem;"></i>
+                    <h4 class="h5 mt-3">Değerlendirme Sistemi</h4>
+                    <p class="text-muted">Karşılıklı değerlendirme ile güven oluşturun</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <i class="bi bi-camera text-primary" style="font-size: 3rem;"></i>
+                    <h4 class="h5 mt-3">Teslimat Kanıtı</h4>
+                    <p class="text-muted">Fotoğraf ve imza ile teslimat belgeleme</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <i class="bi bi-graph-up text-primary" style="font-size: 3rem;"></i>
+                    <h4 class="h5 mt-3">Fiyat Karşılaştırma</h4>
+                    <p class="text-muted">Birden fazla teklif alın, en uygununu seçin</p>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="text-center">
+                    <i class="bi bi-clock-history text-primary" style="font-size: 3rem;"></i>
+                    <h4 class="h5 mt-3">Geçmiş Takibi</h4>
+                    <p class="text-muted">Tüm nakliye işlemlerinizi kayıt altında tutun</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CTA Buttons -->
+    <div class="text-center mt-5 p-5 bg-light rounded">
+        <h3 class="mb-4">Hemen Başlayın!</h3>
+        <div class="d-flex flex-wrap justify-content-center gap-3">
+            <a href="{% url 'website:register' %}" class="btn btn-primary btn-lg">
+                <i class="bi bi-person-plus me-2"></i>Kayıt Ol
+            </a>
+            <a href="{% url 'website:ilanlar' %}" class="btn btn-outline-primary btn-lg">
+                <i class="bi bi-search me-2"></i>İlanları İncele
+            </a>
+            <a href="{% url 'website:ilan_olustur' %}" class="btn btn-success btn-lg">
+                <i class="bi bi-plus-circle me-2"></i>İlan Oluştur
+            </a>
+        </div>
+        <p class="text-muted mt-4 mb-0">
+            <small>Mobil uygulamalarımız yakında iOS ve Android için mevcut olacak</small>
+        </p>
     </div>
 </div>
 {% endblock %}
