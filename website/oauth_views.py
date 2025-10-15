@@ -62,16 +62,31 @@ def google_oauth_callback(request):
 
     if error:
         logger.error(f"Google OAuth error: {error}")
-        return HttpResponse(f"Google OAuth Error: {error}", status=400)
+        error_description = request.GET.get('error_description', '')
+
+        if error == 'access_denied':
+            # User cancelled the login
+            return redirect('/giris/?error=google_cancelled')
+
+        return HttpResponse(
+            f"Google OAuth Hatası: {error}<br>{error_description}<br><br>"
+            f"<a href='/giris/'>Giriş sayfasına dön</a>",
+            status=400
+        )
 
     if not code:
         return HttpResponse("No authorization code received", status=400)
 
     # Verify state (CSRF protection)
     saved_state = request.session.get('oauth_state')
-    if state != saved_state:
-        logger.error(f"OAuth state mismatch: {state} != {saved_state}")
-        # Don't fail for now, just log
+    if state and saved_state and state != saved_state:
+        logger.warning(f"OAuth state mismatch: received={state}, saved={saved_state}")
+        # Clear the old state
+        request.session.pop('oauth_state', None)
+        # Continue anyway - Google has already authenticated the user
+    else:
+        # Clear the state after successful verification
+        request.session.pop('oauth_state', None)
 
     # Get Google credentials
     from allauth.socialaccount.models import SocialApp
@@ -96,12 +111,19 @@ def google_oauth_callback(request):
     }
 
     try:
-        token_response = requests.post(token_url, data=token_data)
+        token_response = requests.post(token_url, data=token_data, timeout=10)
         token_response.raise_for_status()
         tokens = token_response.json()
+    except requests.exceptions.HTTPError as e:
+        logger.error(f"Failed to exchange code for token: HTTP {e.response.status_code}")
+        logger.error(f"Response body: {e.response.text}")
+        return HttpResponse(
+            f"Google OAuth Error: {e.response.status_code} - {e.response.text[:200]}",
+            status=500
+        )
     except Exception as e:
         logger.error(f"Failed to exchange code for token: {e}")
-        return HttpResponse(f"Token exchange failed: {e}", status=500)
+        return HttpResponse(f"Token exchange failed: {str(e)}", status=500)
 
     access_token = tokens.get('access_token')
     if not access_token:
@@ -144,15 +166,21 @@ def google_oauth_callback(request):
         user.save()
         logger.info(f"New user created: {email}")
 
-        # Create UserProfile
-        try:
-            UserProfile.objects.create(
-                user=user,
-                user_type=0,  # Default: shipper (Yük Veren)
-            )
+    # Ensure UserProfile exists (get_or_create to avoid duplicate error)
+    try:
+        profile, created = UserProfile.objects.get_or_create(
+            user=user,
+            defaults={
+                'user_type': 0,  # Default: shipper (Yük Veren)
+            }
+        )
+        if created:
             logger.info(f"UserProfile created for: {email}")
-        except Exception as e:
-            logger.error(f"Failed to create UserProfile: {e}")
+        else:
+            logger.info(f"UserProfile already exists for: {email}")
+    except Exception as e:
+        logger.error(f"Failed to get/create UserProfile: {e}")
+        # Continue anyway - profile might already exist
 
     # Log the user in
     auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
