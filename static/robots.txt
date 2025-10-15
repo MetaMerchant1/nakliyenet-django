@@ -16,6 +16,8 @@ Disallow: /belge-yukle/
 # Important pages for crawling
 Allow: /ilanlar/
 Allow: /ilan/
+Allow: /blog/
+Allow: /nakliye/
 Allow: /hakkimizda/
 Allow: /iletisim/
 Allow: /nasil-calisir/
@@ -23,6 +25,11 @@ Allow: /sss/
 
 # Sitemap location
 Sitemap: https://nakliyenet.com/sitemap.xml
+
+# Additional sitemaps
+Sitemap: https://nakliyenet.com/sitemap.xml?section=blog
+Sitemap: https://nakliyenet.com/sitemap.xml?section=shipments
+Sitemap: https://nakliyenet.com/sitemap.xml?section=cities
 
 # Crawl delay for polite bots
 Crawl-delay: 1
