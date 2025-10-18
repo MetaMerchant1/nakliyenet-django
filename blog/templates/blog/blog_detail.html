@@ -48,7 +48,7 @@
     "name": "NAKLIYE NET",
     "logo": {
       "@type": "ImageObject",
-      "url": "{{ request.scheme }}://{{ request.get_host }}{% static 'images/logo.png' %}"
+      "url": "{{ request.scheme }}://{{ request.get_host }}/static/favicon.png"
     }
   }{% if post.featured_image %},
   "image": "{{ request.scheme }}://{{ request.get_host }}{{ post.featured_image.url }}"{% endif %}
