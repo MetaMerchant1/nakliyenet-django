@@ -16,6 +16,19 @@ class BlogListView(ListView):
 
 
 def blog_detail(request, slug):
-    """Blog yazısı detay sayfası"""
-    # Test slug receiving
-    return HttpResponse(f"<h1>Blog Detail</h1><p>Received slug: {slug}</p>")
+    """Blog yazısı detay sayfası - SEO optimize"""
+    post = get_object_or_404(BlogPost, slug=slug, status='published')
+
+    # Görüntülenme sayısını artır
+    post.view_count += 1
+    post.save(update_fields=['view_count'])
+
+    context = {
+        'post': post,
+        'title': post.title,
+        'description': post.meta_description or post.content[:155],
+        'keywords': post.meta_keywords,
+        'canonical': f'/blog/{post.slug}/',
+    }
+
+    return render(request, 'blog/blog_detail.html', context)
