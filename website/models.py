@@ -278,11 +278,23 @@ class Shipment(models.Model):
     from_address_lat = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
     from_address_lng = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
 
+    # Pickup address details (for home/office moving)
+    from_floor = models.IntegerField(null=True, blank=True, help_text="Alış adresi kat numarası")
+    from_has_elevator = models.BooleanField(null=True, blank=True, help_text="Alış adresinde normal asansör var mı?")
+    from_has_freight_elevator = models.BooleanField(null=True, blank=True, help_text="Alış adresinde yük asansörü var mı?")
+    from_room_count = models.CharField(max_length=10, null=True, blank=True, help_text="Alış adresi oda sayısı (2+1, 3+1, vb.)")
+
     to_address_city = models.CharField(max_length=100)
     to_address_district = models.CharField(max_length=100)
     to_address_full = models.TextField()
     to_address_lat = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
     to_address_lng = models.DecimalField(max_digits=10, decimal_places=7, null=True, blank=True)
+
+    # Delivery address details (for home/office moving)
+    to_floor = models.IntegerField(null=True, blank=True, help_text="Teslimat adresi kat numarası")
+    to_has_elevator = models.BooleanField(null=True, blank=True, help_text="Teslimat adresinde normal asansör var mı?")
+    to_has_freight_elevator = models.BooleanField(null=True, blank=True, help_text="Teslimat adresinde yük asansörü var mı?")
+    to_room_count = models.CharField(max_length=10, null=True, blank=True, help_text="Teslimat adresi oda sayısı (2+1, 3+1, vb.)")
 
     # Cargo details
     weight = models.DecimalField(max_digits=10, decimal_places=2, help_text="Ağırlık (kg)")

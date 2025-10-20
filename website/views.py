@@ -1047,6 +1047,16 @@ def ilan_olustur(request):
                 suggested_price=float(request.POST.get('suggested_price', 0)),
                 pickup_date=request.POST.get('pickup_date'),
 
+                # Moving details (for home/office moving)
+                from_floor=int(request.POST.get('from_floor')) if request.POST.get('from_floor') else None,
+                from_has_elevator=request.POST.get('from_has_elevator') == 'true',
+                from_has_freight_elevator=request.POST.get('from_has_freight_elevator') == 'true',
+                from_room_count=request.POST.get('from_room_count') if request.POST.get('from_room_count') else None,
+                to_floor=int(request.POST.get('to_floor')) if request.POST.get('to_floor') else None,
+                to_has_elevator=request.POST.get('to_has_elevator') == 'true',
+                to_has_freight_elevator=request.POST.get('to_has_freight_elevator') == 'true',
+                to_room_count=request.POST.get('to_room_count') if request.POST.get('to_room_count') else None,
+
                 # Status
                 status='active',
             )
