@@ -26,6 +26,9 @@ urlpatterns = [
     path('teklif/<str:bid_id>/kabul-et/', views.teklif_kabul_et, name='teklif_kabul_et'),
     path('teklif/<str:bid_id>/reddet/', views.teklif_reddet, name='teklif_reddet'),
 
+    # Taşıyıcı Paneli
+    path('tasiyici-panel/', views.tasiyici_panel, name='tasiyici_panel'),
+
     # Ödeme ve Teslim
     path('odeme/<str:payment_id>/', views.odeme_yap, name='odeme_yap'),
     path('teslim-onayla/<str:payment_id>/', views.teslim_onayla, name='teslim_onayla'),

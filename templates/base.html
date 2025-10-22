@@ -184,9 +184,13 @@
                     <li class="nav-item">
                         <a class="nav-link" href="/">Ana Sayfa</a>
                     </li>
+                    {% if user.is_authenticated and user.profile.user_type == 1 %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'website:ilanlar' %}">İlanlar</a>
+                        <a class="nav-link" href="{% url 'website:tasiyici_panel' %}">
+                            <i class="bi bi-truck me-1"></i>Taşıyıcı Paneli
+                        </a>
                     </li>
+                    {% endif %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'website:hakkimizda' %}">Hakkımızda</a>
                     </li>

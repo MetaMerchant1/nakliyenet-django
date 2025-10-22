@@ -18,12 +18,14 @@
                 <h1 class="display-4 fw-bold mb-3">Türkiye'nin Dijital Yük Pazaryeri</h1>
                 <p class="lead mb-4">Yük gönderin, teklif alın, güvenle taşıyın. Binlerce taşıyıcı arasından en uygun teklifi seçin.</p>
                 <div class="d-flex gap-3">
-                    <a href="{% url 'website:ilan_olustur' %}" class="btn btn-warning btn-lg">
-                        <i class="bi bi-box-seam me-2"></i>Yükünü Hemen Taşı
+                    <a href="#ilan-ver-form" class="btn btn-warning btn-lg">
+                        <i class="bi bi-box-seam me-2"></i>Hemen İlan Ver
                     </a>
-                    <a href="{% url 'website:ilanlar' %}" class="btn btn-light btn-lg">
-                        <i class="bi bi-truck me-2"></i>İlanları Gör
+                    {% if user.is_authenticated and user.profile.user_type == 1 %}
+                    <a href="{% url 'website:tasiyici_panel' %}" class="btn btn-light btn-lg">
+                        <i class="bi bi-truck me-2"></i>Taşıyıcı Paneli
                     </a>
+                    {% endif %}
                 </div>
             </div>
             <div class="col-lg-6">
@@ -77,54 +79,31 @@
     </div>
 </div>
 
-<!-- Son İlanlar -->
-<div class="py-5">
+<!-- İlan Ver Formu -->
+<div class="py-5" id="ilan-ver-form">
     <div class="container">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2 class="h3">Son Eklenen İlanlar</h2>
-            <div class="d-flex gap-2">
-                <a href="{% url 'website:ilan_olustur' %}" class="btn btn-warning">
-                    <i class="bi bi-plus-circle me-2"></i>Yükünü Hemen Taşı
-                </a>
-                <a href="{% url 'website:ilanlar' %}" class="btn btn-outline-primary">
-                    Tümünü Gör <i class="bi bi-arrow-right ms-2"></i>
-                </a>
-            </div>
-        </div>
+        <div class="row justify-content-center">
+            <div class="col-lg-10">
+                <div class="text-center mb-5">
+                    <h2 class="h2 mb-3">Yükünüzü Hemen Taşıyın</h2>
+                    <p class="lead text-muted">Formu doldurun, taşıyıcılardan teklif alın, en uygun olanı seçin!</p>
+                </div>
 
-        <div class="row g-4">
-            {% for shipment in recent_shipments %}
-            <div class="col-md-6 col-lg-4">
-                <a href="{% url 'website:ilan_detay' shipment.tracking_number %}" class="text-decoration-none text-dark">
-                    <div class="shipment-card">
-                        <div class="d-flex justify-content-between align-items-start mb-3">
-                            <h3 class="h6 mb-0">{{ shipment.title|truncatewords:8 }}</h3>
-                            <span class="badge badge-status bg-success">{{ shipment.get_status_display }}</span>
-                        </div>
-
-                        <p class="text-muted small mb-3">{{ shipment.description|truncatewords:15 }}</p>
-
-                        <div class="d-flex justify-content-between text-sm mb-2">
-                            <span><i class="bi bi-geo-alt me-1"></i>{{ shipment.from_address_city }}</span>
-                            <span><i class="bi bi-arrow-right mx-2"></i></span>
-                            <span><i class="bi bi-geo-fill me-1"></i>{{ shipment.to_address_city }}</span>
-                        </div>
-
-                        <div class="d-flex justify-content-between align-items-center mt-3 pt-3 border-top">
-                            <span class="text-muted small">
-                                <i class="bi bi-box me-1"></i>{{ shipment.weight }} kg
-                            </span>
-                            <span class="fw-bold text-primary">{{ shipment.suggested_price }} ₺</span>
-                        </div>
+                {% if user.is_authenticated %}
+                    {% include 'website/partials/shipment_form.html' %}
+                {% else %}
+                <div class="card shadow-sm">
+                    <div class="card-body text-center py-5">
+                        <i class="bi bi-lock fs-1 text-primary mb-3 d-block"></i>
+                        <h3 class="h4 mb-3">İlan vermek için giriş yapın</h3>
+                        <p class="text-muted mb-4">İlan oluşturabilmek için önce Google hesabınızla giriş yapmanız gerekmektedir.</p>
+                        <a href="{% url 'website:google_login_start' %}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-google me-2"></i>Google ile Giriş Yap
+                        </a>
                     </div>
-                </a>
+                </div>
+                {% endif %}
             </div>
-            {% empty %}
-            <div class="col-12 text-center py-5">
-                <i class="bi bi-inbox fs-1 text-muted mb-3 d-block"></i>
-                <p class="text-muted">Henüz ilan bulunmuyor</p>
-            </div>
-            {% endfor %}
         </div>
     </div>
 </div>

@@ -22,13 +22,6 @@ def index(request):
     """
     from .models import Shipment, UserProfile
 
-    # Son ilanlar (PostgreSQL'den)
-    try:
-        recent_shipments = Shipment.objects.filter(status='active').order_by('-created_at')[:6]
-    except Exception as e:
-        print(f"Error fetching recent shipments: {e}")
-        recent_shipments = []
-
     # İstatistikler (PostgreSQL'den)
     try:
         stats = {
@@ -67,14 +60,21 @@ def index(request):
         }
     }
 
+    # Form choices for shipment form
+    cargo_types = Shipment.CARGO_TYPES
+    loading_choices = Shipment.LOADING_CHOICES
+    unloading_choices = Shipment.UNLOADING_CHOICES
+
     context = {
         'title': 'NAKLIYE NET - Türkiye\'nin Dijital Yük Pazaryeri',
         'description': 'Yük gönderin, teklif alın, güvenle taşıyın. Türkiye\'nin en büyük nakliye ve taşımacılık platformu. Ev taşıma, ofis taşıma, yük taşıma hizmetleri.',
         'keywords': 'nakliye, taşımacılık, yük taşıma, ev taşıma, ofis taşıma, kamyonet, nakliye firması',
         'og_image': f'{request.scheme}://{request.get_host()}/static/images/og-home.jpg',
-        'recent_shipments': recent_shipments,
         'stats': stats,
         'schema_org': json.dumps(organization_schema, ensure_ascii=False),
+        'cargo_types': cargo_types,
+        'loading_choices': loading_choices,
+        'unloading_choices': unloading_choices,
     }
     return render(request, 'website/index.html', context)
 
@@ -1001,12 +1001,26 @@ def ilan_olustur(request):
     """
     İlan oluşturma sayfası - Tam fonksiyonlu form
     """
-    from .models import Shipment
+    from .models import Shipment, UserProfile
     import uuid
     from datetime import date
 
     if request.method == 'POST':
         try:
+            # Ensure user profile exists and is shipper
+            if hasattr(request.user, 'profile'):
+                profile = request.user.profile
+                # Set as shipper if not already
+                if profile.user_type != 0:
+                    profile.user_type = 0
+                    profile.save()
+            else:
+                # Create shipper profile
+                profile = UserProfile.objects.create(
+                    user=request.user,
+                    user_type=0  # Yük Veren
+                )
+
             # Generate unique tracking number
             tracking_number = f"YN-{date.today().year}-{uuid.uuid4().hex[:6].upper()}"
 
@@ -1305,3 +1319,72 @@ NAKLIYE NET
         'is_carrier': is_carrier,
     }
     return render(request, 'website/teslim_onay.html', context)
+
+
+@login_required
+def tasiyici_panel(request):
+    """
+    Taşıyıcı Paneli - Sadece taşıyıcılar için
+    Bölgeye göre filtrelenmiş aktif ilanları gösterir
+    """
+    from .models import Shipment, UserProfile
+    from django.db.models import Q
+
+    try:
+        profile = request.user.profile
+    except:
+        messages.error(request, 'Profil bulunamadı.')
+        return redirect('website:profil')
+
+    # Sadece taşıyıcılar erişebilir
+    if profile.user_type != 1:
+        messages.warning(request, 'Bu sayfaya sadece taşıyıcılar erişebilir.')
+        return redirect('website:index')
+
+    # Filtreler
+    city_filter = request.GET.get('sehir', '').strip()
+    cargo_type_filter = request.GET.get('yuk_tipi', '').strip()
+
+    # Taşıyıcının hizmet verdiği bölgeler
+    service_areas = []
+    if profile.service_areas:
+        service_areas = [area.strip() for area in profile.service_areas.split(',')]
+
+    # Aktif ilanları getir
+    shipments = Shipment.objects.filter(status='active').order_by('-created_at')
+
+    # Bölge filtresi - taşıyıcının hizmet verdiği şehirler
+    if service_areas and not city_filter:
+        q_filter = Q()
+        for area in service_areas:
+            q_filter |= Q(from_address_city__icontains=area) | Q(to_address_city__icontains=area)
+        shipments = shipments.filter(q_filter)
+    elif city_filter:
+        # Manuel şehir filtresi
+        shipments = shipments.filter(
+            Q(from_address_city__icontains=city_filter) |
+            Q(to_address_city__icontains=city_filter)
+        )
+
+    # Yük tipi filtresi
+    if cargo_type_filter:
+        shipments = shipments.filter(cargo_type=cargo_type_filter)
+
+    # Pagination
+    from django.core.paginator import Paginator
+    paginator = Paginator(shipments, 20)  # 20 ilan per page
+    page_number = request.GET.get('page', 1)
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        'title': 'Taşıyıcı Paneli - Aktif İlanlar',
+        'description': 'Bölgenizdeki aktif nakliye ilanlarını görün, teklif verin',
+        'page_obj': page_obj,
+        'shipments': page_obj.object_list,
+        'service_areas': service_areas,
+        'cargo_types': Shipment.CARGO_TYPES,
+        'city_filter': city_filter,
+        'cargo_type_filter': cargo_type_filter,
+        'total_shipments': shipments.count(),
+    }
+    return render(request, 'website/tasiyici_panel.html', context)
