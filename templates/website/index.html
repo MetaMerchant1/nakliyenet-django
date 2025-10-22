@@ -10,69 +10,92 @@
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section -->
-<div class="bg-primary text-white py-5">
-    <div class="container">
+<!-- Hero Section - Modern Gradient Design -->
+<div class="position-relative overflow-hidden" style="min-height: 600px;">
+    <!-- Animated Gradient Background -->
+    <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-mesh"></div>
+
+    <!-- Floating Shapes -->
+    <div class="position-absolute" style="top: 10%; left: 10%; width: 100px; height: 100px; background: var(--gradient-primary); opacity: 0.1; border-radius: 50%; animation: float 6s ease-in-out infinite;"></div>
+    <div class="position-absolute" style="top: 60%; right: 15%; width: 150px; height: 150px; background: var(--gradient-primary); opacity: 0.1; border-radius: 50%; animation: float 8s ease-in-out infinite; animation-delay: 2s;"></div>
+
+    <div class="container position-relative py-5" style="padding-top: 5rem !important; padding-bottom: 5rem !important;">
         <div class="row align-items-center">
-            <div class="col-lg-6 mb-4 mb-lg-0">
-                <h1 class="display-4 fw-bold mb-3">Türkiye'nin Dijital Yük Pazaryeri</h1>
-                <p class="lead mb-4">Yük gönderin, teklif alın, güvenle taşıyın. Binlerce taşıyıcı arasından en uygun teklifi seçin.</p>
-                <div class="d-flex gap-3">
-                    <a href="#ilan-ver-form" class="btn btn-warning btn-lg">
-                        <i class="bi bi-box-seam me-2"></i>Hemen İlan Ver
+            <div class="col-lg-6 mb-4 mb-lg-0 scroll-reveal">
+                <h1 class="fw-bold mb-4" style="font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">
+                    <span class="text-gradient">Türkiye'nin</span><br>
+                    Dijital Yük Pazaryeri
+                </h1>
+                <p class="lead mb-5 text-muted" style="font-size: clamp(1.1rem, 2vw, 1.5rem);">
+                    Yük gönderin, teklif alın, güvenle taşıyın. Binlerce taşıyıcı arasından en uygun teklifi seçin.
+                </p>
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="#ilan-ver-form" class="btn-modern btn-primary-gradient btn-lg ripple">
+                        <i class="bi bi-box-seam"></i>
+                        <span>Hemen İlan Ver</span>
                     </a>
                     {% if user.is_authenticated and user.profile.user_type == 1 %}
-                    <a href="{% url 'website:tasiyici_panel' %}" class="btn btn-light btn-lg">
-                        <i class="bi bi-truck me-2"></i>Taşıyıcı Paneli
+                    <a href="{% url 'website:tasiyici_panel' %}" class="btn-modern btn-glass btn-lg">
+                        <i class="bi bi-truck"></i>
+                        <span>Taşıyıcı Paneli</span>
                     </a>
                     {% endif %}
                 </div>
             </div>
-            <div class="col-lg-6">
-                <picture>
-                    <!-- Mobile: 800px width WebP -->
-                    <source media="(max-width: 767px)" srcset="{% static 'images/hero-image-mobile.webp' %}" type="image/webp">
-                    <!-- Tablet: 1200px width WebP -->
-                    <source media="(max-width: 1199px)" srcset="{% static 'images/hero-image-tablet.webp' %}" type="image/webp">
-                    <!-- Desktop: Full size WebP -->
-                    <source srcset="{% static 'images/hero-image.webp' %}" type="image/webp">
-                    <!-- Fallback: Original PNG for old browsers -->
-                    <img src="{% static 'images/hero-image.png' %}" alt="NAKLIYE NET - Türkiye'nin Dijital Yük Pazaryeri" class="img-fluid rounded shadow-lg" width="1536" height="1024" loading="eager">
-                </picture>
+            <div class="col-lg-6 scroll-reveal-right">
+                <div class="position-relative">
+                    <!-- Glow effect behind image -->
+                    <div class="position-absolute top-50 start-50 translate-middle" style="width: 120%; height: 120%; background: var(--gradient-primary); opacity: 0.1; filter: blur(60px); border-radius: 50%;"></div>
+
+                    <picture class="position-relative">
+                        <!-- Mobile: 800px width WebP -->
+                        <source media="(max-width: 767px)" srcset="{% static 'images/hero-image-mobile.webp' %}" type="image/webp">
+                        <!-- Tablet: 1200px width WebP -->
+                        <source media="(max-width: 1199px)" srcset="{% static 'images/hero-image-tablet.webp' %}" type="image/webp">
+                        <!-- Desktop: Full size WebP -->
+                        <source srcset="{% static 'images/hero-image.webp' %}" type="image/webp">
+                        <!-- Fallback: Original PNG for old browsers -->
+                        <img src="{% static 'images/hero-image.png' %}"
+                             alt="NAKLIYE NET - Türkiye'nin Dijital Yük Pazaryeri"
+                             class="img-fluid animate-float"
+                             style="border-radius: 2rem; box-shadow: var(--shadow-2xl);"
+                             width="1536" height="1024" loading="eager">
+                    </picture>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- İstatistikler -->
-<div class="py-5 bg-light">
+<!-- İstatistikler - Modern Stats -->
+<div class="py-5" style="background: linear-gradient(180deg, var(--gray-50) 0%, white 100%);">
     <div class="container">
         <div class="row text-center g-4">
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <i class="bi bi-truck fs-1 text-primary mb-3"></i>
-                        <h3 class="display-5 fw-bold">{{ stats.active_shipments }}</h3>
-                        <p class="text-muted">Aktif İlan</p>
+            <div class="col-md-4 scroll-reveal stagger-1">
+                <div class="stat-counter">
+                    <div class="stat-counter-icon bg-gradient-primary">
+                        <i class="bi bi-truck"></i>
                     </div>
+                    <div class="stat-counter-value" data-count="{{ stats.active_shipments }}">0</div>
+                    <div class="stat-counter-label">Aktif İlan</div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <i class="bi bi-check-circle fs-1 text-success mb-3"></i>
-                        <h3 class="display-5 fw-bold">{{ stats.completed_shipments }}</h3>
-                        <p class="text-muted">Tamamlanan Taşıma</p>
+            <div class="col-md-4 scroll-reveal stagger-2">
+                <div class="stat-counter">
+                    <div class="stat-counter-icon" style="background: linear-gradient(135deg, var(--success-500) 0%, var(--success-600) 100%);">
+                        <i class="bi bi-check-circle"></i>
                     </div>
+                    <div class="stat-counter-value" data-count="{{ stats.completed_shipments }}">0</div>
+                    <div class="stat-counter-label">Tamamlanan Taşıma</div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card border-0 shadow-sm h-100">
-                    <div class="card-body">
-                        <i class="bi bi-people fs-1 text-info mb-3"></i>
-                        <h3 class="display-5 fw-bold">{{ stats.total_users }}+</h3>
-                        <p class="text-muted">Kayıtlı Kullanıcı</p>
+            <div class="col-md-4 scroll-reveal stagger-3">
+                <div class="stat-counter">
+                    <div class="stat-counter-icon" style="background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%);">
+                        <i class="bi bi-people"></i>
                     </div>
+                    <div class="stat-counter-value" data-count="{{ stats.total_users }}">0</div>
+                    <div class="stat-counter-label">Kayıtlı Kullanıcı</div>
                 </div>
             </div>
         </div>
