@@ -47,7 +47,8 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label class="form-label">Şehir *</label>
-                    <input type="text" class="form-control" name="from_city" required placeholder="Örn: İstanbul">
+                    <input type="text" class="form-control city-autocomplete" name="from_city" id="from_city" required placeholder="Örn: İstanbul" autocomplete="off" list="cities-list">
+                    <datalist id="cities-list"></datalist>
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">İlçe *</label>
@@ -104,7 +105,7 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label class="form-label">Şehir *</label>
-                    <input type="text" class="form-control" name="to_city" required placeholder="Örn: Ankara">
+                    <input type="text" class="form-control city-autocomplete" name="to_city" id="to_city" required placeholder="Örn: Ankara" autocomplete="off" list="cities-list">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">İlçe *</label>
@@ -221,6 +222,59 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Türkiye Şehirleri - Alfabetik Sırada
+    const turkishCities = [
+        'Adana', 'Adıyaman', 'Afyonkarahisar', 'Ağrı', 'Aksaray', 'Amasya', 'Ankara',
+        'Antalya', 'Ardahan', 'Artvin', 'Aydın', 'Balıkesir', 'Bartın', 'Batman',
+        'Bayburt', 'Bilecik', 'Bingöl', 'Bitlis', 'Bolu', 'Burdur', 'Bursa',
+        'Çanakkale', 'Çankırı', 'Çorum', 'Denizli', 'Diyarbakır', 'Düzce', 'Edirne',
+        'Elazığ', 'Erzincan', 'Erzurum', 'Eskişehir', 'Gaziantep', 'Giresun', 'Gümüşhane',
+        'Hakkari', 'Hatay', 'Iğdır', 'Isparta', 'İstanbul', 'İzmir', 'Kahramanmaraş',
+        'Karabük', 'Karaman', 'Kars', 'Kastamonu', 'Kayseri', 'Kırıkkale', 'Kırklareli',
+        'Kırşehir', 'Kilis', 'Kocaeli', 'Konya', 'Kütahya', 'Malatya', 'Manisa',
+        'Mardin', 'Mersin', 'Muğla', 'Muş', 'Nevşehir', 'Niğde', 'Ordu', 'Osmaniye',
+        'Rize', 'Sakarya', 'Samsun', 'Siirt', 'Sinop', 'Sivas', 'Şanlıurfa', 'Şırnak',
+        'Tekirdağ', 'Tokat', 'Trabzon', 'Tunceli', 'Uşak', 'Van', 'Yalova', 'Yozgat', 'Zonguldak'
+    ];
+
+    // Datalist'i doldur
+    const datalist = document.getElementById('cities-list');
+    if (datalist) {
+        turkishCities.forEach(city => {
+            const option = document.createElement('option');
+            option.value = city;
+            datalist.appendChild(option);
+        });
+    }
+
+    // City autocomplete için gelişmiş özellik
+    const cityInputs = document.querySelectorAll('.city-autocomplete');
+    cityInputs.forEach(input => {
+        // Büyük harf dönüşümü
+        input.addEventListener('input', function(e) {
+            const value = this.value;
+            // İlk harfi büyük yap
+            if (value.length > 0) {
+                this.value = value.charAt(0).toLocaleUpperCase('tr-TR') + value.slice(1).toLocaleLowerCase('tr-TR');
+            }
+        });
+
+        // Enter tuşu ile seç
+        input.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const value = this.value.toLocaleLowerCase('tr-TR');
+                const match = turkishCities.find(city =>
+                    city.toLocaleLowerCase('tr-TR').startsWith(value)
+                );
+                if (match) {
+                    this.value = match;
+                }
+            }
+        });
+    });
+
+    // Cargo type toggle
     const cargoTypeSelect = document.querySelector('select[name="cargo_type"]');
     const movingDetailsElements = document.querySelectorAll('.moving-details');
 

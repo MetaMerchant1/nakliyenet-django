@@ -12,10 +12,13 @@
 {% block content %}
 <!-- Hero Section - High Contrast Modern Design -->
 <div class="position-relative overflow-hidden" style="min-height: 650px; background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);">
+    <!-- Dotted Pattern Background - More Visible -->
+    <div class="position-absolute w-100 h-100" style="top: 0; left: 0; background-image: radial-gradient(circle, rgba(0, 102, 255, 0.15) 2px, transparent 2px); background-size: 40px 40px; background-position: 0 0; opacity: 0.4;"></div>
+
     <!-- Floating Shapes - More Visible -->
-    <div class="position-absolute" style="top: 15%; left: 8%; width: 200px; height: 200px; background: linear-gradient(135deg, rgba(0, 102, 255, 0.15), rgba(0, 212, 255, 0.15)); border-radius: 50%; animation: float 6s ease-in-out infinite; filter: blur(40px);"></div>
-    <div class="position-absolute" style="top: 55%; right: 10%; width: 250px; height: 250px; background: linear-gradient(135deg, rgba(255, 107, 53, 0.12), rgba(245, 158, 11, 0.12)); border-radius: 50%; animation: float 8s ease-in-out infinite; animation-delay: 2s; filter: blur(40px);"></div>
-    <div class="position-absolute" style="bottom: 10%; left: 30%; width: 180px; height: 180px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(52, 211, 153, 0.12)); border-radius: 50%; animation: float 7s ease-in-out infinite; animation-delay: 1s; filter: blur(35px);"></div>
+    <div class="position-absolute" style="top: 15%; left: 8%; width: 200px; height: 200px; background: linear-gradient(135deg, rgba(0, 102, 255, 0.25), rgba(0, 212, 255, 0.25)); border-radius: 50%; animation: float 6s ease-in-out infinite; filter: blur(40px);"></div>
+    <div class="position-absolute" style="top: 55%; right: 10%; width: 250px; height: 250px; background: linear-gradient(135deg, rgba(255, 107, 53, 0.2), rgba(245, 158, 11, 0.2)); border-radius: 50%; animation: float 8s ease-in-out infinite; animation-delay: 2s; filter: blur(40px);"></div>
+    <div class="position-absolute" style="bottom: 10%; left: 30%; width: 180px; height: 180px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(52, 211, 153, 0.2)); border-radius: 50%; animation: float 7s ease-in-out infinite; animation-delay: 1s; filter: blur(35px);"></div>
 
     <div class="container position-relative py-5" style="padding-top: 6rem !important; padding-bottom: 6rem !important; z-index: 10;">
         <div class="row align-items-center">
@@ -82,127 +85,238 @@
     </div>
 </div>
 
-<!-- İstatistikler - High Contrast Stats -->
-<div class="py-5" style="background: white; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB;">
-    <div class="container">
-        <div class="row text-center g-5">
-            <div class="col-md-4 scroll-reveal stagger-1">
-                <div class="stat-counter">
-                    <div class="stat-counter-icon" style="background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%); box-shadow: 0 10px 30px rgba(0, 102, 255, 0.3);">
-                        <i class="bi bi-truck"></i>
-                    </div>
-                    <div class="stat-counter-value" data-count="{{ stats.active_shipments }}" style="background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: clamp(3rem, 8vw, 5rem); text-shadow: none;">{{ stats.active_shipments }}</div>
-                    <div class="stat-counter-label" style="color: #1F2937; font-weight: 600; font-size: 1rem; text-transform: none; letter-spacing: 0;">Aktif İlan</div>
-                </div>
+<!-- İlan Ver Formu - Modern Interactive Design -->
+<div class="py-5" id="ilan-ver-form" style="background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);">
+    <div class="container" style="max-width: 900px;">
+        <!-- Header with FREE Badge -->
+        <div class="text-center mb-4 scroll-reveal">
+            <div class="d-inline-flex flex-wrap align-items-center justify-content-center gap-3 mb-3">
+                <h2 class="fw-bold mb-0" style="font-size: clamp(2rem, 4vw, 2.75rem); color: #111827;">
+                    <span class="text-gradient" style="background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: inline;">Yükünüzü</span> Hemen Taşıyın
+                </h2>
+                <span style="background: linear-gradient(135deg, #10B981 0%, #34D399 100%); color: white; padding: 0.5rem 1.25rem; border-radius: 2rem; font-weight: 700; font-size: 1rem; box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3); display: inline-block; animation: pulse 2s infinite;">
+                    <i class="bi bi-gift-fill me-1"></i>ÜCRETSİZ
+                </span>
             </div>
-            <div class="col-md-4 scroll-reveal stagger-2">
-                <div class="stat-counter">
-                    <div class="stat-counter-icon" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);">
-                        <i class="bi bi-check-circle"></i>
+            <p class="lead" style="font-size: 1.1rem; color: #6B7280; max-width: 600px; margin: 0 auto;">
+                30 saniyede ilan oluşturun, binlerce taşıyıcıdan teklif alın
+            </p>
+        </div>
+
+        <!-- Quick Form Card -->
+        <div class="scroll-reveal" style="background: white; border-radius: 1.5rem; padding: 2.5rem; box-shadow: 0 4px 25px rgba(0, 0, 0, 0.08); border: 2px solid #E5E7EB;">
+            <form id="quickShipmentForm" onsubmit="return false;">
+                <!-- Step 1: Route -->
+                <div class="mb-4">
+                    <label class="form-label" style="color: #374151; font-weight: 600; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem;">
+                        <i class="bi bi-geo-alt-fill" style="color: #0066FF;"></i>
+                        Nereden Nereye?
+                    </label>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" name="from_city" placeholder="Nereden? (Şehir)" required style="padding: 0.875rem 1rem; border: 2px solid #E5E7EB; border-radius: 0.75rem; font-size: 1rem; transition: all 0.2s;" onfocus="this.style.borderColor='#0066FF'; this.style.boxShadow='0 0 0 3px rgba(0, 102, 255, 0.1)';" onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='';">
+                        </div>
+                        <div class="col-md-6">
+                            <input type="text" class="form-control" name="to_city" placeholder="Nereye? (Şehir)" required style="padding: 0.875rem 1rem; border: 2px solid #E5E7EB; border-radius: 0.75rem; font-size: 1rem; transition: all 0.2s;" onfocus="this.style.borderColor='#0066FF'; this.style.boxShadow='0 0 0 3px rgba(0, 102, 255, 0.1)';" onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='';">
+                        </div>
                     </div>
-                    <div class="stat-counter-value" data-count="{{ stats.completed_shipments }}" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: clamp(3rem, 8vw, 5rem); text-shadow: none;">{{ stats.completed_shipments }}</div>
-                    <div class="stat-counter-label" style="color: #1F2937; font-weight: 600; font-size: 1rem; text-transform: none; letter-spacing: 0;">Tamamlanan Taşıma</div>
                 </div>
-            </div>
-            <div class="col-md-4 scroll-reveal stagger-3">
-                <div class="stat-counter">
-                    <div class="stat-counter-icon" style="background: linear-gradient(135deg, #FF6B35 0%, #F59E0B 100%); box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);">
-                        <i class="bi bi-people"></i>
+
+                <!-- Step 2: Cargo Type & Date -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label" style="color: #374151; font-weight: 600; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-box-seam" style="color: #0066FF;"></i>
+                            Ne Taşıyorsunuz?
+                        </label>
+                        <select class="form-select" name="cargo_type" required style="padding: 0.875rem 1rem; border: 2px solid #E5E7EB; border-radius: 0.75rem; font-size: 1rem; transition: all 0.2s;" onfocus="this.style.borderColor='#0066FF'; this.style.boxShadow='0 0 0 3px rgba(0, 102, 255, 0.1)';" onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='';">
+                            {% for value, label in cargo_types %}
+                            <option value="{{value}}">{{label}}</option>
+                            {% endfor %}
+                        </select>
                     </div>
-                    <div class="stat-counter-value" data-count="{{ stats.total_users }}" style="background: linear-gradient(135deg, #FF6B35 0%, #F59E0B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: clamp(3rem, 8vw, 5rem); text-shadow: none;">{{ stats.total_users }}</div>
-                    <div class="stat-counter-label" style="color: #1F2937; font-weight: 600; font-size: 1rem; text-transform: none; letter-spacing: 0;">Kayıtlı Kullanıcı</div>
+                    <div class="col-md-6">
+                        <label class="form-label" style="color: #374151; font-weight: 600; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-calendar-event" style="color: #0066FF;"></i>
+                            Ne Zaman?
+                        </label>
+                        <input type="date" class="form-control" name="pickup_date" required style="padding: 0.875rem 1rem; border: 2px solid #E5E7EB; border-radius: 0.75rem; font-size: 1rem; transition: all 0.2s;" onfocus="this.style.borderColor='#0066FF'; this.style.boxShadow='0 0 0 3px rgba(0, 102, 255, 0.1)';" onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='';">
+                    </div>
+                </div>
+
+                <!-- Step 3: Weight & Budget -->
+                <div class="row g-3 mb-4">
+                    <div class="col-md-6">
+                        <label class="form-label" style="color: #374151; font-weight: 600; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-speedometer2" style="color: #0066FF;"></i>
+                            Ağırlık (kg)
+                        </label>
+                        <input type="number" class="form-control" name="weight" min="1" placeholder="Örn: 100" required style="padding: 0.875rem 1rem; border: 2px solid #E5E7EB; border-radius: 0.75rem; font-size: 1rem; transition: all 0.2s;" onfocus="this.style.borderColor='#0066FF'; this.style.boxShadow='0 0 0 3px rgba(0, 102, 255, 0.1)';" onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='';">
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label" style="color: #374151; font-weight: 600; font-size: 1.05rem; display: flex; align-items: center; gap: 0.5rem;">
+                            <i class="bi bi-currency-dollar" style="color: #0066FF;"></i>
+                            Bütçeniz (₺)
+                        </label>
+                        <input type="number" class="form-control" name="suggested_price" min="1" placeholder="Örn: 1000" required style="padding: 0.875rem 1rem; border: 2px solid #E5E7EB; border-radius: 0.75rem; font-size: 1rem; transition: all 0.2s;" onfocus="this.style.borderColor='#0066FF'; this.style.boxShadow='0 0 0 3px rgba(0, 102, 255, 0.1)';" onblur="this.style.borderColor='#E5E7EB'; this.style.boxShadow='';">
+                    </div>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid mt-4">
+                    <button type="button" onclick="handleFormSubmit()" class="btn-modern btn-primary-gradient btn-lg ripple" style="padding: 1.125rem; font-size: 1.2rem; font-weight: 700; box-shadow: 0 10px 25px rgba(0, 102, 255, 0.3); position: relative;">
+                        <i class="bi bi-check-circle-fill"></i>
+                        <span>Tamamla ve Teklif Al</span>
+                        <span style="position: absolute; top: -8px; right: -8px; background: #10B981; color: white; padding: 0.25rem 0.75rem; border-radius: 1rem; font-size: 0.75rem; font-weight: 700; box-shadow: 0 4px 10px rgba(16, 185, 129, 0.4);">
+                            ÜCRETSİZ
+                        </span>
+                    </button>
+                </div>
+            </form>
+
+            <!-- Login Prompt (Hidden by default) -->
+            <div id="loginPrompt" style="display: none; margin-top: 2rem; padding: 2rem; background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%); border-radius: 1rem; border: 2px solid #0066FF; text-align: center;">
+                <div style="width: 60px; height: 60px; margin: 0 auto 1rem; background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(0, 102, 255, 0.3);">
+                    <i class="bi bi-check-circle-fill" style="font-size: 1.75rem; color: white;"></i>
+                </div>
+                <h4 class="fw-bold mb-2" style="color: #111827; font-size: 1.5rem;">Harika! Neredeyse Bitti 🎉</h4>
+                <p class="mb-4" style="color: #6B7280; font-size: 1.05rem;">
+                    İlanınızı yayınlamak ve teklifleri görmek için giriş yapın
+                </p>
+                <div class="d-flex gap-3 justify-content-center flex-wrap">
+                    <a href="{% url 'website:google_login_start' %}" class="btn-modern btn-primary-gradient btn-lg" style="padding: 0.875rem 2rem; font-size: 1.05rem; box-shadow: 0 8px 20px rgba(0, 102, 255, 0.3);">
+                        <i class="bi bi-google"></i>
+                        <span>Google ile Devam Et</span>
+                    </a>
+                    <a href="{% url 'website:login' %}" class="btn-modern btn-lg" style="background: white; color: var(--primary-600); border: 2px solid var(--primary-200); padding: 0.875rem 2rem; font-size: 1.05rem;">
+                        <i class="bi bi-box-arrow-in-right"></i>
+                        <span>Giriş Yap</span>
+                    </a>
+                </div>
+                <p class="mt-3 mb-0" style="color: #9CA3AF; font-size: 0.9rem;">
+                    <i class="bi bi-shield-check me-1"></i>Bilgileriniz güvende tutulacak
+                </p>
+            </div>
+
+            <!-- Info Tags -->
+            <div class="d-flex flex-wrap justify-content-center gap-3 mt-4" style="padding-top: 1.5rem; border-top: 2px solid #F3F4F6;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; color: #6B7280; font-size: 0.95rem;">
+                    <i class="bi bi-shield-check" style="color: #10B981; font-size: 1.25rem;"></i>
+                    <span>Güvenli Ödeme</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; color: #6B7280; font-size: 0.95rem;">
+                    <i class="bi bi-clock-history" style="color: #0066FF; font-size: 1.25rem;"></i>
+                    <span>Hızlı Teklif</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 0.5rem; color: #6B7280; font-size: 0.95rem;">
+                    <i class="bi bi-people-fill" style="color: #8B5CF6; font-size: 1.25rem;"></i>
+                    <span>Binlerce Taşıyıcı</span>
                 </div>
             </div>
         </div>
     </div>
 </div>
 
-<!-- İlan Ver Formu -->
-<div class="py-5" id="ilan-ver-form">
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-lg-10">
-                <div class="text-center mb-5">
-                    <h2 class="h2 mb-3">Yükünüzü Hemen Taşıyın</h2>
-                    <p class="lead text-muted">Formu doldurun, taşıyıcılardan teklif alın, en uygun olanı seçin!</p>
-                </div>
+<script>
+function handleFormSubmit() {
+    {% if user.is_authenticated %}
+        // If user is logged in, redirect to full form page
+        window.location.href = "{% url 'website:ilan_olustur' %}";
+    {% else %}
+        // If user is not logged in, show login prompt
+        const form = document.getElementById('quickShipmentForm');
+        if (form.checkValidity()) {
+            document.getElementById('loginPrompt').style.display = 'block';
+            document.getElementById('loginPrompt').scrollIntoView({ behavior: 'smooth', block: 'center' });
+        } else {
+            form.reportValidity();
+        }
+    {% endif %}
+}
 
-                {% if user.is_authenticated %}
-                    {% include 'website/partials/shipment_form.html' %}
-                {% else %}
-                <div class="card shadow-sm">
-                    <div class="card-body text-center py-5">
-                        <i class="bi bi-lock fs-1 text-primary mb-3 d-block"></i>
-                        <h3 class="h4 mb-3">İlan vermek için giriş yapın</h3>
-                        <p class="text-muted mb-4">İlan oluşturabilmek için önce Google hesabınızla giriş yapmanız gerekmektedir.</p>
-                        <a href="{% url 'website:google_login_start' %}" class="btn btn-primary btn-lg">
-                            <i class="bi bi-google me-2"></i>Google ile Giriş Yap
-                        </a>
-                    </div>
-                </div>
-                {% endif %}
-            </div>
+// Pulse animation for FREE badge
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes pulse {
+        0%, 100% { transform: scale(1); }
+        50% { transform: scale(1.05); }
+    }
+`;
+document.head.appendChild(style);
+</script>
+
+<!-- Nasıl Çalışır - Modern Design -->
+<div class="py-5" style="background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);">
+    <div class="container" style="max-width: 1200px;">
+        <div class="text-center mb-5 scroll-reveal">
+            <h2 class="fw-bold mb-3" style="font-size: clamp(2rem, 4vw, 3rem); color: #111827;">
+                Nasıl <span class="text-gradient" style="background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: inline;">Çalışır?</span>
+            </h2>
+            <p class="lead" style="font-size: 1.2rem; color: #6B7280; max-width: 700px; margin: 0 auto;">
+                4 adımda güvenli ve kolay nakliye deneyimi
+            </p>
         </div>
-    </div>
-</div>
-
-<!-- Nasıl Çalışır -->
-<div class="py-5 bg-light">
-    <div class="container">
-        <h2 class="h3 text-center mb-5">Nasıl Çalışır?</h2>
         <div class="row g-4">
-            <div class="col-md-3 text-center">
-                <div class="mb-3">
-                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                        <span class="fs-3 fw-bold">1</span>
+            <div class="col-md-3 scroll-reveal stagger-1">
+                <div style="background: white; border-radius: 1.5rem; padding: 2rem; text-align: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; height: 100%;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 10px 30px rgba(0, 102, 255, 0.15)';" onmouseout="this.style.transform=''; this.style.boxShadow='0 4px 20px rgba(0, 0, 0, 0.08)';">
+                    <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(0, 102, 255, 0.3);">
+                        <span style="font-size: 2rem; font-weight: 800; color: white;">1</span>
                     </div>
+                    <h4 style="font-size: 1.25rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem;">Kayıt Olun</h4>
+                    <p style="font-size: 1rem; color: #6B7280; margin: 0; line-height: 1.6;">Hemen ücretsiz kayıt olun</p>
                 </div>
-                <h4 class="h6">Kayıt Olun</h4>
-                <p class="small text-muted">Hemen ücretsiz kayıt olun</p>
             </div>
-            <div class="col-md-3 text-center">
-                <div class="mb-3">
-                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                        <span class="fs-3 fw-bold">2</span>
+            <div class="col-md-3 scroll-reveal stagger-2">
+                <div style="background: white; border-radius: 1.5rem; padding: 2rem; text-align: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; height: 100%;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 10px 30px rgba(0, 102, 255, 0.15)';" onmouseout="this.style.transform=''; this.style.boxShadow='0 4px 20px rgba(0, 0, 0, 0.08)';">
+                    <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(0, 102, 255, 0.3);">
+                        <span style="font-size: 2rem; font-weight: 800; color: white;">2</span>
                     </div>
+                    <h4 style="font-size: 1.25rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem;">İlan Oluştur</h4>
+                    <p style="font-size: 1rem; color: #6B7280; margin: 0; line-height: 1.6;">Yükünüzün detaylarını girin ve ilanı yayınlayın</p>
                 </div>
-                <h4 class="h6">İlan Oluştur</h4>
-                <p class="small text-muted">Yükünüzün detaylarını girin ve ilanı yayınlayın</p>
             </div>
-            <div class="col-md-3 text-center">
-                <div class="mb-3">
-                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                        <span class="fs-3 fw-bold">3</span>
+            <div class="col-md-3 scroll-reveal stagger-3">
+                <div style="background: white; border-radius: 1.5rem; padding: 2rem; text-align: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; height: 100%;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 10px 30px rgba(0, 102, 255, 0.15)';" onmouseout="this.style.transform=''; this.style.boxShadow='0 4px 20px rgba(0, 0, 0, 0.08)';">
+                    <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(0, 102, 255, 0.3);">
+                        <span style="font-size: 2rem; font-weight: 800; color: white;">3</span>
                     </div>
+                    <h4 style="font-size: 1.25rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem;">Teklif Al</h4>
+                    <p style="font-size: 1rem; color: #6B7280; margin: 0; line-height: 1.6;">Taşıyıcılardan gelen teklifleri karşılaştırın</p>
                 </div>
-                <h4 class="h6">Teklif Al</h4>
-                <p class="small text-muted">Taşıyıcılardan gelen teklifleri karşılaştırın</p>
             </div>
-            <div class="col-md-3 text-center">
-                <div class="mb-3">
-                    <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center" style="width: 80px; height: 80px;">
-                        <span class="fs-3 fw-bold">✓</span>
+            <div class="col-md-3 scroll-reveal stagger-4">
+                <div style="background: white; border-radius: 1.5rem; padding: 2rem; text-align: center; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); transition: all 0.3s ease; height: 100%;" onmouseover="this.style.transform='translateY(-8px)'; this.style.boxShadow='0 10px 30px rgba(16, 185, 129, 0.15)';" onmouseout="this.style.transform=''; this.style.boxShadow='0 4px 20px rgba(0, 0, 0, 0.08)';">
+                    <div style="width: 80px; height: 80px; margin: 0 auto 1.5rem; background: linear-gradient(135deg, #10B981 0%, #34D399 100%); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);">
+                        <i class="bi bi-check2" style="font-size: 2.5rem; font-weight: 800; color: white;"></i>
                     </div>
+                    <h4 style="font-size: 1.25rem; font-weight: 700; color: #111827; margin-bottom: 0.75rem;">Taşıma Başlasın</h4>
+                    <p style="font-size: 1rem; color: #6B7280; margin: 0; line-height: 1.6;">En uygun teklifi seçin ve güvenle taşıyın</p>
                 </div>
-                <h4 class="h6">Taşıma Başlasın</h4>
-                <p class="small text-muted">En uygun teklifi seçin ve güvenle taşıyın</p>
             </div>
         </div>
     </div>
 </div>
 
-<!-- CTA Section -->
-<div class="app-download-section text-center">
-    <div class="container">
-        <h2 class="h2 mb-3">Hemen Başlayın!</h2>
-        <p class="lead mb-4">Kayıt olun ve ilk yükünüzü gönderin</p>
-        <div class="d-flex justify-content-center gap-3">
-            <a href="{% url 'website:register' %}" class="btn btn-light btn-lg">
-                <i class="bi bi-person-plus me-2"></i>Kayıt Ol
-            </a>
-            <a href="{% url 'website:ilanlar' %}" class="btn btn-outline-light btn-lg">
-                <i class="bi bi-search me-2"></i>İlanları Gör
-            </a>
+<!-- CTA Section - Modern Design -->
+<div class="py-5" style="background: white;">
+    <div class="container text-center scroll-reveal" style="max-width: 900px;">
+        <div style="background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%); border-radius: 2rem; padding: 4rem 2rem; border: 2px solid #E5E7EB;">
+            <h2 class="fw-bold mb-3" style="font-size: clamp(2rem, 4vw, 3rem); color: #111827;">
+                <span class="text-gradient" style="background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: inline;">Hemen Başlayın!</span>
+            </h2>
+            <p class="lead mb-4" style="font-size: 1.2rem; color: #6B7280;">
+                Yük göndericisi veya taşıyıcı olarak aramıza katılın
+            </p>
+            <div class="d-flex flex-wrap justify-content-center gap-3">
+                <a href="{% url 'website:register' %}?type=carrier" class="btn-modern btn-lg" style="background: linear-gradient(135deg, #10B981 0%, #34D399 100%); color: white; font-size: 1.1rem; padding: 1rem 2rem; box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3); border: none;">
+                    <i class="bi bi-truck"></i>
+                    <span>Taşıyıcı Olarak Katıl</span>
+                </a>
+                <a href="{% url 'website:register' %}" class="btn-modern btn-primary-gradient btn-lg ripple" style="font-size: 1.1rem; padding: 1rem 2rem; box-shadow: 0 10px 25px rgba(0, 102, 255, 0.3);">
+                    <i class="bi bi-box-seam"></i>
+                    <span>Yük Göndericisi Ol</span>
+                </a>
+            </div>
         </div>
     </div>
 </div>

@@ -176,41 +176,32 @@
     {% endif %}
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <!-- Modern Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-white" style="box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05); padding: 1rem 0;">
         <div class="container">
-            <a class="navbar-brand" href="/">
-                NAKLIYENET
+            <a class="navbar-brand" href="/" style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.75rem; letter-spacing: -0.5px; color: #0066FF;">
+                <span style="background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: inline-block;">NAKLIYE</span><span style="background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; opacity: 0.8; display: inline-block;">NET</span>
             </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+            <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" style="box-shadow: none;">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav ms-auto">
+                <ul class="navbar-nav ms-auto align-items-lg-center" style="gap: 0.5rem;">
                     <li class="nav-item">
-                        <a class="nav-link" href="/">Ana Sayfa</a>
+                        <a class="nav-link" href="/" style="color: #374151; font-weight: 500; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: all 0.2s;" onmouseover="this.style.color='#0066FF'; this.style.background='#F3F4F6';" onmouseout="this.style.color='#374151'; this.style.background='transparent';">Ana Sayfa</a>
                     </li>
                     {% if user.is_authenticated and user.profile.user_type == 1 %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'website:tasiyici_panel' %}">
+                        <a class="nav-link" href="{% url 'website:tasiyici_panel' %}" style="color: #374151; font-weight: 500; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: all 0.2s;" onmouseover="this.style.color='#0066FF'; this.style.background='#F3F4F6';" onmouseout="this.style.color='#374151'; this.style.background='transparent';">
                             <i class="bi bi-truck me-1"></i>Taşıyıcı Paneli
                         </a>
                     </li>
                     {% endif %}
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'website:hakkimizda' %}">Hakkımızda</a>
+                        <a class="nav-link" href="{% url 'blog:list' %}" style="color: #374151; font-weight: 500; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: all 0.2s;" onmouseover="this.style.color='#0066FF'; this.style.background='#F3F4F6';" onmouseout="this.style.color='#374151'; this.style.background='transparent';">Blog</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="{% url 'blog:list' %}">Blog</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'website:nasil_calisir' %}">Nasıl Çalışır?</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'website:sss' %}">SSS</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'website:iletisim' %}">İletişim</a>
+                        <a class="nav-link" href="{% url 'website:nasil_calisir' %}" style="color: #374151; font-weight: 500; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: all 0.2s;" onmouseover="this.style.color='#0066FF'; this.style.background='#F3F4F6';" onmouseout="this.style.color='#374151'; this.style.background='transparent';">Nasıl Çalışır?</a>
                     </li>
 
                     {% if user.is_authenticated %}
@@ -233,15 +224,22 @@
                             </ul>
                         </li>
                     {% else %}
-                        <!-- Guest user menu -->
+                        <!-- Guest user menu - Modern Design -->
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'website:login' %}">
-                                <i class="bi bi-box-arrow-in-right"></i> Giriş Yap
+                            <a class="nav-link" href="{% url 'website:login' %}" style="color: #374151; font-weight: 500; padding: 0.5rem 1rem; border-radius: 0.5rem; transition: all 0.2s;" onmouseover="this.style.color='#0066FF'; this.style.background='#F3F4F6';" onmouseout="this.style.color='#374151'; this.style.background='transparent';">
+                                <i class="bi bi-box-arrow-in-right"></i> Giriş
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="btn btn-primary ms-2" href="{% url 'website:register' %}">
-                                <i class="bi bi-person-plus"></i> Kayıt Ol
+                            <a class="btn btn-modern" href="{% url 'website:register' %}?type=carrier" style="background: linear-gradient(135deg, #10B981 0%, #34D399 100%); color: white; padding: 0.6rem 1.5rem; font-weight: 600; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3); border: none;">
+                                <i class="bi bi-truck"></i>
+                                <span>Taşıyıcı Olarak Katıl</span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="btn btn-modern btn-primary-gradient" href="{% url 'website:register' %}" style="padding: 0.6rem 1.5rem; font-weight: 600; box-shadow: 0 4px 12px rgba(0, 102, 255, 0.25);">
+                                <i class="bi bi-person-plus"></i>
+                                <span>Yük Göndericisi Ol</span>
                             </a>
                         </li>
                     {% endif %}
@@ -256,93 +254,105 @@
         {% block content %}{% endblock %}
     </main>
 
-    <!-- Footer -->
-    <footer>
+    <!-- Modern Footer -->
+    <footer style="background: linear-gradient(135deg, #111827 0%, #1F2937 100%); padding: 4rem 0 2rem; margin-top: 5rem;">
         <div class="container">
             <div class="row">
-                <div class="col-md-4 mb-4">
-                    <h5>{{ SITE_NAME }}</h5>
-                    <p>{{ SITE_DESCRIPTION }}</p>
+                <!-- Brand Section -->
+                <div class="col-lg-4 mb-4">
+                    <h5 style="font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 1.75rem; background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 1rem;">
+                        NAKLIYE<span style="opacity: 0.8;">NET</span>
+                    </h5>
+                    <p style="color: #9CA3AF; line-height: 1.7; max-width: 350px;">
+                        Türkiye'nin en büyük dijital yük pazaryeri. Güvenli, hızlı ve kolay nakliye deneyimi.
+                    </p>
+                    <div style="display: flex; gap: 1rem; margin-top: 1.5rem;">
+                        <a href="#" style="width: 40px; height: 40px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; transition: all 0.3s; text-decoration: none;" onmouseover="this.style.background='linear-gradient(135deg, #0066FF 0%, #00D4FF 100%)'; this.style.transform='translateY(-3px)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.transform='';">
+                            <i class="bi bi-facebook"></i>
+                        </a>
+                        <a href="#" style="width: 40px; height: 40px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; transition: all 0.3s; text-decoration: none;" onmouseover="this.style.background='linear-gradient(135deg, #0066FF 0%, #00D4FF 100%)'; this.style.transform='translateY(-3px)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.transform='';">
+                            <i class="bi bi-twitter"></i>
+                        </a>
+                        <a href="#" style="width: 40px; height: 40px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; transition: all 0.3s; text-decoration: none;" onmouseover="this.style.background='linear-gradient(135deg, #0066FF 0%, #00D4FF 100%)'; this.style.transform='translateY(-3px)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.transform='';">
+                            <i class="bi bi-instagram"></i>
+                        </a>
+                        <a href="#" style="width: 40px; height: 40px; background: rgba(255, 255, 255, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; transition: all 0.3s; text-decoration: none;" onmouseover="this.style.background='linear-gradient(135deg, #0066FF 0%, #00D4FF 100%)'; this.style.transform='translateY(-3px)';" onmouseout="this.style.background='rgba(255, 255, 255, 0.1)'; this.style.transform='';">
+                            <i class="bi bi-linkedin"></i>
+                        </a>
+                    </div>
                 </div>
-                <div class="col-md-2 mb-4">
-                    <h6>Kurumsal</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="{% url 'website:hakkimizda' %}">Hakkımızda</a></li>
-                        <li><a href="{% url 'website:iletisim' %}">İletişim</a></li>
+
+                <!-- Kurumsal -->
+                <div class="col-lg-2 col-md-4 col-6 mb-4">
+                    <h6 style="color: white; font-weight: 700; font-size: 1rem; margin-bottom: 1.25rem;">Kurumsal</h6>
+                    <ul class="list-unstyled" style="line-height: 2.2;">
+                        <li><a href="{% url 'website:hakkimizda' %}" style="color: #9CA3AF; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#00D4FF'" onmouseout="this.style.color='#9CA3AF'">Hakkımızda</a></li>
+                        <li><a href="{% url 'website:iletisim' %}" style="color: #9CA3AF; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#00D4FF'" onmouseout="this.style.color='#9CA3AF'">İletişim</a></li>
+                        <li><a href="{% url 'blog:list' %}" style="color: #9CA3AF; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#00D4FF'" onmouseout="this.style.color='#9CA3AF'">Blog</a></li>
                     </ul>
                 </div>
-                <div class="col-md-2 mb-4">
-                    <h6>Destek</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="{% url 'website:nasil_calisir' %}">Nasıl Çalışır?</a></li>
-                        <li><a href="{% url 'website:sss' %}">SSS</a></li>
+
+                <!-- Destek -->
+                <div class="col-lg-2 col-md-4 col-6 mb-4">
+                    <h6 style="color: white; font-weight: 700; font-size: 1rem; margin-bottom: 1.25rem;">Destek</h6>
+                    <ul class="list-unstyled" style="line-height: 2.2;">
+                        <li><a href="{% url 'website:nasil_calisir' %}" style="color: #9CA3AF; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#00D4FF'" onmouseout="this.style.color='#9CA3AF'">Nasıl Çalışır?</a></li>
+                        <li><a href="{% url 'website:sss' %}" style="color: #9CA3AF; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#00D4FF'" onmouseout="this.style.color='#9CA3AF'">SSS</a></li>
                     </ul>
                 </div>
-                <div class="col-md-2 mb-4">
-                    <h6>İlanlar</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="{% url 'website:ilanlar' %}">Tüm İlanlar</a></li>
-                        <li><a href="{% url 'website:ilanlar' %}?sehir=İstanbul">İstanbul İlanları</a></li>
-                        <li><a href="{% url 'website:ilanlar' %}?sehir=Ankara">Ankara İlanları</a></li>
+
+                <!-- Yasal -->
+                <div class="col-lg-2 col-md-4 col-6 mb-4">
+                    <h6 style="color: white; font-weight: 700; font-size: 1rem; margin-bottom: 1.25rem;">Yasal</h6>
+                    <ul class="list-unstyled" style="line-height: 2.2;">
+                        <li><a href="{% url 'website:gizlilik_politikasi' %}" style="color: #9CA3AF; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#00D4FF'" onmouseout="this.style.color='#9CA3AF'">Gizlilik Politikası</a></li>
+                        <li><a href="{% url 'website:kullanim_kosullari' %}" style="color: #9CA3AF; text-decoration: none; transition: color 0.2s;" onmouseover="this.style.color='#00D4FF'" onmouseout="this.style.color='#9CA3AF'">Kullanım Koşulları</a></li>
                     </ul>
                 </div>
-                <div class="col-md-2 mb-4">
-                    <h6>Yasal</h6>
-                    <ul class="list-unstyled">
-                        <li><a href="{% url 'website:gizlilik_politikasi' %}">Gizlilik Politikası</a></li>
-                        <li><a href="{% url 'website:kullanim_kosullari' %}">Kullanım Koşulları</a></li>
-                    </ul>
+
+                <!-- CTA -->
+                <div class="col-lg-2 col-md-12 mb-4">
+                    <a href="{% url 'website:register' %}?type=carrier" class="btn-modern d-block mb-3" style="background: linear-gradient(135deg, #10B981 0%, #34D399 100%); color: white; padding: 0.875rem 1.5rem; font-size: 1rem; font-weight: 600; text-align: center; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); border: none;">
+                        <i class="bi bi-truck"></i>
+                        <span>Taşıyıcı Ol</span>
+                    </a>
+                    <a href="{% url 'website:register' %}" class="btn-modern btn-primary-gradient d-block" style="padding: 0.875rem 1.5rem; font-size: 1rem; font-weight: 600; text-align: center; box-shadow: 0 8px 20px rgba(0, 102, 255, 0.3);">
+                        <i class="bi bi-box-seam"></i>
+                        <span>Yük Gönder</span>
+                    </a>
                 </div>
             </div>
 
-            <!-- Popüler Şehirler -->
-            <div class="row mt-3">
-                <div class="col-12">
-                    <h6 class="text-uppercase mb-3">Şehir Nakliye Hizmetleri</h6>
-                    <div class="row">
-                        <div class="col-6 col-md-2 mb-2">
-                            <a href="{% url 'website:sehir_nakliye' 'istanbul' %}">İstanbul Nakliye</a>
-                        </div>
-                        <div class="col-6 col-md-2 mb-2">
-                            <a href="{% url 'website:sehir_nakliye' 'ankara' %}">Ankara Nakliye</a>
-                        </div>
-                        <div class="col-6 col-md-2 mb-2">
-                            <a href="{% url 'website:sehir_nakliye' 'izmir' %}">İzmir Nakliye</a>
-                        </div>
-                        <div class="col-6 col-md-2 mb-2">
-                            <a href="{% url 'website:sehir_nakliye' 'bursa' %}">Bursa Nakliye</a>
-                        </div>
-                        <div class="col-6 col-md-2 mb-2">
-                            <a href="{% url 'website:sehir_nakliye' 'antalya' %}">Antalya Nakliye</a>
-                        </div>
-                        <div class="col-6 col-md-2 mb-2">
-                            <a href="{% url 'website:sehir_nakliye' 'gebze' %}">Gebze Nakliye</a>
-                        </div>
-                        <div class="col-6 col-md-2 mb-2">
-                            <a href="{% url 'website:sehir_nakliye' 'kocaeli' %}">Kocaeli Nakliye</a>
-                        </div>
-                        <div class="col-6 col-md-2 mb-2">
-                            <a href="{% url 'website:sehir_nakliye' 'darica' %}">Darıca Nakliye</a>
-                        </div>
-                        <div class="col-6 col-md-2 mb-2">
-                            <a href="{% url 'website:sehir_nakliye' 'adana' %}">Adana Nakliye</a>
-                        </div>
-                        <div class="col-6 col-md-2 mb-2">
-                            <a href="{% url 'website:sehir_nakliye' 'konya' %}">Konya Nakliye</a>
-                        </div>
-                        <div class="col-6 col-md-2 mb-2">
-                            <a href="{% url 'website:sehir_nakliye' 'trabzon' %}">Trabzon Nakliye</a>
-                        </div>
-                        <div class="col-6 col-md-2 mb-2">
-                            <a href="{% url 'website:sehir_nakliye' 'sakarya' %}">Sakarya Nakliye</a>
-                        </div>
+            <!-- Şehirler SEO -->
+            <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 2.5rem; margin-top: 2rem;">
+                <h6 style="color: white; font-weight: 700; font-size: 0.95rem; margin-bottom: 1.25rem; text-transform: uppercase; letter-spacing: 0.5px;">Şehir Nakliye Hizmetleri</h6>
+                <div class="row g-2">
+                    <div class="col-6 col-md-2 mb-2">
+                        <a href="{% url 'website:sehir_nakliye' 'istanbul' %}" style="color: #6B7280; text-decoration: none; font-size: 0.9rem; transition: color 0.2s;" onmouseover="this.style.color='#00D4FF'" onmouseout="this.style.color='#6B7280'">İstanbul Nakliye</a>
+                    </div>
+                    <div class="col-6 col-md-2 mb-2">
+                        <a href="{% url 'website:sehir_nakliye' 'ankara' %}" style="color: #6B7280; text-decoration: none; font-size: 0.9rem; transition: color 0.2s;" onmouseover="this.style.color='#00D4FF'" onmouseout="this.style.color='#6B7280'">Ankara Nakliye</a>
+                    </div>
+                    <div class="col-6 col-md-2 mb-2">
+                        <a href="{% url 'website:sehir_nakliye' 'izmir' %}" style="color: #6B7280; text-decoration: none; font-size: 0.9rem; transition: color 0.2s;" onmouseover="this.style.color='#00D4FF'" onmouseout="this.style.color='#6B7280'">İzmir Nakliye</a>
+                    </div>
+                    <div class="col-6 col-md-2 mb-2">
+                        <a href="{% url 'website:sehir_nakliye' 'bursa' %}" style="color: #6B7280; text-decoration: none; font-size: 0.9rem; transition: color 0.2s;" onmouseover="this.style.color='#00D4FF'" onmouseout="this.style.color='#6B7280'">Bursa Nakliye</a>
+                    </div>
+                    <div class="col-6 col-md-2 mb-2">
+                        <a href="{% url 'website:sehir_nakliye' 'antalya' %}" style="color: #6B7280; text-decoration: none; font-size: 0.9rem; transition: color 0.2s;" onmouseover="this.style.color='#00D4FF'" onmouseout="this.style.color='#6B7280'">Antalya Nakliye</a>
+                    </div>
+                    <div class="col-6 col-md-2 mb-2">
+                        <a href="{% url 'website:sehir_nakliye' 'adana' %}" style="color: #6B7280; text-decoration: none; font-size: 0.9rem; transition: color 0.2s;" onmouseover="this.style.color='#00D4FF'" onmouseout="this.style.color='#6B7280'">Adana Nakliye</a>
                     </div>
                 </div>
             </div>
 
-            <hr style="border-color: rgba(255,255,255,0.1);">
-            <div class="text-center">
-                <p class="mb-0">&copy; 2025 {{ SITE_NAME }}. Tüm hakları saklıdır.</p>
+            <!-- Copyright -->
+            <div style="border-top: 1px solid rgba(255, 255, 255, 0.1); padding-top: 1.5rem; margin-top: 2rem; text-align: center;">
+                <p style="color: #6B7280; margin: 0; font-size: 0.9rem;">
+                    &copy; 2025 <strong style="background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">NAKLIYENET</strong>. Tüm hakları saklıdır.
+                </p>
             </div>
         </div>
     </footer>

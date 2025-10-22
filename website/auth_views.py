@@ -53,9 +53,13 @@ def login_view(request):
 def register_view(request):
     """
     Register page - Create new Django user
+    Supports ?type=carrier for direct carrier registration
     """
     if request.user.is_authenticated:
         return redirect('website:index')
+
+    # Check if carrier registration from URL parameter
+    is_carrier_registration = request.GET.get('type') == 'carrier'
 
     if request.method == 'POST':
         email = request.POST.get('email', '').strip()
@@ -64,6 +68,10 @@ def register_view(request):
         display_name = request.POST.get('display_name', '').strip()
         phone_number = request.POST.get('phone_number', '').strip()
         user_type = request.POST.get('user_type', '0')  # 0: Shipper, 1: Carrier
+
+        # Override user_type if carrier registration
+        if is_carrier_registration:
+            user_type = '1'
 
         # Validation
         if not email or not password:
@@ -101,16 +109,22 @@ def register_view(request):
                 # Auto login after registration
                 login(request, user)
 
-                messages.success(request, 'Kayıt başarılı! Hoş geldiniz.')
-                return redirect('website:index')
+                # Redirect based on user type
+                if int(user_type) == 1:  # Carrier
+                    messages.success(request, 'Taşıyıcı kaydınız başarılı! Hoş geldiniz. Şimdi ilanları görüntüleyebilirsiniz.')
+                    return redirect('website:tasiyici_panel')
+                else:  # Shipper
+                    messages.success(request, 'Kayıt başarılı! Hoş geldiniz. Şimdi ilan oluşturabilirsiniz.')
+                    return redirect('website:index')
 
             except Exception as e:
                 logger.error(f"Registration error: {e}", exc_info=True)
                 messages.error(request, 'Kayıt sırasında bir hata oluştu. Lütfen tekrar deneyin.')
 
     context = {
-        'title': 'Kayıt Ol - NAKLIYE NET',
-        'description': 'NAKLIYE NET platformuna üye olun.',
+        'title': 'Taşıyıcı Olarak Katıl - NAKLIYE NET' if is_carrier_registration else 'Kayıt Ol - NAKLIYE NET',
+        'description': 'NAKLIYE NET platformuna taşıyıcı olarak katılın ve iş fırsatlarını keşfedin.' if is_carrier_registration else 'NAKLIYE NET platformuna üye olun.',
+        'is_carrier_registration': is_carrier_registration,
     }
     return render(request, 'website/register.html', context)
 

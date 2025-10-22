@@ -81,10 +81,26 @@ def index(request):
 
 def ilan_listesi(request):
     """
-    İlan listesi - SEO optimize
+    İlan listesi - SADECE TAŞIYICILAR İÇİN
     /ilanlar/ URL'i
     """
     from .models import Shipment
+    from django.contrib import messages
+
+    # Kullanıcı giriş yapmış mı kontrol et
+    if not request.user.is_authenticated:
+        messages.warning(request, 'İlanları görüntülemek için taşıyıcı olarak giriş yapmalısınız.')
+        return redirect('website:login')
+
+    # Kullanıcı taşıyıcı mı kontrol et (user_type == 1)
+    try:
+        profile = request.user.profile
+        if profile.user_type != 1:  # 1 = Taşıyıcı
+            messages.error(request, 'İlanları sadece taşıyıcılar görüntüleyebilir. Lütfen taşıyıcı hesabı ile giriş yapın.')
+            return redirect('website:index')
+    except:
+        messages.error(request, 'Profil bilgileriniz bulunamadı. Lütfen profilinizi tamamlayın.')
+        return redirect('website:profil')
 
     # Filtreler
     city = request.GET.get('sehir', '').strip()
@@ -141,12 +157,13 @@ def ilan_listesi(request):
 
 def ilan_detay(request, tracking_number):
     """
-    İlan detay - Her ilan için unique SEO
+    İlan detay - SADECE TAŞIYICILAR VE İLAN SAHİBİ İÇİN
     /ilan/YN-2025-001234/ URL'i
 
     En önemli SEO sayfası!
     """
     from .models import Shipment, Bid
+    from django.contrib import messages
 
     # Get shipment from PostgreSQL
     try:
@@ -154,11 +171,27 @@ def ilan_detay(request, tracking_number):
     except Shipment.DoesNotExist:
         raise Http404("İlan bulunamadı")
 
+    # Kullanıcı giriş yapmış mı kontrol et
+    if not request.user.is_authenticated:
+        messages.warning(request, 'İlan detayını görüntülemek için giriş yapmalısınız.')
+        return redirect('website:login')
+
+    # Kullanıcının bu ilanı görme yetkisi var mı kontrol et
+    # İlan sahibi veya taşıyıcı olmalı
+    try:
+        profile = request.user.profile
+        is_owner = (profile == shipment.shipper)
+        is_carrier = (profile.user_type == 1)  # 1 = Taşıyıcı
+
+        if not is_owner and not is_carrier:
+            messages.error(request, 'Bu ilanı görüntülemek için taşıyıcı hesabınız olmalı.')
+            return redirect('website:index')
+    except:
+        messages.error(request, 'Profil bilgileriniz bulunamadı.')
+        return redirect('website:profil')
+
     # Increment view count (only if not the owner)
-    if not request.user.is_authenticated or (
-        hasattr(request.user, 'profile') and
-        request.user.profile != shipment.shipper
-    ):
+    if profile != shipment.shipper:
         shipment.increment_view_count()
 
     # Yük sahibi bilgileri
