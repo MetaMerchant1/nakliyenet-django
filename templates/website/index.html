@@ -10,42 +10,57 @@
 {% endblock %}
 
 {% block content %}
-<!-- Hero Section - Modern Gradient Design -->
-<div class="position-relative overflow-hidden" style="min-height: 600px;">
-    <!-- Animated Gradient Background -->
-    <div class="position-absolute top-0 start-0 w-100 h-100 bg-gradient-mesh"></div>
+<!-- Hero Section - High Contrast Modern Design -->
+<div class="position-relative overflow-hidden" style="min-height: 650px; background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);">
+    <!-- Floating Shapes - More Visible -->
+    <div class="position-absolute" style="top: 15%; left: 8%; width: 200px; height: 200px; background: linear-gradient(135deg, rgba(0, 102, 255, 0.15), rgba(0, 212, 255, 0.15)); border-radius: 50%; animation: float 6s ease-in-out infinite; filter: blur(40px);"></div>
+    <div class="position-absolute" style="top: 55%; right: 10%; width: 250px; height: 250px; background: linear-gradient(135deg, rgba(255, 107, 53, 0.12), rgba(245, 158, 11, 0.12)); border-radius: 50%; animation: float 8s ease-in-out infinite; animation-delay: 2s; filter: blur(40px);"></div>
+    <div class="position-absolute" style="bottom: 10%; left: 30%; width: 180px; height: 180px; background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), rgba(52, 211, 153, 0.12)); border-radius: 50%; animation: float 7s ease-in-out infinite; animation-delay: 1s; filter: blur(35px);"></div>
 
-    <!-- Floating Shapes -->
-    <div class="position-absolute" style="top: 10%; left: 10%; width: 100px; height: 100px; background: var(--gradient-primary); opacity: 0.1; border-radius: 50%; animation: float 6s ease-in-out infinite;"></div>
-    <div class="position-absolute" style="top: 60%; right: 15%; width: 150px; height: 150px; background: var(--gradient-primary); opacity: 0.1; border-radius: 50%; animation: float 8s ease-in-out infinite; animation-delay: 2s;"></div>
-
-    <div class="container position-relative py-5" style="padding-top: 5rem !important; padding-bottom: 5rem !important;">
+    <div class="container position-relative py-5" style="padding-top: 6rem !important; padding-bottom: 6rem !important; z-index: 10;">
         <div class="row align-items-center">
-            <div class="col-lg-6 mb-4 mb-lg-0 scroll-reveal">
-                <h1 class="fw-bold mb-4" style="font-size: clamp(2.5rem, 5vw, 4rem); line-height: 1.1;">
-                    <span class="text-gradient">Türkiye'nin</span><br>
-                    Dijital Yük Pazaryeri
+            <div class="col-lg-6 mb-5 mb-lg-0 scroll-reveal">
+                <h1 class="fw-bold mb-4" style="font-size: clamp(2.5rem, 5vw, 4.5rem); line-height: 1.1; letter-spacing: -0.02em;">
+                    <span class="text-gradient" style="background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; display: inline-block;">Türkiye'nin</span><br>
+                    <span style="color: #111827; font-weight: 800;">Dijital Yük<br>Pazaryeri</span>
                 </h1>
-                <p class="lead mb-5 text-muted" style="font-size: clamp(1.1rem, 2vw, 1.5rem);">
-                    Yük gönderin, teklif alın, güvenle taşıyın. Binlerce taşıyıcı arasından en uygun teklifi seçin.
+                <p class="lead mb-5" style="font-size: clamp(1.1rem, 2vw, 1.4rem); color: #4B5563; font-weight: 500; line-height: 1.6;">
+                    Yük gönderin, teklif alın, güvenle taşıyın.<br>
+                    <strong style="color: #1F2937;">Binlerce taşıyıcı</strong> arasından en uygun teklifi seçin.
                 </p>
                 <div class="d-flex flex-wrap gap-3">
-                    <a href="#ilan-ver-form" class="btn-modern btn-primary-gradient btn-lg ripple">
+                    <a href="#ilan-ver-form" class="btn-modern btn-primary-gradient btn-lg ripple" style="font-size: 1.1rem; padding: 1rem 2rem; box-shadow: 0 10px 25px rgba(0, 102, 255, 0.3);">
                         <i class="bi bi-box-seam"></i>
                         <span>Hemen İlan Ver</span>
                     </a>
                     {% if user.is_authenticated and user.profile.user_type == 1 %}
-                    <a href="{% url 'website:tasiyici_panel' %}" class="btn-modern btn-glass btn-lg">
+                    <a href="{% url 'website:tasiyici_panel' %}" class="btn-modern btn-lg" style="background: white; color: var(--primary-600); border: 2px solid var(--primary-200); font-size: 1.1rem; padding: 1rem 2rem;">
                         <i class="bi bi-truck"></i>
                         <span>Taşıyıcı Paneli</span>
                     </a>
                     {% endif %}
                 </div>
+
+                <!-- Trust Indicators -->
+                <div class="d-flex flex-wrap gap-4 mt-5 pt-3" style="border-top: 1px solid #E5E7EB;">
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-shield-check" style="font-size: 1.5rem; color: var(--success-500);"></i>
+                        <span style="color: #6B7280; font-size: 0.9rem; font-weight: 500;">Güvenli Ödeme</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-clock-history" style="font-size: 1.5rem; color: var(--primary-500);"></i>
+                        <span style="color: #6B7280; font-size: 0.9rem; font-weight: 500;">Hızlı Teslim</span>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <i class="bi bi-star-fill" style="font-size: 1.5rem; color: var(--warning-500);"></i>
+                        <span style="color: #6B7280; font-size: 0.9rem; font-weight: 500;">5 Yıldız Destek</span>
+                    </div>
+                </div>
             </div>
             <div class="col-lg-6 scroll-reveal-right">
                 <div class="position-relative">
-                    <!-- Glow effect behind image -->
-                    <div class="position-absolute top-50 start-50 translate-middle" style="width: 120%; height: 120%; background: var(--gradient-primary); opacity: 0.1; filter: blur(60px); border-radius: 50%;"></div>
+                    <!-- Glow effect behind image - More Visible -->
+                    <div class="position-absolute top-50 start-50 translate-middle" style="width: 110%; height: 110%; background: linear-gradient(135deg, rgba(0, 102, 255, 0.2), rgba(0, 212, 255, 0.2)); filter: blur(50px); border-radius: 30%; z-index: -1;"></div>
 
                     <picture class="position-relative">
                         <!-- Mobile: 800px width WebP -->
@@ -57,8 +72,8 @@
                         <!-- Fallback: Original PNG for old browsers -->
                         <img src="{% static 'images/hero-image.png' %}"
                              alt="NAKLIYE NET - Türkiye'nin Dijital Yük Pazaryeri"
-                             class="img-fluid animate-float"
-                             style="border-radius: 2rem; box-shadow: var(--shadow-2xl);"
+                             class="img-fluid"
+                             style="border-radius: 2rem; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2); animation: float 3s ease-in-out infinite;"
                              width="1536" height="1024" loading="eager">
                     </picture>
                 </div>
@@ -67,35 +82,35 @@
     </div>
 </div>
 
-<!-- İstatistikler - Modern Stats -->
-<div class="py-5" style="background: linear-gradient(180deg, var(--gray-50) 0%, white 100%);">
+<!-- İstatistikler - High Contrast Stats -->
+<div class="py-5" style="background: white; border-top: 1px solid #E5E7EB; border-bottom: 1px solid #E5E7EB;">
     <div class="container">
-        <div class="row text-center g-4">
+        <div class="row text-center g-5">
             <div class="col-md-4 scroll-reveal stagger-1">
                 <div class="stat-counter">
-                    <div class="stat-counter-icon bg-gradient-primary">
+                    <div class="stat-counter-icon" style="background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%); box-shadow: 0 10px 30px rgba(0, 102, 255, 0.3);">
                         <i class="bi bi-truck"></i>
                     </div>
-                    <div class="stat-counter-value" data-count="{{ stats.active_shipments }}">0</div>
-                    <div class="stat-counter-label">Aktif İlan</div>
+                    <div class="stat-counter-value" data-count="{{ stats.active_shipments }}" style="background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: clamp(3rem, 8vw, 5rem); text-shadow: none;">{{ stats.active_shipments }}</div>
+                    <div class="stat-counter-label" style="color: #1F2937; font-weight: 600; font-size: 1rem; text-transform: none; letter-spacing: 0;">Aktif İlan</div>
                 </div>
             </div>
             <div class="col-md-4 scroll-reveal stagger-2">
                 <div class="stat-counter">
-                    <div class="stat-counter-icon" style="background: linear-gradient(135deg, var(--success-500) 0%, var(--success-600) 100%);">
+                    <div class="stat-counter-icon" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);">
                         <i class="bi bi-check-circle"></i>
                     </div>
-                    <div class="stat-counter-value" data-count="{{ stats.completed_shipments }}">0</div>
-                    <div class="stat-counter-label">Tamamlanan Taşıma</div>
+                    <div class="stat-counter-value" data-count="{{ stats.completed_shipments }}" style="background: linear-gradient(135deg, #10B981 0%, #059669 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: clamp(3rem, 8vw, 5rem); text-shadow: none;">{{ stats.completed_shipments }}</div>
+                    <div class="stat-counter-label" style="color: #1F2937; font-weight: 600; font-size: 1rem; text-transform: none; letter-spacing: 0;">Tamamlanan Taşıma</div>
                 </div>
             </div>
             <div class="col-md-4 scroll-reveal stagger-3">
                 <div class="stat-counter">
-                    <div class="stat-counter-icon" style="background: linear-gradient(135deg, var(--secondary-500) 0%, var(--secondary-600) 100%);">
+                    <div class="stat-counter-icon" style="background: linear-gradient(135deg, #FF6B35 0%, #F59E0B 100%); box-shadow: 0 10px 30px rgba(255, 107, 53, 0.3);">
                         <i class="bi bi-people"></i>
                     </div>
-                    <div class="stat-counter-value" data-count="{{ stats.total_users }}">0</div>
-                    <div class="stat-counter-label">Kayıtlı Kullanıcı</div>
+                    <div class="stat-counter-value" data-count="{{ stats.total_users }}" style="background: linear-gradient(135deg, #FF6B35 0%, #F59E0B 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; font-size: clamp(3rem, 8vw, 5rem); text-shadow: none;">{{ stats.total_users }}</div>
+                    <div class="stat-counter-label" style="color: #1F2937; font-weight: 600; font-size: 1rem; text-transform: none; letter-spacing: 0;">Kayıtlı Kullanıcı</div>
                 </div>
             </div>
         </div>
