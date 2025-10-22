@@ -8,7 +8,7 @@ from django.views.decorators.cache import cache_page
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.utils import timezone
-from .models import UserDocument, UserProfile, Bid, Payment, Shipment, ShipmentTracking, DeliveryProof, Review
+from .models import UserDocument, UserProfile, Bid, Payment, Shipment
 from decimal import Decimal
 import json
 import uuid
