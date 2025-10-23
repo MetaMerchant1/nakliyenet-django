@@ -47,7 +47,12 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Şehir *</label>
-                                <input type="text" class="form-control" name="from_city" required>
+                                <select class="form-select" name="from_city" required>
+                                    <option value="">Şehir Seçiniz</option>
+                                    {% for city in cities %}
+                                    <option value="{{city}}">{{city}}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">İlçe *</label>
@@ -102,7 +107,12 @@
                         <div class="row mb-3">
                             <div class="col-md-6">
                                 <label class="form-label">Şehir *</label>
-                                <input type="text" class="form-control" name="to_city" required>
+                                <select class="form-select" name="to_city" required>
+                                    <option value="">Şehir Seçiniz</option>
+                                    {% for city in cities %}
+                                    <option value="{{city}}">{{city}}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">İlçe *</label>
@@ -159,9 +169,9 @@
                     <div class="card-body">
                         <h5 class="card-title">Yük Bilgileri</h5>
                         <div class="row mb-3">
-                            <div class="col-md-3">
+                            <div class="col-md-3 weight-field">
                                 <label class="form-label">Ağırlık (kg) *</label>
-                                <input type="number" class="form-control" name="weight" required min="1" step="0.01">
+                                <input type="number" class="form-control weight-input" name="weight" required min="1" step="0.01">
                             </div>
                             <div class="col-md-3">
                                 <label class="form-label">Uzunluk (cm)</label>
@@ -221,6 +231,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     const cargoTypeSelect = document.querySelector('select[name="cargo_type"]');
     const movingDetailsElements = document.querySelectorAll('.moving-details');
+    const weightField = document.querySelector('.weight-field');
+    const weightInput = document.querySelector('.weight-input');
     const dimensionInputs = {
         length: document.querySelector('input[name="length"]'),
         width: document.querySelector('input[name="width"]'),
@@ -236,7 +248,18 @@ document.addEventListener('DOMContentLoaded', function() {
             element.style.display = showMovingDetails ? 'block' : 'none';
         });
 
-        // 2. Yük/Kargo taşıma için boyutları zorunlu yap
+        // 2. Evden eve taşımada ağırlık alanını gizle
+        const hideWeight = selectedValue === 'evden_eve' || selectedValue === 'isyeri' || selectedValue === 'beyaz_esya';
+        if (weightField && weightInput) {
+            weightField.style.display = hideWeight ? 'none' : 'block';
+            weightInput.required = !hideWeight;
+            // Evden eve taşımada ağırlık 0 olarak ayarlanacak
+            if (hideWeight) {
+                weightInput.value = '1'; // Backend için minimum değer
+            }
+        }
+
+        // 3. Yük/Kargo taşıma için boyutları zorunlu yap
         const requireDimensions = selectedValue === 'diger' || selectedValue === 'parcali';
         Object.values(dimensionInputs).forEach(input => {
             if (input) {
@@ -249,7 +272,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
 
-        // 3. Beyaz eşya için asansör ve kat bilgisi önemli
+        // 4. Beyaz eşya için asansör ve kat bilgisi önemli
         if (selectedValue === 'beyaz_esya') {
             // Boyutlar opsiyonel kalır ama kat bilgisi önemlidir
             Object.values(dimensionInputs).forEach(input => {

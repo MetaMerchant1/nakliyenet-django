@@ -1126,12 +1126,15 @@ def ilan_olustur(request):
         'suggested_price': request.GET.get('suggested_price', ''),
     }
 
+    from .cities import CITIES
+
     context = {
         'title': 'İlan Oluştur - NAKLIYE NET',
         'description': 'Yeni nakliye ilanı oluşturun',
         'cargo_types': Shipment.CARGO_TYPES,
         'loading_choices': Shipment.LOADING_CHOICES,
         'unloading_choices': Shipment.UNLOADING_CHOICES,
+        'cities': CITIES,
         'prefill': prefill_data,
     }
     return render(request, 'website/ilan_olustur.html', context)
