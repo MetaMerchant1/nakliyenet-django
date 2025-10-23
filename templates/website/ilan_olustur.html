@@ -173,17 +173,17 @@
                                 <label class="form-label">Ağırlık (kg) *</label>
                                 <input type="number" class="form-control weight-input" name="weight" required min="1" step="0.01">
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-3 dimension-field">
                                 <label class="form-label">Uzunluk (cm)</label>
-                                <input type="number" class="form-control" name="length" min="1" step="0.01" placeholder="Opsiyonel">
+                                <input type="number" class="form-control dimension-input" name="length" min="1" step="0.01" placeholder="Opsiyonel">
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-3 dimension-field">
                                 <label class="form-label">En (cm)</label>
-                                <input type="number" class="form-control" name="width" min="1" step="0.01" placeholder="Opsiyonel">
+                                <input type="number" class="form-control dimension-input" name="width" min="1" step="0.01" placeholder="Opsiyonel">
                             </div>
-                            <div class="col-md-3">
+                            <div class="col-md-3 dimension-field">
                                 <label class="form-label">Boy (cm)</label>
-                                <input type="number" class="form-control" name="height" min="1" step="0.01" placeholder="Opsiyonel">
+                                <input type="number" class="form-control dimension-input" name="height" min="1" step="0.01" placeholder="Opsiyonel">
                             </div>
                         </div>
                         <div class="row mb-3">
@@ -193,10 +193,10 @@
                                 <div class="form-text">Taşıyıcılar bu fiyat üzerinden teklif verecek</div>
                             </div>
                         </div>
-                        <div class="row mb-3">
+                        <div class="row mb-3 loading-unloading-field">
                             <div class="col-md-6">
                                 <label class="form-label">Yükleme *</label>
-                                <select class="form-select" name="loading_responsibility" required>
+                                <select class="form-select loading-input" name="loading_responsibility" required>
                                     {% for value, label in loading_choices %}
                                     <option value="{{value}}">{{label}}</option>
                                     {% endfor %}
@@ -204,7 +204,7 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label">İndirme *</label>
-                                <select class="form-select" name="unloading_responsibility" required>
+                                <select class="form-select unloading-input" name="unloading_responsibility" required>
                                     {% for value, label in unloading_choices %}
                                     <option value="{{value}}">{{label}}</option>
                                     {% endfor %}
@@ -233,11 +233,15 @@ document.addEventListener('DOMContentLoaded', function() {
     const movingDetailsElements = document.querySelectorAll('.moving-details');
     const weightField = document.querySelector('.weight-field');
     const weightInput = document.querySelector('.weight-input');
+    const dimensionFields = document.querySelectorAll('.dimension-field');
     const dimensionInputs = {
         length: document.querySelector('input[name="length"]'),
         width: document.querySelector('input[name="width"]'),
         height: document.querySelector('input[name="height"]')
     };
+    const loadingUnloadingField = document.querySelector('.loading-unloading-field');
+    const loadingInput = document.querySelector('.loading-input');
+    const unloadingInput = document.querySelector('.unloading-input');
 
     function toggleFields() {
         const selectedValue = cargoTypeSelect.value;
@@ -248,35 +252,57 @@ document.addEventListener('DOMContentLoaded', function() {
             element.style.display = showMovingDetails ? 'block' : 'none';
         });
 
-        // 2. Evden eve taşımada ağırlık alanını gizle
+        // 2. Evden eve ve ofis taşımada ağırlık alanını gizle
         const hideWeight = selectedValue === 'evden_eve' || selectedValue === 'isyeri' || selectedValue === 'beyaz_esya';
         if (weightField && weightInput) {
             weightField.style.display = hideWeight ? 'none' : 'block';
             weightInput.required = !hideWeight;
-            // Evden eve taşımada ağırlık 0 olarak ayarlanacak
             if (hideWeight) {
                 weightInput.value = '1'; // Backend için minimum değer
             }
         }
 
-        // 3. Yük/Kargo taşıma için boyutları zorunlu yap
-        const requireDimensions = selectedValue === 'diger' || selectedValue === 'parcali';
+        // 3. Evden eve ve ofis taşımada boyut alanlarını gizle
+        const hideDimensions = selectedValue === 'evden_eve' || selectedValue === 'isyeri';
+        dimensionFields.forEach(field => {
+            field.style.display = hideDimensions ? 'none' : 'block';
+        });
         Object.values(dimensionInputs).forEach(input => {
             if (input) {
-                input.required = requireDimensions;
-                if (requireDimensions) {
-                    input.placeholder = 'Zorunlu';
-                } else {
-                    input.placeholder = 'Opsiyonel';
+                input.required = false; // Hiçbir zaman zorunlu değil
+                if (hideDimensions) {
+                    input.value = '';
                 }
             }
         });
 
-        // 4. Beyaz eşya için asansör ve kat bilgisi önemli
-        if (selectedValue === 'beyaz_esya') {
-            // Boyutlar opsiyonel kalır ama kat bilgisi önemlidir
+        // 4. Evden eve ve ofis taşımada yükleme/indirme alanlarını gizle
+        const hideLoadingUnloading = selectedValue === 'evden_eve' || selectedValue === 'isyeri';
+        if (loadingUnloadingField) {
+            loadingUnloadingField.style.display = hideLoadingUnloading ? 'none' : 'block';
+            if (loadingInput && unloadingInput) {
+                loadingInput.required = !hideLoadingUnloading;
+                unloadingInput.required = !hideLoadingUnloading;
+                // Evden eve ve ofis için varsayılan değerler
+                if (hideLoadingUnloading) {
+                    loadingInput.value = 'carrier'; // Taşıyıcı yapar
+                    unloadingInput.value = 'carrier'; // Taşıyıcı yapar
+                }
+            }
+        }
+
+        // 5. Yük/Kargo taşıma için boyutları zorunlu yap
+        const requireDimensions = selectedValue === 'diger' || selectedValue === 'parcali';
+        if (!hideDimensions) {
             Object.values(dimensionInputs).forEach(input => {
-                if (input) input.required = false;
+                if (input) {
+                    input.required = requireDimensions;
+                    if (requireDimensions) {
+                        input.placeholder = 'Zorunlu';
+                    } else {
+                        input.placeholder = 'Opsiyonel';
+                    }
+                }
             });
         }
     }
