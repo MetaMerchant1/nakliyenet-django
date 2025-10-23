@@ -8,8 +8,8 @@ from django.utils import timezone
 from django.urls import reverse
 from django.db.models import Count, Q
 from .models import (
-    UserDocument, AdminActivity, UserProfile, Bid, BidComment,
-    Vehicle, Shipment, Payment, ShipmentTracking, DeliveryProof, Review
+    UserDocument, AdminActivity, UserProfile, Bid,
+    Vehicle, Shipment, Payment
 )
 
 
@@ -1189,7 +1189,6 @@ class NakliyeNetAdminSite(AdminSite):
 # Replace default admin site
 admin_site = NakliyeNetAdminSite(name='admin')
 
-@admin.register(BidComment)
 class BidCommentAdmin(admin.ModelAdmin):
     """Admin interface for bid comments"""
 
@@ -1256,11 +1255,9 @@ admin_site.register(AdminActivity, AdminActivityAdmin)
 admin_site.register(UserProfile, UserProfileAdmin)
 admin_site.register(Shipment, ShipmentAdmin)
 admin_site.register(Bid, BidAdmin)
-admin_site.register(BidComment, BidCommentAdmin)
 admin_site.register(Vehicle, VehicleAdmin)
 admin_site.register(Payment, PaymentAdmin)
 
-@admin.register(ShipmentTracking)
 class ShipmentTrackingAdmin(admin.ModelAdmin):
     """Admin interface for shipment tracking updates"""
 
@@ -1352,7 +1349,6 @@ class ShipmentTrackingAdmin(admin.ModelAdmin):
     updated_by_display.short_description = 'Güncelleyen'
 
 
-@admin.register(DeliveryProof)
 class DeliveryProofAdmin(admin.ModelAdmin):
     """Admin interface for delivery proof (photos, signatures)"""
 
@@ -1449,7 +1445,6 @@ class DeliveryProofAdmin(admin.ModelAdmin):
     file_image_preview.short_description = 'Dosya Önizleme'
 
 
-@admin.register(Review)
 class ReviewAdmin(admin.ModelAdmin):
     """Admin interface for user reviews and ratings"""
 
@@ -1622,6 +1617,3 @@ admin_site.register(SocialAccount)
 admin_site.register(SocialToken)
 
 # Register new models with admin site
-admin_site.register(ShipmentTracking, ShipmentTrackingAdmin)
-admin_site.register(DeliveryProof, DeliveryProofAdmin)
-admin_site.register(Review, ReviewAdmin)
