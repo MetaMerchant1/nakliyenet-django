@@ -451,8 +451,6 @@ class ShipmentAdmin(admin.ModelAdmin):
         'shipment_id',
         'tracking_number',
         'shipper',
-        'shipper_email',
-        'shipper_phone',
         'created_at',
         'updated_at',
         'view_count',
@@ -474,8 +472,6 @@ class ShipmentAdmin(admin.ModelAdmin):
         ('Yük Sahibi', {
             'fields': (
                 'shipper',
-                'shipper_email',
-                'shipper_phone',
             )
         }),
         ('Kalkış Adresi', {
