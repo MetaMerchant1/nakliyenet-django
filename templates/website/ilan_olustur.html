@@ -221,21 +221,48 @@
 document.addEventListener('DOMContentLoaded', function() {
     const cargoTypeSelect = document.querySelector('select[name="cargo_type"]');
     const movingDetailsElements = document.querySelectorAll('.moving-details');
+    const dimensionInputs = {
+        length: document.querySelector('input[name="length"]'),
+        width: document.querySelector('input[name="width"]'),
+        height: document.querySelector('input[name="height"]')
+    };
 
-    function toggleMovingDetails() {
+    function toggleFields() {
         const selectedValue = cargoTypeSelect.value;
-        const showDetails = selectedValue === 'evden_eve' || selectedValue === 'isyeri';
 
+        // 1. Evden Eve / Ofis Taşıma için kat/asansör alanlarını göster
+        const showMovingDetails = selectedValue === 'evden_eve' || selectedValue === 'isyeri' || selectedValue === 'beyaz_esya';
         movingDetailsElements.forEach(element => {
-            element.style.display = showDetails ? 'block' : 'none';
+            element.style.display = showMovingDetails ? 'block' : 'none';
         });
+
+        // 2. Yük/Kargo taşıma için boyutları zorunlu yap
+        const requireDimensions = selectedValue === 'diger' || selectedValue === 'parcali';
+        Object.values(dimensionInputs).forEach(input => {
+            if (input) {
+                input.required = requireDimensions;
+                if (requireDimensions) {
+                    input.placeholder = 'Zorunlu';
+                } else {
+                    input.placeholder = 'Opsiyonel';
+                }
+            }
+        });
+
+        // 3. Beyaz eşya için asansör ve kat bilgisi önemli
+        if (selectedValue === 'beyaz_esya') {
+            // Boyutlar opsiyonel kalır ama kat bilgisi önemlidir
+            Object.values(dimensionInputs).forEach(input => {
+                if (input) input.required = false;
+            });
+        }
     }
 
-    // Run on page load
-    toggleMovingDetails();
+    // Sayfa yüklendiğinde çalıştır
+    toggleFields();
 
-    // Run when cargo type changes
-    cargoTypeSelect.addEventListener('change', toggleMovingDetails);
+    // Yük tipi değiştiğinde çalıştır
+    cargoTypeSelect.addEventListener('change', toggleFields);
 });
 </script>
 
