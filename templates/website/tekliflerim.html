@@ -1,213 +1,349 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}{{ title }}{% endblock %}
+{% block extra_head %}
+<style>
+/* Tekliflerim için Özel Stiller */
+body {
+    background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+}
+
+.panel-header {
+    background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+    color: white;
+    padding: 3rem 0;
+    margin-bottom: 2rem;
+    border-radius: 0 0 2rem 2rem;
+    box-shadow: 0 10px 30px rgba(16, 185, 129, 0.2);
+}
+
+.stat-card {
+    background: white;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 2px solid #E5E7EB;
+    transition: all 0.3s ease;
+    height: 100%;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(16, 185, 129, 0.15);
+    border-color: #10B981;
+}
+
+.stat-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    margin-bottom: 1rem;
+}
+
+.bid-card {
+    background: white;
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+    border: 2px solid #F3F4F6;
+    transition: all 0.3s ease;
+    margin-bottom: 1.5rem;
+}
+
+.bid-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 35px rgba(16, 185, 129, 0.15);
+    border-color: #10B981;
+}
+
+.status-badge {
+    padding: 0.5rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.location-row {
+    background: #F8F9FA;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    margin-bottom: 0.5rem;
+    border-left: 3px solid #10B981;
+}
+
+.price-box {
+    background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+    padding: 1.25rem;
+    border-radius: 1rem;
+    border: 2px solid #10B981;
+}
+
+.price-highlight {
+    background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    font-size: 2rem;
+}
+
+.alert-success-modern {
+    background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 100%);
+    border: 2px solid #10B981;
+    border-radius: 1rem;
+    padding: 1.5rem;
+}
+
+.alert-info-modern {
+    background: linear-gradient(135deg, #DBEAFE 0%, #BFDBFE 100%);
+    border: 2px solid #0066FF;
+    border-radius: 1rem;
+    padding: 1.5rem;
+}
+
+.btn-modern {
+    padding: 0.75rem 1.5rem;
+    border-radius: 0.75rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: none;
+}
+
+.btn-primary-modern {
+    background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(0, 102, 255, 0.3);
+}
+
+.btn-primary-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 102, 255, 0.4);
+    color: white;
+}
+
+.btn-success-modern {
+    background: linear-gradient(135deg, #10B981 0%, #34D399 100%);
+    color: white;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.btn-success-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.4);
+    color: white;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: white;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+}
+</style>
+{% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="row">
-        <div class="col-12">
-            <h1 class="mb-4"><i class="bi bi-truck"></i> Tekliflerim</h1>
-            <p class="text-muted">Verdiğiniz teklifleri görüntüleyin ve durumlarını takip edin.</p>
+<!-- Modern Header -->
+<div class="panel-header">
+    <div class="container">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="fw-bold mb-2" style="font-size: 2.5rem;">
+                    <i class="bi bi-tags me-3"></i>Tekliflerim
+                </h1>
+                <p class="mb-0 opacity-90" style="font-size: 1.1rem;">Verdiğiniz teklifleri görüntüleyin ve durumlarını takip edin</p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <a href="{% url 'website:tasiyici_panel' %}" class="btn btn-light btn-lg">
+                    <i class="bi bi-speedometer2 me-2"></i>Taşıyıcı Paneli
+                </a>
+            </div>
         </div>
     </div>
+</div>
 
-    <!-- İstatistikler -->
-    <div class="row mb-4">
-        <div class="col-md-3">
-            <div class="card bg-primary text-white">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-clipboard-check"></i> Toplam Teklif</h5>
-                    <h2 class="mb-0">{{ stats.total_bids }}</h2>
+<div class="container my-5">
+    <!-- İstatistik Kartları -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-3 col-6">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%); color: white;">
+                    <i class="bi bi-clipboard-check"></i>
                 </div>
+                <h3 class="fw-bold mb-1" style="font-size: 2.5rem; color: #1F2937;">{{ stats.total_bids }}</h3>
+                <p class="text-muted mb-0">Toplam Teklif</p>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-warning text-dark">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-clock"></i> Bekleyen</h5>
-                    <h2 class="mb-0">{{ stats.pending_bids }}</h2>
+        <div class="col-md-3 col-6">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #F59E0B 0%, #FBBF24 100%); color: white;">
+                    <i class="bi bi-clock"></i>
                 </div>
+                <h3 class="fw-bold mb-1" style="font-size: 2.5rem; color: #1F2937;">{{ stats.pending_bids }}</h3>
+                <p class="text-muted mb-0">Bekleyen</p>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-success text-white">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-check-circle"></i> Kabul Edilen</h5>
-                    <h2 class="mb-0">{{ stats.accepted_bids }}</h2>
+        <div class="col-md-3 col-6">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #10B981 0%, #34D399 100%); color: white;">
+                    <i class="bi bi-check-circle"></i>
                 </div>
+                <h3 class="fw-bold mb-1" style="font-size: 2.5rem; color: #1F2937;">{{ stats.accepted_bids }}</h3>
+                <p class="text-muted mb-0">Kabul Edildi</p>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card bg-danger text-white">
-                <div class="card-body">
-                    <h5 class="card-title"><i class="bi bi-x-circle"></i> Reddedilen</h5>
-                    <h2 class="mb-0">{{ stats.rejected_bids }}</h2>
+        <div class="col-md-3 col-6">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: linear-gradient(135deg, #EF4444 0%, #F87171 100%); color: white;">
+                    <i class="bi bi-x-circle"></i>
                 </div>
+                <h3 class="fw-bold mb-1" style="font-size: 2.5rem; color: #1F2937;">{{ stats.rejected_bids }}</h3>
+                <p class="text-muted mb-0">Reddedildi</p>
             </div>
         </div>
     </div>
 
     <!-- Teklifler Listesi -->
-    <div class="row">
-        <div class="col-12">
-            {% if bids %}
-                <div class="table-responsive">
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th>İlan Detayları</th>
-                                <th>Teklif Tutarı</th>
-                                <th>Teslimat Süresi</th>
-                                <th>Durum</th>
-                                <th>Tarih</th>
-                                <th>İşlemler</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {% for bid in bids %}
-                            <tr>
-                                <td>
-                                    <div>
-                                        <strong>{{ bid.shipment.title }}</strong><br>
-                                        <small class="text-muted">
-                                            <i class="bi bi-geo-alt"></i>
-                                            {{ bid.shipment.from_address_city }} → {{ bid.shipment.to_address_city }}
-                                        </small><br>
-                                        <small class="text-muted">
-                                            <i class="bi bi-hash"></i> {{ bid.tracking_number }}
-                                        </small>
-                                    </div>
-                                </td>
-                                <td>
-                                    <strong class="text-success">{{ bid.offered_price }} TL</strong>
-                                    {% if bid.shipment.suggested_price %}
-                                    <br><small class="text-muted">Önerilen: {{ bid.shipment.suggested_price }} TL</small>
-                                    {% endif %}
-                                </td>
-                                <td>{{ bid.estimated_delivery_days }} gün</td>
-                                <td>
-                                    {% if bid.status == 'pending' %}
-                                        <span class="badge bg-warning text-dark">
-                                            <i class="bi bi-clock"></i> Bekliyor
-                                        </span>
-                                    {% elif bid.status == 'accepted' %}
-                                        <span class="badge bg-success">
-                                            <i class="bi bi-check-circle"></i> Kabul Edildi
-                                        </span>
-                                    {% elif bid.status == 'rejected' %}
-                                        <span class="badge bg-danger">
-                                            <i class="bi bi-x-circle"></i> Reddedildi
-                                        </span>
-                                    {% elif bid.status == 'counter_offered' %}
-                                        <span class="badge bg-info">
-                                            <i class="bi bi-arrow-left-right"></i> Karşı Teklif
-                                        </span>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <small>{{ bid.created_at|date:"d.m.Y H:i" }}</small>
-                                    {% if bid.accepted_at %}
-                                    <br><small class="text-success">Kabul: {{ bid.accepted_at|date:"d.m.Y H:i" }}</small>
-                                    {% endif %}
-                                </td>
-                                <td>
-                                    <a href="{% url 'website:ilan_detay' bid.tracking_number %}" class="btn btn-sm btn-primary">
-                                        <i class="bi bi-eye"></i> İlanı Gör
-                                    </a>
-
-                                    {% if bid.status == 'accepted' and bid.shipment.status != 'completed' %}
-                                    <a href="{% url 'website:shipment_tracking' bid.tracking_number %}" class="btn btn-sm btn-success mt-1">
-                                        <i class="bi bi-geo-alt"></i> Takip
-                                    </a>
-                                    {% endif %}
-                                </td>
-                            </tr>
-
-                            <!-- Mesaj varsa göster -->
-                            {% if bid.message %}
-                            <tr class="table-light">
-                                <td colspan="6">
-                                    <small><strong><i class="bi bi-chat-left-text"></i> Mesajınız:</strong> {{ bid.message }}</small>
-                                </td>
-                            </tr>
-                            {% endif %}
-
-                            <!-- Kabul edildiğinde ek bilgiler göster -->
-                            {% if bid.status == 'accepted' %}
-                            <tr class="table-success">
-                                <td colspan="6">
-                                    <div class="alert alert-success mb-0">
-                                        <h6><i class="bi bi-check-circle-fill"></i> Teklif Kabul Edildi!</h6>
-
-                                        {% if bid.shipment.payment %}
-                                        <div class="mb-2">
-                                            <strong>💰 Ödeme Durumu:</strong>
-                                            {% if bid.shipment.payment.status == 'pending' %}
-                                                <span class="badge bg-warning text-dark">Yük sahibi ödeme yapmadı</span>
-                                                <p class="small text-muted mb-0 mt-1">Yükü almak için önce yük sahibinin ödeme yapması gerekiyor.</p>
-                                            {% elif bid.shipment.payment.status == 'paid' %}
-                                                <span class="badge bg-success">✓ Ödeme Yapıldı!</span>
-                                                <p class="small mb-0 mt-1">
-                                                    Yük sahibi <strong>{{ bid.shipment.payment.amount }} TL</strong> ödeme yaptı.
-                                                    Teslimat sonrası <strong>{{ bid.shipment.payment.carrier_amount }} TL</strong> tarafınıza transfer edilecek.
-                                                </p>
-                                            {% elif bid.shipment.payment.status == 'in_transit' %}
-                                                <span class="badge bg-info">Yük yolda</span>
-                                            {% elif bid.shipment.payment.status == 'delivered' %}
-                                                <span class="badge bg-primary">Teslim edildi</span>
-                                            {% elif bid.shipment.payment.status == 'completed' %}
-                                                <span class="badge bg-success">✓ Para Transferi Tamamlandı!</span>
-                                                <p class="small mb-0 mt-1"><strong>{{ bid.shipment.payment.carrier_amount }} TL</strong> hesabınıza transfer edildi.</p>
-                                            {% endif %}
-                                        </div>
-                                        {% endif %}
-
-                                        <p class="mb-0">
-                                            <strong>Yük Durumu:</strong>
-                                            {% if bid.shipment.status == 'assigned' %}
-                                                İş size atandı.
-                                                {% if bid.shipment.payment and bid.shipment.payment.status == 'paid' %}
-                                                    Ödeme alındı, yükü almaya başlayabilirsiniz!
-                                                {% else %}
-                                                    Yük sahibinin ödeme yapmasını bekleyin.
-                                                {% endif %}
-                                            {% elif bid.shipment.status == 'picked_up' %}
-                                                Yük toplandı, yoldayız!
-                                            {% elif bid.shipment.status == 'in_transit' %}
-                                                Taşıma devam ediyor.
-                                            {% elif bid.shipment.status == 'delivered' %}
-                                                Teslim edildi! Yük sahibi onayını bekliyor.
-                                            {% elif bid.shipment.status == 'completed' %}
-                                                İş tamamlandı. Harika!
-                                            {% endif %}
-                                        </p>
-
-                                        {% if bid.shipment.status in 'assigned,picked_up,in_transit' and bid.shipment.payment and bid.shipment.payment.status == 'paid' %}
-                                        <div class="mt-2">
-                                            <a href="{% url 'website:update_tracking' bid.tracking_number %}" class="btn btn-sm btn-primary">
-                                                <i class="bi bi-geo-alt"></i> Konumu Güncelle
-                                            </a>
-                                        </div>
-                                        {% endif %}
-                                    </div>
-                                </td>
-                            </tr>
-                            {% endif %}
-                            {% endfor %}
-                        </tbody>
-                    </table>
+    {% if bids %}
+        {% for bid in bids %}
+        <div class="bid-card">
+            <div class="row align-items-center mb-3">
+                <div class="col-md-8">
+                    <h5 class="fw-bold mb-2" style="color: #1F2937;">{{ bid.shipment.title }}</h5>
+                    <div class="location-row">
+                        <i class="bi bi-geo-alt text-primary me-2"></i>
+                        <small class="text-muted me-2">Rota:</small>
+                        <span class="fw-bold" style="color: #374151;">{{ bid.shipment.from_address_city }} → {{ bid.shipment.to_address_city }}</span>
+                    </div>
+                    <small class="text-muted">
+                        <i class="bi bi-hash"></i> {{ bid.tracking_number }}
+                        <span class="ms-3"><i class="bi bi-calendar3"></i> {{ bid.created_at|date:"d.m.Y H:i" }}</span>
+                    </small>
                 </div>
-            {% else %}
-                <div class="alert alert-info">
-                    <h5><i class="bi bi-info-circle"></i> Henüz teklif vermediniz</h5>
-                    <p>Aktif ilanları görüntüleyerek teklif vermeye başlayabilirsiniz.</p>
-                    <a href="{% url 'website:ilanlar' %}" class="btn btn-primary">
-                        <i class="bi bi-search"></i> İlanları Gör
-                    </a>
+                <div class="col-md-4 mt-3 mt-md-0">
+                    {% if bid.status == 'pending' %}
+                        <span class="status-badge bg-warning text-dark d-block text-center">
+                            <i class="bi bi-clock"></i> Bekliyor
+                        </span>
+                    {% elif bid.status == 'accepted' %}
+                        <span class="status-badge bg-success text-white d-block text-center">
+                            <i class="bi bi-check-circle"></i> Kabul Edildi
+                        </span>
+                    {% elif bid.status == 'rejected' %}
+                        <span class="status-badge bg-danger text-white d-block text-center">
+                            <i class="bi bi-x-circle"></i> Reddedildi
+                        </span>
+                    {% elif bid.status == 'counter_offered' %}
+                        <span class="status-badge bg-info text-white d-block text-center">
+                            <i class="bi bi-arrow-left-right"></i> Karşı Teklif
+                        </span>
+                    {% endif %}
                 </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+                <div class="col-md-4">
+                    <div class="price-box text-center">
+                        <small class="text-muted d-block mb-1">Teklifiniz</small>
+                        <span class="price-highlight">{{ bid.offered_price }} ₺</span>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="price-box text-center" style="background: linear-gradient(135deg, #F0F4FF 0%, #E0E7FF 100%); border-color: #0066FF;">
+                        <small class="text-muted d-block mb-1">Önerilen Bütçe</small>
+                        <strong style="font-size: 1.5rem; color: #0066FF;">{{ bid.shipment.suggested_price }} ₺</strong>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="price-box text-center" style="background: linear-gradient(135deg, #FFF7ED 0%, #FFEDD5 100%); border-color: #F59E0B;">
+                        <small class="text-muted d-block mb-1">Teslimat Süresi</small>
+                        <strong style="font-size: 1.5rem; color: #F59E0B;">{{ bid.estimated_delivery_days }} gün</strong>
+                    </div>
+                </div>
+            </div>
+
+            {% if bid.message %}
+            <div class="alert alert-info-modern mb-3">
+                <i class="bi bi-chat-left-text me-2"></i>
+                <strong>Mesajınız:</strong> {{ bid.message }}
+            </div>
             {% endif %}
+
+            <!-- Kabul edilmiş teklifler için detaylı bilgi -->
+            {% if bid.status == 'accepted' %}
+            <div class="alert-success-modern">
+                <h6 class="fw-bold mb-3" style="color: #065F46;">
+                    <i class="bi bi-check-circle-fill me-2"></i>Teklif Kabul Edildi!
+                </h6>
+
+                {% if bid.shipment.payment %}
+                <div class="mb-3">
+                    <strong style="color: #065F46;">💰 Ödeme Durumu:</strong>
+                    {% if bid.shipment.payment.status == 'pending' %}
+                        <span class="badge bg-warning text-dark ms-2">Yük sahibi ödeme yapmadı</span>
+                        <p class="small text-muted mb-0 mt-2">Yükü almak için önce yük sahibinin ödeme yapması gerekiyor.</p>
+                    {% elif bid.shipment.payment.status == 'paid' %}
+                        <span class="badge bg-success ms-2">✓ Ödeme Yapıldı!</span>
+                        <p class="small mb-0 mt-2" style="color: #065F46;">
+                            Yük sahibi <strong>{{ bid.shipment.payment.amount }} ₺</strong> ödeme yaptı.
+                            Teslimat sonrası <strong>{{ bid.shipment.payment.carrier_amount }} ₺</strong> tarafınıza transfer edilecek.
+                        </p>
+                    {% elif bid.shipment.payment.status == 'completed' %}
+                        <span class="badge bg-success ms-2">✓ Para Transferi Tamamlandı!</span>
+                        <p class="small mb-0 mt-2" style="color: #065F46;">
+                            <strong>{{ bid.shipment.payment.carrier_amount }} ₺</strong> hesabınıza transfer edildi.
+                        </p>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <div class="mb-3">
+                    <strong style="color: #065F46;">📦 Yük Durumu:</strong>
+                    {% if bid.shipment.status == 'assigned' %}
+                        <span class="badge bg-primary ms-2">İş size atandı</span>
+                    {% elif bid.shipment.status == 'picked_up' %}
+                        <span class="badge bg-info ms-2">Yük toplandı</span>
+                    {% elif bid.shipment.status == 'in_transit' %}
+                        <span class="badge bg-info ms-2">Taşıma devam ediyor</span>
+                    {% elif bid.shipment.status == 'delivered' %}
+                        <span class="badge bg-warning text-dark ms-2">Teslim edildi, onay bekleniyor</span>
+                    {% elif bid.shipment.status == 'completed' %}
+                        <span class="badge bg-success ms-2">✓ Tamamlandı</span>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="d-flex gap-2 mt-3 pt-3 border-top">
+                <a href="{% url 'website:ilan_detay' bid.tracking_number %}" class="btn btn-primary-modern btn-modern">
+                    <i class="bi bi-eye me-1"></i>İlanı Gör
+                </a>
+                {% if bid.status == 'accepted' and bid.shipment.status != 'completed' %}
+                <a href="{% url 'website:shipment_tracking' bid.tracking_number %}" class="btn btn-success-modern btn-modern">
+                    <i class="bi bi-geo-alt me-1"></i>Takip Et
+                </a>
+                {% endif %}
+            </div>
         </div>
-    </div>
+        {% endfor %}
+    {% else %}
+        <div class="empty-state">
+            <div class="mb-4">
+                <i class="bi bi-inbox" style="font-size: 5rem; color: #D1D5DB;"></i>
+            </div>
+            <h3 class="fw-bold mb-3" style="color: #374151;">Henüz Teklif Vermediniz</h3>
+            <p class="text-muted mb-4">Aktif ilanları görüntüleyerek teklif vermeye başlayabilirsiniz.</p>
+            <a href="{% url 'website:tasiyici_panel' %}" class="btn btn-success-modern btn-modern btn-lg">
+                <i class="bi bi-search me-2"></i>İlanları Gör
+            </a>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}
