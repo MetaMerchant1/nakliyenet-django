@@ -1,0 +1,151 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ post.title }} - NAKLIYE NET Blog{% endblock %}
+{% block description %}{{ post.meta_description|default:post.content|truncatewords:30 }}{% endblock %}
+{% block keywords %}{{ post.meta_keywords }}{% endblock %}
+
+{% block extra_head %}
+<!-- Schema.org Article markup -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ post.title }}",
+  "datePublished": "{{ post.created_at|date:'c' }}",
+  "dateModified": "{{ post.updated_at|date:'c' }}",
+  "author": {
+    "@type": "Organization",
+    "name": "NAKLIYE NET"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "NAKLIYE NET",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ request.scheme }}://{{ request.get_host }}/static/logo.png"
+    }
+  },
+  "description": "{{ post.meta_description|default:post.content|truncatewords:30 }}"
+  {% if post.featured_image %},
+  "image": "{{ request.scheme }}://{{ request.get_host }}{{ post.featured_image.url }}"
+  {% endif %}
+}
+</script>
+{% endblock %}
+
+{% block content %}
+<div class="container my-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            <!-- Breadcrumb -->
+            <nav aria-label="breadcrumb" class="mb-4">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'website:index' %}">Ana Sayfa</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'blog:list' %}">Blog</a></li>
+                    <li class="breadcrumb-item active">{{ post.title }}</li>
+                </ol>
+            </nav>
+
+            <!-- Article -->
+            <article class="blog-post">
+                <header class="mb-4">
+                    <h1 class="display-5 mb-3">{{ post.title }}</h1>
+                    <div class="text-muted">
+                        <i class="bi bi-calendar3"></i> {{ post.created_at|date:"d F Y, H:i" }}
+                        <span class="ms-3"><i class="bi bi-eye"></i> {{ post.view_count }} görüntülenme</span>
+                    </div>
+                </header>
+
+                {% if post.featured_image %}
+                <div class="mb-4">
+                    <img src="{{ post.featured_image.url }}"
+                         alt="{{ post.title }}"
+                         class="img-fluid rounded shadow-sm"
+                         style="max-height: 500px; width: 100%; object-fit: cover;">
+                </div>
+                {% endif %}
+
+                <div class="blog-content">
+                    {{ post.content|linebreaks }}
+                </div>
+
+                <hr class="my-5">
+
+                <!-- Share Buttons -->
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <strong>Paylaş:</strong>
+                        <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ post.title }}"
+                           target="_blank"
+                           class="btn btn-sm btn-outline-primary ms-2">
+                            <i class="bi bi-twitter"></i> Twitter
+                        </a>
+                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}"
+                           target="_blank"
+                           class="btn btn-sm btn-outline-primary ms-2">
+                            <i class="bi bi-facebook"></i> Facebook
+                        </a>
+                        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}"
+                           target="_blank"
+                           class="btn btn-sm btn-outline-primary ms-2">
+                            <i class="bi bi-linkedin"></i> LinkedIn
+                        </a>
+                    </div>
+                    <a href="{% url 'blog:list' %}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> Tüm Yazılar
+                    </a>
+                </div>
+            </article>
+        </div>
+    </div>
+</div>
+
+<style>
+.blog-content {
+    font-size: 1.1rem;
+    line-height: 1.8;
+    color: #333;
+}
+
+.blog-content p {
+    margin-bottom: 1.5rem;
+}
+
+.blog-content h2 {
+    margin-top: 2rem;
+    margin-bottom: 1rem;
+    font-size: 1.8rem;
+}
+
+.blog-content h3 {
+    margin-top: 1.5rem;
+    margin-bottom: 0.75rem;
+    font-size: 1.4rem;
+}
+
+.blog-content ul, .blog-content ol {
+    margin-bottom: 1.5rem;
+    padding-left: 2rem;
+}
+
+.blog-content li {
+    margin-bottom: 0.5rem;
+}
+
+.blog-content img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin: 1.5rem 0;
+}
+
+.blog-content blockquote {
+    border-left: 4px solid var(--primary-color);
+    padding-left: 1.5rem;
+    margin: 1.5rem 0;
+    font-style: italic;
+    color: #666;
+}
+</style>
+{% endblock %}
