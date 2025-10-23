@@ -220,12 +220,36 @@
 <script>
 function handleFormSubmit() {
     {% if user.is_authenticated %}
-        // If user is logged in, redirect to full form page
-        window.location.href = "{% url 'website:ilan_olustur' %}";
-    {% else %}
-        // If user is not logged in, show login prompt
+        // If user is logged in, redirect to full form page with pre-filled data
         const form = document.getElementById('quickShipmentForm');
         if (form.checkValidity()) {
+            // Collect form data
+            const formData = new FormData(form);
+            const params = new URLSearchParams();
+
+            // Add all form fields to URL parameters
+            for (const [key, value] of formData.entries()) {
+                if (value) params.append(key, value);
+            }
+
+            // Redirect to full form with pre-filled data
+            window.location.href = "{% url 'website:ilan_olustur' %}?" + params.toString();
+        } else {
+            form.reportValidity();
+        }
+    {% else %}
+        // If user is not logged in, save form data and show login prompt
+        const form = document.getElementById('quickShipmentForm');
+        if (form.checkValidity()) {
+            // Save form data to sessionStorage for after login
+            const formData = new FormData(form);
+            const data = {};
+            for (const [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            sessionStorage.setItem('quickFormData', JSON.stringify(data));
+
+            // Show login prompt
             document.getElementById('loginPrompt').style.display = 'block';
             document.getElementById('loginPrompt').scrollIntoView({ behavior: 'smooth', block: 'center' });
         } else {
@@ -243,6 +267,67 @@ style.textContent = `
     }
 `;
 document.head.appendChild(style);
+
+// Add city autocomplete functionality
+document.addEventListener('DOMContentLoaded', function() {
+    // Türkiye Şehirleri - Alfabetik Sırada
+    const turkishCities = [
+        'Adana', 'Adıyaman', 'Afyonkarahisar', 'Ağrı', 'Aksaray', 'Amasya', 'Ankara',
+        'Antalya', 'Ardahan', 'Artvin', 'Aydın', 'Balıkesir', 'Bartın', 'Batman',
+        'Bayburt', 'Bilecik', 'Bingöl', 'Bitlis', 'Bolu', 'Burdur', 'Bursa',
+        'Çanakkale', 'Çankırı', 'Çorum', 'Denizli', 'Diyarbakır', 'Düzce', 'Edirne',
+        'Elazığ', 'Erzincan', 'Erzurum', 'Eskişehir', 'Gaziantep', 'Giresun', 'Gümüşhane',
+        'Hakkari', 'Hatay', 'Iğdır', 'Isparta', 'İstanbul', 'İzmir', 'Kahramanmaraş',
+        'Karabük', 'Karaman', 'Kars', 'Kastamonu', 'Kayseri', 'Kırıkkale', 'Kırklareli',
+        'Kırşehir', 'Kilis', 'Kocaeli', 'Konya', 'Kütahya', 'Malatya', 'Manisa',
+        'Mardin', 'Mersin', 'Muğla', 'Muş', 'Nevşehir', 'Niğde', 'Ordu', 'Osmaniye',
+        'Rize', 'Sakarya', 'Samsun', 'Siirt', 'Sinop', 'Sivas', 'Şanlıurfa', 'Şırnak',
+        'Tekirdağ', 'Tokat', 'Trabzon', 'Tunceli', 'Uşak', 'Van', 'Yalova', 'Yozgat', 'Zonguldak'
+    ];
+
+    // Add datalist for city autocomplete
+    const fromCityInput = document.querySelector('input[name="from_city"]');
+    const toCityInput = document.querySelector('input[name="to_city"]');
+
+    if (fromCityInput && toCityInput) {
+        // Create datalist
+        const datalist = document.createElement('datalist');
+        datalist.id = 'quick-cities-list';
+        turkishCities.forEach(city => {
+            const option = document.createElement('option');
+            option.value = city;
+            datalist.appendChild(option);
+        });
+        document.body.appendChild(datalist);
+
+        // Attach datalist to inputs
+        fromCityInput.setAttribute('list', 'quick-cities-list');
+        toCityInput.setAttribute('list', 'quick-cities-list');
+
+        // Add autocomplete functionality
+        [fromCityInput, toCityInput].forEach(input => {
+            input.addEventListener('input', function() {
+                const value = this.value;
+                if (value.length > 0) {
+                    this.value = value.charAt(0).toLocaleUpperCase('tr-TR') + value.slice(1).toLocaleLowerCase('tr-TR');
+                }
+            });
+
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    const value = this.value.toLocaleLowerCase('tr-TR');
+                    const match = turkishCities.find(city =>
+                        city.toLocaleLowerCase('tr-TR').startsWith(value)
+                    );
+                    if (match) {
+                        this.value = match;
+                    }
+                }
+            });
+        });
+    }
+});
 </script>
 
 <!-- Nasıl Çalışır - Modern Design -->

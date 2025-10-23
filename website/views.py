@@ -1116,12 +1116,23 @@ def ilan_olustur(request):
             messages.error(request, f'İlan oluşturulurken hata: {str(e)}')
 
     # GET request - show form
+    # Get pre-filled data from URL parameters (from quick form)
+    prefill_data = {
+        'from_city': request.GET.get('from_city', ''),
+        'to_city': request.GET.get('to_city', ''),
+        'cargo_type': request.GET.get('cargo_type', ''),
+        'pickup_date': request.GET.get('pickup_date', ''),
+        'weight': request.GET.get('weight', ''),
+        'suggested_price': request.GET.get('suggested_price', ''),
+    }
+
     context = {
         'title': 'İlan Oluştur - NAKLIYE NET',
         'description': 'Yeni nakliye ilanı oluşturun',
         'cargo_types': Shipment.CARGO_TYPES,
         'loading_choices': Shipment.LOADING_CHOICES,
         'unloading_choices': Shipment.UNLOADING_CHOICES,
+        'prefill': prefill_data,
     }
     return render(request, 'website/ilan_olustur.html', context)
 

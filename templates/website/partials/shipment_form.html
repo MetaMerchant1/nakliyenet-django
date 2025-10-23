@@ -27,7 +27,7 @@
                     <label class="form-label">Yük Tipi *</label>
                     <select class="form-select" name="cargo_type" id="cargo_type" required>
                         {% for value, label in cargo_types %}
-                        <option value="{{value}}">{{label}}</option>
+                        <option value="{{value}}" {% if prefill.cargo_type == value %}selected{% endif %}>{{label}}</option>
                         {% endfor %}
                     </select>
                 </div>
@@ -47,7 +47,7 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label class="form-label">Şehir *</label>
-                    <input type="text" class="form-control city-autocomplete" name="from_city" id="from_city" required placeholder="Örn: İstanbul" autocomplete="off" list="cities-list">
+                    <input type="text" class="form-control city-autocomplete" name="from_city" id="from_city" required placeholder="Örn: İstanbul" autocomplete="off" list="cities-list" value="{{ prefill.from_city|default:'' }}">
                     <datalist id="cities-list"></datalist>
                 </div>
                 <div class="col-md-6">
@@ -105,7 +105,7 @@
             <div class="row mb-3">
                 <div class="col-md-6">
                     <label class="form-label">Şehir *</label>
-                    <input type="text" class="form-control city-autocomplete" name="to_city" id="to_city" required placeholder="Örn: Ankara" autocomplete="off" list="cities-list">
+                    <input type="text" class="form-control city-autocomplete" name="to_city" id="to_city" required placeholder="Örn: Ankara" autocomplete="off" list="cities-list" value="{{ prefill.to_city|default:'' }}">
                 </div>
                 <div class="col-md-6">
                     <label class="form-label">İlçe *</label>
@@ -166,7 +166,7 @@
             <div class="row mb-3">
                 <div class="col-md-3">
                     <label class="form-label">Ağırlık (kg) *</label>
-                    <input type="number" class="form-control" name="weight" required min="1" step="0.01" placeholder="100">
+                    <input type="number" class="form-control" name="weight" required min="1" step="0.01" placeholder="100" value="{{ prefill.weight|default:'' }}">
                 </div>
                 <div class="col-md-3">
                     <label class="form-label">Uzunluk (cm)</label>
@@ -184,7 +184,7 @@
             <div class="row mb-3">
                 <div class="col-md-12">
                     <label class="form-label">Bütçeniz (₺) *</label>
-                    <input type="number" class="form-control" name="suggested_price" required min="1" step="0.01" placeholder="1000">
+                    <input type="number" class="form-control" name="suggested_price" required min="1" step="0.01" placeholder="1000" value="{{ prefill.suggested_price|default:'' }}">
                     <div class="form-text">Taşıyıcılar bu fiyat üzerinden teklif verecek</div>
                 </div>
             </div>
@@ -208,7 +208,7 @@
             </div>
             <div class="mb-3">
                 <label class="form-label">Alış Tarihi *</label>
-                <input type="date" class="form-control" name="pickup_date" required>
+                <input type="date" class="form-control" name="pickup_date" required value="{{ prefill.pickup_date|default:'' }}">
             </div>
         </div>
     </div>
