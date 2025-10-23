@@ -115,7 +115,10 @@ class UserDocumentAdmin(admin.ModelAdmin):
 
     def approve_documents(self, request, queryset):
         """Bulk approve documents"""
+        from website.models import UserProfile
         count = 0
+        updated_profiles = set()
+
         for doc in queryset.filter(status='pending'):
             doc.status = 'approved'
             doc.verified_at = timezone.now()
@@ -133,7 +136,23 @@ class UserDocumentAdmin(admin.ModelAdmin):
             )
             count += 1
 
-        self.message_user(request, f"✅ {count} belge başarıyla onaylandı!", 'success')
+            # Check if all documents are approved for this user
+            try:
+                user = User.objects.get(email=doc.user_email)
+                profile = user.profile
+
+                # Check if all required documents are approved
+                if profile.check_documents_verified():
+                    profile.documents_verified = True
+                    profile.save()
+                    updated_profiles.add(doc.user_email)
+            except (User.DoesNotExist, UserProfile.DoesNotExist):
+                pass
+
+        message = f"✅ {count} belge başarıyla onaylandı!"
+        if updated_profiles:
+            message += f" {len(updated_profiles)} kullanıcı tamamen doğrulandı."
+        self.message_user(request, message, 'success')
     approve_documents.short_description = "✅ Seçili belgeleri ONAYLA"
 
     def reject_documents(self, request, queryset):
@@ -366,6 +385,32 @@ class UserProfileAdmin(admin.ModelAdmin):
             '<span style="background-color: #95a5a6; color: white; padding: 3px 10px; border-radius: 3px;">❓ Belirtilmemiş</span>'
         )
     user_type_badge.short_description = 'Kullanıcı Tipi'
+
+    actions = ['verify_users']
+
+    def verify_users(self, request, queryset):
+        """Verify selected user profiles"""
+        count = 0
+        for profile in queryset:
+            if profile.user_type == 1:  # Carrier
+                if profile.check_documents_verified():
+                    profile.documents_verified = True
+                    profile.save()
+                    count += 1
+                else:
+                    self.message_user(
+                        request,
+                        f"⚠️ {profile.user.email} - Tüm belgeler onaylanmamış!",
+                        'warning'
+                    )
+            else:  # Shipper
+                profile.documents_verified = True
+                profile.save()
+                count += 1
+
+        if count > 0:
+            self.message_user(request, f"✅ {count} kullanıcı doğrulandı!", 'success')
+    verify_users.short_description = "✅ Seçili kullanıcıları DOĞRULA"
 
 
 class BidInline(admin.StackedInline):
