@@ -15,13 +15,7 @@ class BlogPost(models.Model):
                                     help_text='Virgülle ayrılmış anahtar kelimeler')
 
     # SEO ve yayın ayarları
-    STATUS_CHOICES = [
-        ('draft', 'Taslak'),
-        ('published', 'Yayında'),
-        ('archived', 'Arşivlendi'),
-    ]
-    status = models.CharField('Durum', max_length=20, choices=STATUS_CHOICES, default='draft')
-    is_published = models.BooleanField('Yayında', default=True)  # Backward compatibility
+    is_published = models.BooleanField('Yayında', default=True)
     featured_image = models.ImageField('Öne Çıkan Görsel', upload_to='blog/', blank=True, null=True)
 
     # Tarihler

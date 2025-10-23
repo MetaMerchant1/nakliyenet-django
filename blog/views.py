@@ -17,7 +17,7 @@ class BlogListView(ListView):
 
 def blog_detail(request, slug):
     """Blog yazısı detay sayfası - SEO optimize"""
-    post = get_object_or_404(BlogPost, slug=slug, status='published')
+    post = get_object_or_404(BlogPost, slug=slug, is_published=True)
 
     # Görüntülenme sayısını artır
     post.view_count += 1
