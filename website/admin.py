@@ -265,6 +265,7 @@ class UserProfileAdmin(admin.ModelAdmin):
 
     list_display = [
         'user_email',
+        'user_type_badge',
         'phone_number',
         'iban_masked',
         'profile_status',
@@ -350,6 +351,21 @@ class UserProfileAdmin(admin.ModelAdmin):
         """Show approved document count"""
         return f"{obj.get_approved_document_count()} onaylı"
     approved_document_count_display.short_description = 'Onaylı Belge'
+
+    def user_type_badge(self, obj):
+        """Display user type with badge"""
+        if obj.user_type == 0:
+            return format_html(
+                '<span style="background-color: #3498db; color: white; padding: 3px 10px; border-radius: 3px; font-weight: bold;">📦 Yük Gönderen</span>'
+            )
+        elif obj.user_type == 1:
+            return format_html(
+                '<span style="background-color: #10B981; color: white; padding: 3px 10px; border-radius: 3px; font-weight: bold;">🚛 Taşıyıcı</span>'
+            )
+        return format_html(
+            '<span style="background-color: #95a5a6; color: white; padding: 3px 10px; border-radius: 3px;">❓ Belirtilmemiş</span>'
+        )
+    user_type_badge.short_description = 'Kullanıcı Tipi'
 
 
 class BidInline(admin.StackedInline):
