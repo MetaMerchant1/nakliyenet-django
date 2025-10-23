@@ -8,15 +8,9 @@ from django.utils import timezone
 from django.urls import reverse
 from django.db.models import Count, Q
 from .models import (
-    UserDocument, AdminActivity, UserProfile, Bid,
-    Vehicle, Shipment, Payment
+    UserDocument, AdminActivity, UserProfile, Bid, BidComment,
+    Vehicle, Shipment, Payment, ShipmentTracking, DeliveryProof, Review
 )
-
-# Optional models - only import if they exist
-BidComment = None
-ShipmentTracking = None
-DeliveryProof = None
-Review = None
 
 
 @admin.register(UserDocument)
@@ -1195,66 +1189,65 @@ class NakliyeNetAdminSite(AdminSite):
 # Replace default admin site
 admin_site = NakliyeNetAdminSite(name='admin')
 
-if BidComment:
-    @admin.register(BidComment)
-    class BidCommentAdmin(admin.ModelAdmin):
-        """Admin interface for bid comments"""
+@admin.register(BidComment)
+class BidCommentAdmin(admin.ModelAdmin):
+    """Admin interface for bid comments"""
 
-        list_display = [
-            'bid_id_short',
-            'author_name',
-            'is_shipper',
-            'comment_short',
-            'created_at',
-        ]
+    list_display = [
+        'bid_id_short',
+        'author_name',
+        'is_shipper',
+        'comment_short',
+        'created_at',
+    ]
 
-        list_filter = [
-            'is_shipper',
-            'created_at',
-        ]
+    list_filter = [
+        'is_shipper',
+        'created_at',
+    ]
 
-        search_fields = [
-            'bid__bid_id',
-            'author_name',
-            'author_email',
-            'comment',
-        ]
+    search_fields = [
+        'bid__bid_id',
+        'author_name',
+        'author_email',
+        'comment',
+    ]
 
-        readonly_fields = [
-            'bid',
-            'author',
-            'author_email',
-            'author_name',
-            'is_shipper',
-            'created_at',
-            'updated_at',
-        ]
+    readonly_fields = [
+        'bid',
+        'author',
+        'author_email',
+        'author_name',
+        'is_shipper',
+        'created_at',
+        'updated_at',
+    ]
 
-        fieldsets = (
-            ('Teklif Bilgileri', {
-                'fields': ('bid',)
-            }),
-            ('Yorum Yazarı', {
-                'fields': ('author', 'author_name', 'author_email', 'is_shipper')
-            }),
-            ('Yorum İçeriği', {
-                'fields': ('comment',)
-            }),
-            ('Tarihler', {
-                'fields': ('created_at', 'updated_at'),
-                'classes': ('collapse',)
-            }),
-        )
+    fieldsets = (
+        ('Teklif Bilgileri', {
+            'fields': ('bid',)
+        }),
+        ('Yorum Yazarı', {
+            'fields': ('author', 'author_name', 'author_email', 'is_shipper')
+        }),
+        ('Yorum İçeriği', {
+            'fields': ('comment',)
+        }),
+        ('Tarihler', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
 
-        def bid_id_short(self, obj):
-            """Display short bid ID"""
-            return obj.bid.bid_id[:13] + '...'
-        bid_id_short.short_description = 'Teklif ID'
+    def bid_id_short(self, obj):
+        """Display short bid ID"""
+        return obj.bid.bid_id[:13] + '...'
+    bid_id_short.short_description = 'Teklif ID'
 
-        def comment_short(self, obj):
-            """Display shortened comment"""
-            return obj.comment[:50] + '...' if len(obj.comment) > 50 else obj.comment
-        comment_short.short_description = 'Yorum'
+    def comment_short(self, obj):
+        """Display shortened comment"""
+        return obj.comment[:50] + '...' if len(obj.comment) > 50 else obj.comment
+    comment_short.short_description = 'Yorum'
 
 
 # Re-register all models with the new admin site
@@ -1263,14 +1256,12 @@ admin_site.register(AdminActivity, AdminActivityAdmin)
 admin_site.register(UserProfile, UserProfileAdmin)
 admin_site.register(Shipment, ShipmentAdmin)
 admin_site.register(Bid, BidAdmin)
-if BidComment:
-    admin_site.register(BidComment, BidCommentAdmin)
+admin_site.register(BidComment, BidCommentAdmin)
 admin_site.register(Vehicle, VehicleAdmin)
 admin_site.register(Payment, PaymentAdmin)
 
-if ShipmentTracking:
-    @admin.register(ShipmentTracking)
-    class ShipmentTrackingAdmin(admin.ModelAdmin):
+@admin.register(ShipmentTracking)
+class ShipmentTrackingAdmin(admin.ModelAdmin):
     """Admin interface for shipment tracking updates"""
 
     list_display = [
@@ -1630,10 +1621,7 @@ admin_site.register(SocialApp)
 admin_site.register(SocialAccount)
 admin_site.register(SocialToken)
 
-# Register new models with admin site (if they exist)
-if ShipmentTracking:
-    admin_site.register(ShipmentTracking, ShipmentTrackingAdmin)
-if DeliveryProof:
-    admin_site.register(DeliveryProof, DeliveryProofAdmin)
-if Review:
-    admin_site.register(Review, ReviewAdmin)
+# Register new models with admin site
+admin_site.register(ShipmentTracking, ShipmentTrackingAdmin)
+admin_site.register(DeliveryProof, DeliveryProofAdmin)
+admin_site.register(Review, ReviewAdmin)
