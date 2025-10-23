@@ -769,6 +769,14 @@ def teklif_ver(request, tracking_number):
         return redirect('website:ilan_detay', tracking_number=tracking_number)
 
     try:
+        # Determine carrier name with fallback chain
+        carrier_name = (
+            request.user.get_full_name() or
+            request.user.username or
+            request.user.email.split('@')[0] or
+            'Taşıyıcı'
+        )
+
         # Create bid in PostgreSQL
         bid = Bid.objects.create(
             bid_id=str(uuid.uuid4()),
@@ -776,7 +784,7 @@ def teklif_ver(request, tracking_number):
             tracking_number=tracking_number,
             carrier=profile,
             carrier_email=request.user.email,
-            carrier_name=request.user.get_full_name() or request.user.username,
+            carrier_name=carrier_name,
             carrier_phone=profile.phone_number or '',
             carrier_verified=profile.documents_verified,
             shipper_email=shipment.shipper_email,
