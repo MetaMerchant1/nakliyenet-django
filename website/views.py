@@ -806,15 +806,19 @@ def teklif_ver(request, tracking_number):
 @login_required
 def ilanlarim(request):
     """
-    İlanlarım sayfası - Kullanıcı tipine göre farklı içerik gösterir
-    - Yük Sahibi (shipper): Oluşturduğu ilanları ve gelen teklifleri görür
-    - Taşıyıcı (carrier): Verdiği teklifleri ve durumlarını görür
+    İlanlarım sayfası - Sadece Yük Sahipleri için
+    Oluşturduğu ilanları ve gelen teklifleri görür
     """
     try:
         profile = request.user.profile
     except:
         messages.error(request, 'Profil bulunamadı.')
         return redirect('website:profil')
+
+    # Sadece yük sahipleri erişebilir
+    if profile.user_type != 0:
+        messages.warning(request, 'Bu sayfaya sadece yük sahipleri erişebilir.')
+        return redirect('website:tekliflerim')
 
     from .models import Shipment, Bid
     from django.db.models import Count, Q
@@ -856,55 +860,71 @@ def ilanlarim(request):
             }
             messages.error(request, 'İlanlar yüklenirken hata oluştu.')
 
-        context = {
-            'title': 'İlanlarım - NAKLIYE NET',
-            'description': 'Oluşturduğunuz ilanları görüntüleyin ve teklifleri değerlendirin.',
-            'shipments': shipments_list,
-            'stats': stats,
-            'profile': profile,
-            'is_carrier': False,
+    context = {
+        'title': 'İlanlarım - NAKLIYE NET',
+        'description': 'Oluşturduğunuz ilanları görüntüleyin ve teklifleri değerlendirin.',
+        'shipments': shipments_list,
+        'stats': stats,
+        'profile': profile,
+    }
+    return render(request, 'website/ilanlarim.html', context)
+
+
+@login_required
+def tekliflerim(request):
+    """
+    Tekliflerim sayfası - Sadece Taşıyıcılar için
+    Verdiği teklifleri ve durumlarını görür
+    """
+    try:
+        profile = request.user.profile
+    except:
+        messages.error(request, 'Profil bulunamadı.')
+        return redirect('website:profil')
+
+    # Sadece taşıyıcılar erişebilir
+    if profile.user_type != 1:
+        messages.warning(request, 'Bu sayfaya sadece taşıyıcılar erişebilir.')
+        return redirect('website:ilanlarim')
+
+    from .models import Bid
+
+    try:
+        # Taşıyıcının verdiği teklifleri getir (Payment bilgisi ile)
+        bids_list = Bid.objects.filter(carrier=profile).select_related(
+            'shipment',
+            'shipment__payment'
+        ).order_by('-created_at')
+
+        # İstatistikler
+        stats = {
+            'total_bids': bids_list.count(),
+            'pending_bids': bids_list.filter(status='pending').count(),
+            'accepted_bids': bids_list.filter(status='accepted').count(),
+            'rejected_bids': bids_list.filter(status='rejected').count(),
         }
-        return render(request, 'website/ilanlarim.html', context)
 
-    # Taşıyıcı görünümü
-    else:
-        try:
-            # Taşıyıcının verdiği teklifleri getir (Payment bilgisi ile)
-            bids_list = Bid.objects.filter(carrier=profile).select_related(
-                'shipment',
-                'shipment__payment'
-            ).order_by('-created_at')
-
-            # İstatistikler
-            stats = {
-                'total_bids': bids_list.count(),
-                'pending_bids': bids_list.filter(status='pending').count(),
-                'accepted_bids': bids_list.filter(status='accepted').count(),
-                'rejected_bids': bids_list.filter(status='rejected').count(),
-            }
-
-        except Exception as e:
-            print(f"Error fetching carrier bids: {e}")
-            import traceback
-            traceback.print_exc()
-            bids_list = []
-            stats = {
-                'total_bids': 0,
-                'pending_bids': 0,
-                'accepted_bids': 0,
-                'rejected_bids': 0,
-            }
-            messages.error(request, 'Teklifler yüklenirken hata oluştu.')
-
-        context = {
-            'title': 'Tekliflerim - NAKLIYE NET',
-            'description': 'Verdiğiniz teklifleri görüntüleyin ve durumlarını takip edin.',
-            'bids': bids_list,
-            'stats': stats,
-            'profile': profile,
-            'is_carrier': True,
+    except Exception as e:
+        print(f"Error fetching carrier bids: {e}")
+        import traceback
+        traceback.print_exc()
+        bids_list = []
+        stats = {
+            'total_bids': 0,
+            'pending_bids': 0,
+            'accepted_bids': 0,
+            'rejected_bids': 0,
         }
-        return render(request, 'website/tekliflerim.html', context)
+        messages.error(request, 'Teklifler yüklenirken hata oluştu.')
+
+    context = {
+        'title': 'Tekliflerim - NAKLIYE NET',
+        'description': 'Verdiğiniz teklifleri görüntüleyin ve durumlarını takip edin.',
+        'bids': bids_list,
+        'stats': stats,
+        'profile': profile,
+    }
+    return render(request, 'website/tekliflerim.html', context)
 
 
 @login_required

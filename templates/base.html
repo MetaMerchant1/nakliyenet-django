@@ -214,9 +214,22 @@
                                 <li><a class="dropdown-item" href="{% url 'website:profil' %}">
                                     <i class="bi bi-person"></i> Profilim
                                 </a></li>
-                                <li><a class="dropdown-item" href="{% url 'website:ilanlarim' %}">
-                                    <i class="bi bi-box-seam"></i> İlanlarım
-                                </a></li>
+
+                                {% if user.profile.user_type == 0 %}
+                                    <!-- Yük Sahibi Menüsü -->
+                                    <li><a class="dropdown-item" href="{% url 'website:ilanlarim' %}">
+                                        <i class="bi bi-box-seam"></i> İlanlarım
+                                    </a></li>
+                                {% elif user.profile.user_type == 1 %}
+                                    <!-- Taşıyıcı Menüsü -->
+                                    <li><a class="dropdown-item" href="{% url 'website:tasiyici_panel' %}">
+                                        <i class="bi bi-speedometer2"></i> Taşıyıcı Paneli
+                                    </a></li>
+                                    <li><a class="dropdown-item" href="{% url 'website:tekliflerim' %}">
+                                        <i class="bi bi-tags"></i> Tekliflerim
+                                    </a></li>
+                                {% endif %}
+
                                 <li><hr class="dropdown-divider"></li>
                                 <li><a class="dropdown-item" href="{% url 'website:logout' %}">
                                     <i class="bi bi-box-arrow-right"></i> Çıkış Yap

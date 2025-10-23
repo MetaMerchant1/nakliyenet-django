@@ -21,8 +21,13 @@ urlpatterns = [
     path('ilan/<str:tracking_number>/', views.ilan_detay, name='ilan_detay'),
     path('ilan/<str:tracking_number>/teklif-ver/', views.teklif_ver, name='teklif_ver'),
 
-    # İlanlarım - Kullanıcının ilanları
+    # İlanlarım - Yük Sahibi için
     path('ilanlarim/', views.ilanlarim, name='ilanlarim'),
+
+    # Tekliflerim - Taşıyıcı için
+    path('tekliflerim/', views.tekliflerim, name='tekliflerim'),
+
+    # Teklif aksiyonları
     path('teklif/<str:bid_id>/kabul-et/', views.teklif_kabul_et, name='teklif_kabul_et'),
     path('teklif/<str:bid_id>/reddet/', views.teklif_reddet, name='teklif_reddet'),
 
