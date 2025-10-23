@@ -186,8 +186,8 @@ def google_oauth_callback(request):
     auth_login(request, user, backend='django.contrib.auth.backends.ModelBackend')
     logger.info(f"User logged in: {email}")
 
-    # Redirect to profile or home
-    return redirect('/profilim/')
+    # Redirect to create shipment page
+    return redirect('/ilan-olustur/')
 
 
 def google_login_debug(request):

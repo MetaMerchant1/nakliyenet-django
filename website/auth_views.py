@@ -36,7 +36,7 @@ def login_view(request):
             if user is not None:
                 login(request, user)
                 messages.success(request, 'Giriş başarılı! Hoş geldiniz.')
-                return redirect(request.GET.get('next', 'website:index'))
+                return redirect(request.GET.get('next', 'website:ilan_olustur'))
             else:
                 messages.error(request, 'E-posta veya şifre hatalı.')
         else:
@@ -115,7 +115,7 @@ def register_view(request):
                     return redirect('website:tasiyici_panel')
                 else:  # Shipper
                     messages.success(request, 'Kayıt başarılı! Hoş geldiniz. Şimdi ilan oluşturabilirsiniz.')
-                    return redirect('website:index')
+                    return redirect('website:ilan_olustur')
 
             except Exception as e:
                 logger.error(f"Registration error: {e}", exc_info=True)
