@@ -29,13 +29,13 @@
                                 <label class="form-label">Yük Tipi *</label>
                                 <select class="form-select" name="cargo_type" required>
                                     {% for value, label in cargo_types %}
-                                    <option value="{{value}}">{{label}}</option>
+                                    <option value="{{value}}" {% if prefill.cargo_type == value %}selected{% endif %}>{{label}}</option>
                                     {% endfor %}
                                 </select>
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Telefon *</label>
-                                <input type="tel" class="form-control" name="phone" required>
+                                <input type="tel" class="form-control" name="phone" value="{{ user.profile.phone|default:'' }}" required>
                             </div>
                         </div>
                     </div>
@@ -50,7 +50,7 @@
                                 <select class="form-select" name="from_city" required>
                                     <option value="">Şehir Seçiniz</option>
                                     {% for city in cities %}
-                                    <option value="{{city}}">{{city}}</option>
+                                    <option value="{{city}}" {% if prefill.from_city == city %}selected{% endif %}>{{city}}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -110,7 +110,7 @@
                                 <select class="form-select" name="to_city" required>
                                     <option value="">Şehir Seçiniz</option>
                                     {% for city in cities %}
-                                    <option value="{{city}}">{{city}}</option>
+                                    <option value="{{city}}" {% if prefill.to_city == city %}selected{% endif %}>{{city}}</option>
                                     {% endfor %}
                                 </select>
                             </div>
@@ -213,7 +213,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Alış Tarihi *</label>
-                            <input type="date" class="form-control" name="pickup_date" required>
+                            <input type="date" class="form-control" name="pickup_date" value="{{ prefill.pickup_date }}" required>
                         </div>
                     </div>
                 </div>
@@ -312,6 +312,41 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Yük tipi değiştiğinde çalıştır
     cargoTypeSelect.addEventListener('change', toggleFields);
+
+    // Anasayfadan gelen verileri sessionStorage'dan yükle (giriş yapmayanlar için)
+    const savedData = sessionStorage.getItem('quickFormData');
+    if (savedData) {
+        try {
+            const data = JSON.parse(savedData);
+
+            // Şehirleri doldur
+            if (data.from_city) {
+                const fromCitySelect = document.querySelector('select[name="from_city"]');
+                if (fromCitySelect) fromCitySelect.value = data.from_city;
+            }
+            if (data.to_city) {
+                const toCitySelect = document.querySelector('select[name="to_city"]');
+                if (toCitySelect) toCitySelect.value = data.to_city;
+            }
+
+            // Yük tipini doldur
+            if (data.cargo_type) {
+                cargoTypeSelect.value = data.cargo_type;
+                toggleFields(); // Alan görünürlüğünü güncelle
+            }
+
+            // Tarihi doldur
+            if (data.pickup_date) {
+                const pickupDateInput = document.querySelector('input[name="pickup_date"]');
+                if (pickupDateInput) pickupDateInput.value = data.pickup_date;
+            }
+
+            // Verileri kullandık, temizle
+            sessionStorage.removeItem('quickFormData');
+        } catch (e) {
+            console.error('Error loading saved form data:', e);
+        }
+    }
 });
 </script>
 
