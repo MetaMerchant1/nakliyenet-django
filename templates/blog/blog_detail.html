@@ -35,82 +35,102 @@
 {% endblock %}
 
 {% block content %}
-<div class="container my-5">
-    <div class="row">
-        <div class="col-lg-8 mx-auto">
-            <!-- Breadcrumb -->
-            <nav aria-label="breadcrumb" class="mb-4">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'website:index' %}">Ana Sayfa</a></li>
-                    <li class="breadcrumb-item"><a href="{% url 'blog:list' %}">Blog</a></li>
-                    <li class="breadcrumb-item active">{{ post.title }}</li>
-                </ol>
-            </nav>
+<!-- Main Blog Container with Light Background -->
+<div style="background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%); min-height: 100vh; padding: 3rem 0;">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-9 mx-auto">
+                <!-- Breadcrumb with better visibility -->
+                <nav aria-label="breadcrumb" class="mb-4">
+                    <ol class="breadcrumb" style="background: white; padding: 1rem 1.5rem; border-radius: 0.75rem; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);">
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'website:index' %}" style="color: #0066FF; text-decoration: none; font-weight: 500;">
+                                <i class="bi bi-house-door-fill me-1"></i>Ana Sayfa
+                            </a>
+                        </li>
+                        <li class="breadcrumb-item">
+                            <a href="{% url 'blog:list' %}" style="color: #0066FF; text-decoration: none; font-weight: 500;">Blog</a>
+                        </li>
+                        <li class="breadcrumb-item active" style="color: #6B7280; font-weight: 500;">{{ post.title|truncatewords:5 }}</li>
+                    </ol>
+                </nav>
 
-            <!-- Article -->
-            <article class="blog-post">
-                <header class="mb-4">
-                    <h1 class="display-5 mb-3">{{ post.title }}</h1>
-                    <div class="text-muted">
-                        <i class="bi bi-calendar3"></i> {{ post.created_at|date:"d F Y, H:i" }}
-                        <span class="ms-3"><i class="bi bi-eye"></i> {{ post.view_count }} görüntülenme</span>
+                <!-- Article Card -->
+                <article class="blog-post" style="background: white; border-radius: 1.5rem; box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08); overflow: hidden;">
+                    <!-- Header Section -->
+                    <header style="background: linear-gradient(135deg, #0066FF 0%, #00D4FF 100%); color: white; padding: 3rem 3rem 2rem;">
+                        <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 1rem; line-height: 1.2;">{{ post.title }}</h1>
+                        <div style="display: flex; align-items: center; gap: 2rem; font-size: 0.95rem; opacity: 0.95;">
+                            <div>
+                                <i class="bi bi-calendar3"></i> {{ post.created_at|date:"d F Y, H:i" }}
+                            </div>
+                            <div>
+                                <i class="bi bi-eye-fill"></i> {{ post.view_count }} görüntülenme
+                            </div>
+                        </div>
+                    </header>
+
+                    {% if post.featured_image %}
+                    <div style="margin: 0;">
+                        <img src="{{ post.featured_image.url }}"
+                             alt="{{ post.title }}"
+                             class="img-fluid"
+                             style="max-height: 450px; width: 100%; object-fit: cover; display: block;">
                     </div>
-                </header>
+                    {% endif %}
 
-                {% if post.featured_image %}
-                <div class="mb-4">
-                    <img src="{{ post.featured_image.url }}"
-                         alt="{{ post.title }}"
-                         class="img-fluid rounded shadow-sm"
-                         style="max-height: 500px; width: 100%; object-fit: cover;">
-                </div>
-                {% endif %}
-
-                <div class="blog-content">
-                    {{ post.content|safe }}
-                </div>
-
-                <hr class="my-5">
-
-                <!-- Share Buttons -->
-                <div class="d-flex justify-content-between align-items-center">
-                    <div>
-                        <strong>Paylaş:</strong>
-                        <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ post.title }}"
-                           target="_blank"
-                           class="btn btn-sm btn-outline-primary ms-2">
-                            <i class="bi bi-twitter"></i> Twitter
-                        </a>
-                        <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}"
-                           target="_blank"
-                           class="btn btn-sm btn-outline-primary ms-2">
-                            <i class="bi bi-facebook"></i> Facebook
-                        </a>
-                        <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}"
-                           target="_blank"
-                           class="btn btn-sm btn-outline-primary ms-2">
-                            <i class="bi bi-linkedin"></i> LinkedIn
-                        </a>
+                    <!-- Content Section -->
+                    <div class="blog-content" style="padding: 3rem;">
+                        {{ post.content|safe }}
                     </div>
-                    <a href="{% url 'blog:list' %}" class="btn btn-outline-secondary">
-                        <i class="bi bi-arrow-left"></i> Tüm Yazılar
-                    </a>
-                </div>
-            </article>
+
+                    <!-- Share Section -->
+                    <div style="padding: 2rem 3rem; background: #F9FAFB; border-top: 2px solid #E5E7EB;">
+                        <div class="d-flex flex-wrap justify-content-between align-items-center gap-3">
+                            <div>
+                                <strong style="color: #111827; font-size: 1rem; margin-right: 0.75rem;">Paylaş:</strong>
+                                <a href="https://twitter.com/intent/tweet?url={{ request.build_absolute_uri }}&text={{ post.title }}"
+                                   target="_blank"
+                                   class="btn btn-sm ms-2"
+                                   style="background: #1DA1F2; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500;">
+                                    <i class="bi bi-twitter"></i> Twitter
+                                </a>
+                                <a href="https://www.facebook.com/sharer/sharer.php?u={{ request.build_absolute_uri }}"
+                                   target="_blank"
+                                   class="btn btn-sm ms-2"
+                                   style="background: #1877F2; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500;">
+                                    <i class="bi bi-facebook"></i> Facebook
+                                </a>
+                                <a href="https://www.linkedin.com/sharing/share-offsite/?url={{ request.build_absolute_uri }}"
+                                   target="_blank"
+                                   class="btn btn-sm ms-2"
+                                   style="background: #0A66C2; color: white; border: none; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 500;">
+                                    <i class="bi bi-linkedin"></i> LinkedIn
+                                </a>
+                            </div>
+                            <a href="{% url 'blog:list' %}"
+                               class="btn"
+                               style="background: white; color: #0066FF; border: 2px solid #0066FF; padding: 0.5rem 1.5rem; border-radius: 0.5rem; font-weight: 600; text-decoration: none;">
+                                <i class="bi bi-arrow-left me-1"></i> Tüm Yazılar
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            </div>
         </div>
     </div>
 </div>
 
 <style>
-/* Blog Article Header */
-.blog-post h1 {
-    color: #111827;
-    font-weight: 800;
+/* Breadcrumb Styling */
+.breadcrumb {
+    margin-bottom: 0;
 }
 
-.blog-post .text-muted {
-    color: #6B7280 !important;
-    font-size: 0.95rem;
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "›";
+    color: #9CA3AF;
+    font-size: 1.2rem;
 }
 
 /* Blog Content */
@@ -118,14 +138,10 @@
     font-size: 1.125rem;
     line-height: 1.9;
     color: #1F2937;
-    background: white;
-    padding: 2rem;
-    border-radius: 1rem;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .blog-content p {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.75rem;
     color: #1F2937;
 }
 
@@ -152,7 +168,7 @@
 }
 
 .blog-content ul, .blog-content ol {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     padding-left: 2.5rem;
     color: #1F2937;
 }
@@ -166,7 +182,7 @@
 }
 
 .blog-content li {
-    margin-bottom: 0.875rem;
+    margin-bottom: 1rem;
     line-height: 1.8;
     color: #1F2937;
 }
@@ -180,19 +196,18 @@
     max-width: 100%;
     height: auto;
     border-radius: 0.75rem;
-    margin: 2rem 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin: 2.5rem 0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
 }
 
 .blog-content blockquote {
     border-left: 5px solid #0066FF;
     background: #F8F9FF;
-    padding: 1.5rem;
-    padding-left: 2rem;
-    margin: 2rem 0;
+    padding: 1.5rem 2rem;
+    margin: 2.5rem 0;
     font-style: italic;
     color: #4B5563;
-    border-radius: 0.5rem;
+    border-radius: 0.75rem;
 }
 
 .blog-content strong {
@@ -203,19 +218,29 @@
 .blog-content a {
     color: #0066FF;
     text-decoration: none;
-    font-weight: 500;
-    border-bottom: 2px solid transparent;
-    transition: border-color 0.2s;
+    font-weight: 600;
+    border-bottom: 2px solid rgba(0, 102, 255, 0.3);
+    transition: all 0.2s;
 }
 
 .blog-content a:hover {
     border-bottom-color: #0066FF;
+    color: #0052CC;
 }
 
-/* Share Section */
-.blog-post hr {
-    border-color: #E5E7EB;
-    opacity: 1;
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .blog-content {
+        font-size: 1rem;
+    }
+
+    .blog-content h2 {
+        font-size: 1.75rem;
+    }
+
+    .blog-content h3 {
+        font-size: 1.35rem;
+    }
 }
 </style>
 {% endblock %}
