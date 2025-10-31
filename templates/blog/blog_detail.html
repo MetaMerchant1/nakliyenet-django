@@ -102,37 +102,59 @@
 </div>
 
 <style>
+/* Blog Article Header */
+.blog-post h1 {
+    color: #111827;
+    font-weight: 800;
+}
+
+.blog-post .text-muted {
+    color: #6B7280 !important;
+    font-size: 0.95rem;
+}
+
+/* Blog Content */
 .blog-content {
-    font-size: 1.1rem;
-    line-height: 1.8;
-    color: #333;
+    font-size: 1.125rem;
+    line-height: 1.9;
+    color: #1F2937;
+    background: white;
+    padding: 2rem;
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
 .blog-content p {
     margin-bottom: 1.5rem;
+    color: #1F2937;
 }
 
 .blog-content h2 {
-    margin-top: 2.5rem;
-    margin-bottom: 1rem;
-    font-size: 1.8rem;
+    margin-top: 3rem;
+    margin-bottom: 1.25rem;
+    font-size: 2rem;
     font-weight: 700;
     color: #111827;
-    border-bottom: 2px solid #E5E7EB;
-    padding-bottom: 0.5rem;
+    border-bottom: 3px solid #0066FF;
+    padding-bottom: 0.75rem;
+}
+
+.blog-content h2:first-child {
+    margin-top: 0;
 }
 
 .blog-content h3 {
-    margin-top: 2rem;
-    margin-bottom: 0.75rem;
-    font-size: 1.4rem;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    font-size: 1.5rem;
     font-weight: 600;
-    color: #1F2937;
+    color: #111827;
 }
 
 .blog-content ul, .blog-content ol {
     margin-bottom: 1.5rem;
-    padding-left: 2rem;
+    padding-left: 2.5rem;
+    color: #1F2937;
 }
 
 .blog-content ul {
@@ -144,42 +166,56 @@
 }
 
 .blog-content li {
-    margin-bottom: 0.75rem;
-    line-height: 1.7;
+    margin-bottom: 0.875rem;
+    line-height: 1.8;
+    color: #1F2937;
 }
 
 .blog-content li strong {
     color: #111827;
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .blog-content img {
     max-width: 100%;
     height: auto;
-    border-radius: 8px;
-    margin: 1.5rem 0;
+    border-radius: 0.75rem;
+    margin: 2rem 0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .blog-content blockquote {
-    border-left: 4px solid #0066FF;
-    padding-left: 1.5rem;
-    margin: 1.5rem 0;
+    border-left: 5px solid #0066FF;
+    background: #F8F9FF;
+    padding: 1.5rem;
+    padding-left: 2rem;
+    margin: 2rem 0;
     font-style: italic;
-    color: #666;
+    color: #4B5563;
+    border-radius: 0.5rem;
 }
 
 .blog-content strong {
-    font-weight: 600;
+    font-weight: 700;
     color: #111827;
 }
 
 .blog-content a {
     color: #0066FF;
     text-decoration: none;
+    font-weight: 500;
+    border-bottom: 2px solid transparent;
+    transition: border-color 0.2s;
 }
 
 .blog-content a:hover {
-    text-decoration: underline;
+    border-bottom-color: #0066FF;
+}
+
+/* Share Section */
+.blog-post hr {
+    border-color: #E5E7EB;
+    opacity: 1;
 }
 </style>
 {% endblock %}
